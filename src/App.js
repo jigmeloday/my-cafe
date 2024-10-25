@@ -3,6 +3,8 @@ import Header from './containers/header/header';
 import './App.css';
 import AboutUs from './containers/about-us/about-us';
 import SpecialMenu from './containers/menu/SpecialMenu';
+import Chef from './containers/chef/chef';
+import Intro from './containers/intro/intro';
 
 function App() {
   return (
@@ -11,6 +13,8 @@ function App() {
           <Header />
           <AboutUs />
           <SpecialMenu />
+          <Chef />
+          <Intro />
       </div>
   );
 }
