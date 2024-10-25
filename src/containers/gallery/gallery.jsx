@@ -7,7 +7,7 @@ import {images} from '../../constants';
 
 function Gallery() {
     const scrollRef = useRef();
-    const { gallery01, gallery02, gallery03, gallery04 } = images;
+    const { gallery01, gallery02, gallery03, gallery04, gallery05, gallery06, gallery07 } = images;
     const scroll = (direction) => {
         const { current } = scrollRef;
         if (direction === 'left') {
@@ -31,7 +31,7 @@ function Gallery() {
             <div className="app__gallery-images">
                 <div className="app__gallery-images_container" ref={scrollRef}>
                     {
-                        [gallery01, gallery02, gallery03, gallery04].map((value, index) => (
+                        [gallery05, gallery07,gallery01, gallery06, gallery02, gallery03, gallery04].map((value, index) => (
                             <div className="app__gallery-images_card flex__center" key={`${index}-gallery_image`}>
                                 <img src={value} alt="gallery"/>
                                 <BsInstagram className="gallery__image-icon" />

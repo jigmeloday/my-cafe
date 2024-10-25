@@ -1,6 +1,6 @@
 import './menu-item.css';
 
-function MenuItems({ key, title, price, tags }) {
+function MenuItems({ title, price, tags }) {
     return(
         <div className="app__menuitem">
             <div className="app__menuitem-head">
