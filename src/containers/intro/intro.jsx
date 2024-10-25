@@ -5,7 +5,7 @@ import './intro.css';
 
 function Intro() {
     const vidRef = useRef();
-    const [playVideo, setPlayVideo] = useState(false);
+    const [playVideo, setPlayVideo] = useState(true);
     const handleVideo = () => {
         setPlayVideo((playVideo) => !playVideo)
         if (playVideo) {

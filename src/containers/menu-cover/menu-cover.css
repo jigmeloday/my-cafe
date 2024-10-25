@@ -1,0 +1,12 @@
+.app__menu-cover{
+    display: flex;
+    background: var(--color-black);
+
+}
+
+.app__menu-img{
+    height: 300px;
+    width: 100px;
+    object-fit: cover;
+    border-radius: 20px;
+}
