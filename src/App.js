@@ -5,6 +5,8 @@ import AboutUs from './containers/about-us/about-us';
 import SpecialMenu from './containers/menu/SpecialMenu';
 import Chef from './containers/chef/chef';
 import Intro from './containers/intro/intro';
+import Luarels from './containers/luarels/luarels';
+import Gallery from './containers/gallery/gallery';
 
 function App() {
   return (
@@ -15,6 +17,8 @@ function App() {
           <SpecialMenu />
           <Chef />
           <Intro />
+          <Luarels />
+          <Gallery />
       </div>
   );
 }
