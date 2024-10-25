@@ -14,3 +14,8 @@
 .app__header-img{
     width: 80%;
 }
+
+.app__wrapper_info p{
+    color: var(--color-grey);
+}
+
