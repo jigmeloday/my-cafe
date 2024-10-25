@@ -5,7 +5,7 @@ import './luarels.css'
 
 function Luarels() {
     return(
-       <div className="app__bg app__wrapper section__padding" id="award">
+       <div className="app__bg app__wrapper section__padding" id="awards">
            <div className="app__wrapper_info ">
                <SubHeader title="Awards & recognition" />
                <h1 className="headtext__cormorant">Our Laurels</h1>
@@ -18,7 +18,7 @@ function Luarels() {
                </div>
            </div>
            <div className="app__wrapper_img">
-               <img src={images.laurels}/>
+               <img src={images.laurels} alt="laurels img"/>
            </div>
        </div>
     );
