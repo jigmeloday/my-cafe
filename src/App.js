@@ -7,6 +7,8 @@ import Chef from './containers/chef/chef';
 import Intro from './containers/intro/intro';
 import Luarels from './containers/luarels/luarels';
 import Gallery from './containers/gallery/gallery';
+import Findus from './containers/findus/findus';
+import Footer from './containers/footer/footer';
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
           <Intro />
           <Luarels />
           <Gallery />
+          <Findus />
+          <Footer />
       </div>
   );
 }
