@@ -32,7 +32,16 @@
   --color-secondary-foreground: var(--secondary-foreground);
   --color-secondary: var(--secondary);
   --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
+  --color-primary-50: var(--primary-50);
+  --color-primary-100: var(--primary-100);
+  --color-primary-200: var(--primary-200);
+  --color-primary-300: var(--primary-300);
+  --color-primary-400: var(--primary-400);
+  --color-primary-500: var(--primary-500);
+  --color-primary-600: var(--primary-600);
+  --color-primary-700: var(--primary-700);
+  --color-primary-800: var(--primary-800);
+  --color-primary-900: var(--primary-900);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
@@ -127,5 +136,29 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+
+  h1 {
+    @apply font-sans text-5xl md:text-6xl font-extrabold tracking-tight text-foreground leading-tight;
+  }
+
+  h2 {
+    @apply font-sans text-4xl md:text-5xl font-bold tracking-tight text-foreground leading-snug;
+  }
+
+  h3 {
+    @apply font-sans text-3xl md:text-4xl font-semibold tracking-tight text-foreground leading-snug;
+  }
+
+  h4 {
+    @apply font-sans text-2xl md:text-3xl font-semibold tracking-normal text-foreground leading-snug;
+  }
+
+  h5 {
+    @apply font-sans text-xl md:text-2xl font-medium tracking-normal text-foreground leading-snug;
+  }
+
+  h6 {
+    @apply font-sans text-lg md:text-xl font-medium tracking-normal text-foreground leading-snug uppercase;
   }
 }
