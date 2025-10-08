@@ -2,6 +2,7 @@ import LandingBanner from '@/components/landing/landing-banner';
 import CafeCard from '@/components/shared/cafe-card';
 import TitleComponent from '@/components/shared/title-component';
 import { CafeList } from '@/lib/action/cafe.action';
+import { CafeType } from '../../../types';
 
 export default async function Home() {
 
@@ -18,7 +19,9 @@ export default async function Home() {
         {
           cafeList.map((item) => (
             <div key={item.id} className='w-full my-[24px]'>
-              <CafeCard />
+              <CafeCard
+                cafe={item}
+              />
             </div>
           ))
         }
