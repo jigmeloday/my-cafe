@@ -1,5 +1,5 @@
 import LandingBanner from '@/components/landing/landing-banner';
-import Image from 'next/image';
+import TitleComponent from '@/components/shared/title-component';
 
 export default function Home() {
   return (
@@ -8,7 +8,14 @@ export default function Home() {
         <LandingBanner />
       </section>
       <section className="my-[120px] px-[16px] lg:px-[112px]">
-        Top Rate Cafe
+       <TitleComponent title="Top Rated Cafe" />
+       <div className='flex justify-between my-[24px] space-x-10'>
+        {
+          [1,2,3,4].map((item) => (
+            <div key={item} className='border w-full '>hello</div>
+          ))
+        }
+       </div>
       </section>
       <section className="my-[120px] px-[16px] lg:px-[112px]">Feature</section>
       <section className="my-[120px] px-[16px] lg:px-[112px]">
