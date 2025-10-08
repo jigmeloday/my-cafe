@@ -1,7 +1,12 @@
 import LandingBanner from '@/components/landing/landing-banner';
+import CafeCard from '@/components/shared/cafe-card';
 import TitleComponent from '@/components/shared/title-component';
+import { CafeList } from '@/lib/action/cafe.action';
 
-export default function Home() {
+export default async function Home() {
+
+  const cafeList = await CafeList({ limit: 4 });
+
   return (
     <main>
       <section className="flex lg:h-[56vh] mt-[12px]">
@@ -11,8 +16,10 @@ export default function Home() {
        <TitleComponent title="Top Rated Cafe" />
        <div className='flex justify-between my-[24px] space-x-10'>
         {
-          [1,2,3,4].map((item) => (
-            <div key={item} className='border w-full '>hello</div>
+          cafeList.map((item) => (
+            <div key={item.id} className='w-full my-[24px]'>
+              <CafeCard />
+            </div>
           ))
         }
        </div>
