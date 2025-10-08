@@ -2,7 +2,6 @@ import LandingBanner from '@/components/landing/landing-banner';
 import CafeCard from '@/components/shared/cafe-card';
 import TitleComponent from '@/components/shared/title-component';
 import { CafeList } from '@/lib/action/cafe.action';
-import { CafeType } from '../../../types';
 
 export default async function Home() {
 
