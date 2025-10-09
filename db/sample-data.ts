@@ -92,8 +92,9 @@ export const ADDRESS_DATA = [
         state: 'Thimphu',
         zip: '11001',
         country: 'Bhutan',
-        isDefault: true, // first address is default
+        isDefault: true,
         map: 'https://maps.google.com/?q=27.4728,89.6390',
+        createdAt: new Date(),
       },
       {
         street: '5 Changlam Rd',
@@ -103,6 +104,7 @@ export const ADDRESS_DATA = [
         country: 'Bhutan',
         isDefault: false,
         map: 'https://maps.google.com/?q=27.4710,89.6410',
+        createdAt: new Date(),
       },
     ],
   },
@@ -117,6 +119,7 @@ export const ADDRESS_DATA = [
         country: 'Bhutan',
         isDefault: true,
         map: 'https://maps.google.com/?q=27.4315,89.4166',
+        createdAt: new Date(),
       },
       {
         street: '10 Rinpung Dzong Rd',
@@ -126,6 +129,7 @@ export const ADDRESS_DATA = [
         country: 'Bhutan',
         isDefault: false,
         map: 'https://maps.google.com/?q=27.4280,89.4170',
+        createdAt: new Date(),
       },
     ],
   },
@@ -140,6 +144,7 @@ export const ADDRESS_DATA = [
         country: 'Bhutan',
         isDefault: true,
         map: 'https://maps.google.com/?q=26.8638,89.3883',
+        createdAt: new Date(),
       },
     ],
   },
@@ -154,6 +159,7 @@ export const ADDRESS_DATA = [
         country: 'Bhutan',
         isDefault: true,
         map: 'https://maps.google.com/?q=27.5920,89.8771',
+        createdAt: new Date(),
       },
       {
         street: '2 Punakha Bazaar Rd',
@@ -163,6 +169,7 @@ export const ADDRESS_DATA = [
         country: 'Bhutan',
         isDefault: false,
         map: 'https://maps.google.com/?q=27.5900,89.8800',
+        createdAt: new Date(),
       },
     ],
   },
@@ -177,6 +184,7 @@ export const ADDRESS_DATA = [
         country: 'Bhutan',
         isDefault: true,
         map: 'https://maps.google.com/?q=27.5594,90.7520',
+        createdAt: new Date(),
       },
     ],
   },
@@ -191,6 +199,7 @@ export const ADDRESS_DATA = [
         country: 'Bhutan',
         isDefault: true,
         map: 'https://maps.google.com/?q=27.2747,91.2395',
+        createdAt: new Date(),
       },
     ],
   },
@@ -205,6 +214,7 @@ export const ADDRESS_DATA = [
         country: 'Bhutan',
         isDefault: true,
         map: 'https://maps.google.com/?q=27.5022,90.5075',
+        createdAt: new Date(),
       },
     ],
   },
@@ -219,6 +229,7 @@ export const ADDRESS_DATA = [
         country: 'Bhutan',
         isDefault: true,
         map: 'https://maps.google.com/?q=27.3333,91.5530',
+        createdAt: new Date(),
       },
     ],
   },
@@ -233,6 +244,7 @@ export const ADDRESS_DATA = [
         country: 'Bhutan',
         isDefault: true,
         map: 'https://maps.google.com/?q=26.8000,91.5000',
+        createdAt: new Date(),
       },
     ],
   },
@@ -247,7 +259,90 @@ export const ADDRESS_DATA = [
         country: 'Bhutan',
         isDefault: true,
         map: 'https://maps.google.com/?q=27.4333,89.9167',
+        createdAt: new Date(),
       },
+    ],
+  },
+];
+
+export const MENU_DATA = [
+  {
+    cafeName: 'Starbuck',
+    menus: [
+      { name: 'Caffe Latte', img: '/menu/latte.png', price: 3.5, spicyRate: 0, ingredients: ['Espresso', 'Steamed milk'], createdAt: new Date() },
+      { name: 'Cappuccino', img: '/menu/cappuccino.png', price: 3.8, spicyRate: 0, ingredients: ['Espresso', 'Steamed milk', 'Foam'], createdAt: new Date() },
+      { name: 'Mocha', img: '/menu/mocha.png', price: 4.0, spicyRate: 0, ingredients: ['Espresso', 'Chocolate', 'Steamed milk'], createdAt: new Date() },
+    ],
+  },
+  {
+    cafeName: 'Cafe Mocha',
+    menus: [
+      { name: 'Hot Chocolate', img: '/menu/hotchocolate.png', price: 3.0, spicyRate: 0, ingredients: ['Chocolate', 'Milk'], createdAt: new Date() },
+      { name: 'Iced Coffee', img: '/menu/icedcoffee.png', price: 3.2, spicyRate: 0, ingredients: ['Coffee', 'Ice', 'Milk'], createdAt: new Date() },
+      { name: 'Caramel Macchiato', img: '/menu/caramelmacchiato.png', price: 4.0, spicyRate: 0, ingredients: ['Espresso', 'Milk', 'Caramel syrup'], createdAt: new Date() },
+    ],
+  },
+  {
+    cafeName: 'The Coffee House',
+    menus: [
+      { name: 'Espresso', img: '/menu/espresso.png', price: 2.5, spicyRate: 0, ingredients: ['Pure espresso shot'], createdAt: new Date() },
+      { name: 'Americano', img: '/menu/americano.png', price: 3.0, spicyRate: 0, ingredients: ['Espresso', 'Hot water'], createdAt: new Date() },
+      { name: 'Flat White', img: '/menu/flatwhite.png', price: 3.5, spicyRate: 0, ingredients: ['Espresso', 'Steamed milk'], createdAt: new Date() },
+    ],
+  },
+  {
+    cafeName: 'Brew Haven',
+    menus: [
+      { name: 'Flat White', img: '/menu/flatwhite.png', price: 3.5, spicyRate: 0, ingredients: ['Espresso', 'Steamed milk'], createdAt: new Date() },
+      { name: 'Caramel Latte', img: '/menu/caramellatte.png', price: 4.2, spicyRate: 0, ingredients: ['Espresso', 'Milk', 'Caramel syrup'], createdAt: new Date() },
+      { name: 'Vanilla Latte', img: '/menu/vanillalatte.png', price: 4.0, spicyRate: 0, ingredients: ['Espresso', 'Milk', 'Vanilla syrup'], createdAt: new Date() },
+    ],
+  },
+  {
+    cafeName: 'Espresso Lab',
+    menus: [
+      { name: 'Affogato', img: '/menu/affogato.png', price: 4.5, spicyRate: 0, ingredients: ['Espresso', 'Vanilla ice cream'], createdAt: new Date() },
+      { name: 'Nitro Cold Brew', img: '/menu/nitro.png', price: 4.0, spicyRate: 0, ingredients: ['Cold brew coffee', 'Nitrogen'], createdAt: new Date() },
+    ],
+  },
+  {
+    cafeName: 'Latte Lounge',
+    menus: [
+      { name: 'Vanilla Latte', img: '/menu/vanillalatte.png', price: 4.0, spicyRate: 0, ingredients: ['Espresso', 'Milk', 'Vanilla syrup'], createdAt: new Date() },
+      { name: 'Matcha Latte', img: '/menu/matcha.png', price: 4.2, spicyRate: 0, ingredients: ['Matcha', 'Milk', 'Sugar'], createdAt: new Date() },
+      { name: 'Chai Latte', img: '/menu/chailatte.png', price: 3.8, spicyRate: 1, ingredients: ['Black tea', 'Milk', 'Spices'], createdAt: new Date() },
+    ],
+  },
+  {
+    cafeName: 'Morning Roast',
+    menus: [
+      { name: 'Espresso', img: '/menu/espresso.png', price: 2.5, spicyRate: 0, ingredients: ['Pure espresso shot'], createdAt: new Date() },
+      { name: 'Americano', img: '/menu/americano.png', price: 3.0, spicyRate: 0, ingredients: ['Espresso', 'Hot water'], createdAt: new Date() },
+      { name: 'Caffe Latte', img: '/menu/latte.png', price: 3.5, spicyRate: 0, ingredients: ['Espresso', 'Steamed milk'], createdAt: new Date() },
+    ],
+  },
+  {
+    cafeName: 'The Bean Spot',
+    menus: [
+      { name: 'Cappuccino', img: '/menu/cappuccino.png', price: 3.8, spicyRate: 0, ingredients: ['Espresso', 'Steamed milk', 'Foam'], createdAt: new Date() },
+      { name: 'Mocha', img: '/menu/mocha.png', price: 4.0, spicyRate: 0, ingredients: ['Espresso', 'Chocolate', 'Steamed milk'], createdAt: new Date() },
+      { name: 'Iced Coffee', img: '/menu/icedcoffee.png', price: 3.2, spicyRate: 0, ingredients: ['Coffee', 'Ice', 'Milk'], createdAt: new Date() },
+    ],
+  },
+  {
+    cafeName: 'Cafe Aroma',
+    menus: [
+      { name: 'Caffe Latte', img: '/menu/latte.png', price: 3.5, spicyRate: 0, ingredients: ['Espresso', 'Steamed milk'], createdAt: new Date() },
+      { name: 'Flat White', img: '/menu/flatwhite.png', price: 3.5, spicyRate: 0, ingredients: ['Espresso', 'Steamed milk'], createdAt: new Date() },
+      { name: 'Caramel Macchiato', img: '/menu/caramelmacchiato.png', price: 4.0, spicyRate: 0, ingredients: ['Espresso', 'Milk', 'Caramel syrup'], createdAt: new Date() },
+    ],
+  },
+  {
+    cafeName: 'Bistro Beans',
+    menus: [
+      { name: 'Mocha', img: '/menu/mocha.png', price: 4.0, spicyRate: 0, ingredients: ['Espresso', 'Chocolate', 'Steamed milk'], createdAt: new Date() },
+      { name: 'Cappuccino', img: '/menu/cappuccino.png', price: 3.8, spicyRate: 0, ingredients: ['Espresso', 'Steamed milk', 'Foam'], createdAt: new Date() },
+      { name: 'Espresso', img: '/menu/espresso.png', price: 2.5, spicyRate: 0, ingredients: ['Pure espresso shot'], createdAt: new Date() },
     ],
   },
 ];

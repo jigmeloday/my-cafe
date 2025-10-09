@@ -31,32 +31,46 @@ datasource db {
 // }
 
 model Cafe {
-  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name         String
-  subTitle     String?
-  logo         String?
-  openTime     String
-  closeTime    String
-  themeColor   String
-  closed       Boolean @default(false)
-  createdAt    DateTime @default(now()) @db.Timestamp(6)
-  addresses    Address[]
- 
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name       String
+  subTitle   String?
+  logo       String?
+  openTime   String
+  closeTime  String
+  themeColor String
+  closed     Boolean   @default(false)
+  createdAt  DateTime  @default(now()) @db.Timestamp(6)
+  addresses  Address[]
+  menus      Menu[]
   // reviews  Review[]
-  // menus        Menu[]
   // favorites    Favorite[]
   // folderItems  FolderItem[]
 }
 
 model Address {
-  id      String @id @default(uuid())
-  street  String
-  city    String
-  state   String?
-  zip     String?
-  country String
-  map    String?
+  id        String  @id @default(uuid())
+  street    String
+  city      String
+  state     String?
+  zip       String?
+  country   String
+  map       String?
   isDefault Boolean @default(false)
-  cafeId  String @db.Uuid
-  cafe    Cafe   @relation(fields: [cafeId], references: [id])
+  cafeId    String  @db.Uuid
+  cafe      Cafe    @relation(fields: [cafeId], references: [id])
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+
+}
+
+model Menu {
+  id          String  @id @default(uuid())
+  cafeId      String  @db.Uuid      
+  cafe        Cafe    @relation(fields: [cafeId], references: [id])
+  name        String
+  img         String?
+  price       Float
+  spicyRate   Int?
+  ingredients String[]
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  // reviews  Review[]
 }

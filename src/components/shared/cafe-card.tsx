@@ -29,7 +29,7 @@ export default function CafeCard(props:{  cafe: CafeType } ) {
             <Star
               key={item}
               size={14}
-              className="text-yellow-400 fill-yellow-400/80"
+              className="text-primary-400 fill-primary-400/80"
             />
           ))}
         </div>
