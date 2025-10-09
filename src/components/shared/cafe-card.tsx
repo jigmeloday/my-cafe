@@ -19,9 +19,9 @@ export default function CafeCard(props:{  cafe: CafeType } ) {
       </div>
 
       <div className="flex flex-col justify-start w-full mt-4 text-center">
-        <h4 className="text-primary-800">
+        <h5 className="text-primary-800">
           {cafe?.name}
-        </h4>
+        </h5>
         <p className="text-sm text-gray-400 mt-1">{cafe?.subTitle}</p>
 
         <div className="flex justify-center items-center mt-2 space-x-1">

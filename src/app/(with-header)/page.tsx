@@ -6,7 +6,7 @@ import { CafeList } from '@/lib/action/cafe.action';
 export default async function Home() {
 
   const cafeList = await CafeList({ limit: 4 });
-
+  console.log(cafeList)
   return (
     <main>
       <section className="flex lg:h-[56vh] mt-[12px]">
@@ -26,10 +26,10 @@ export default async function Home() {
         }
        </div>
       </section>
-      <section className="my-[120px] px-[16px] lg:px-[112px]">Feature</section>
       <section className="my-[120px] px-[16px] lg:px-[112px]">
         top-rated foods
       </section>
+      <section className="my-[120px] px-[16px] lg:px-[112px]">Feature</section>
       <section className="my-[120px] px-[16px] lg:px-[112px]">
         blog listing{' '}
       </section>

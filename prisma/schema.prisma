@@ -40,9 +40,23 @@ model Cafe {
   themeColor   String
   closed       Boolean @default(false)
   createdAt    DateTime @default(now()) @db.Timestamp(6)
-  // address      String
+  addresses    Address[]
+ 
   // reviews  Review[]
   // menus        Menu[]
   // favorites    Favorite[]
   // folderItems  FolderItem[]
+}
+
+model Address {
+  id      String @id @default(uuid())
+  street  String
+  city    String
+  state   String?
+  zip     String?
+  country String
+  map    String?
+  isDefault Boolean @default(false)
+  cafeId  String @db.Uuid
+  cafe    Cafe   @relation(fields: [cafeId], references: [id])
 }
