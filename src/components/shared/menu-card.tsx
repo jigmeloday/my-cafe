@@ -7,13 +7,13 @@ function MenuCard({ menu }: { menu: MenuType }) {
 
   return (
     <Link href={`/menu-details/${menu.id}`} className="w-full shadow rounded-md overflow-hidden hover:-translate-y-1 hover:shadow-lg hover:shadow-primary-500/10 cursor-pointer transition duration-500 ease-in-out">
-      <div className="h-[250px] ">
+      <div className="h-[350px] w-full">
         <Image
-          src={'/banner/dummy/globe.jpg'}
+          src={menu?.img || '/banner/dummy/globe.jpg'}
           alt=""
           height={500}
           width={500}
-          className="object-cover object-center h-full w-full"
+          className="object-cover h-full w-full"
         />
       </div>
       <div className="py-[16px] px-2">

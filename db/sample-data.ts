@@ -6,6 +6,7 @@ export const CAFE_DATA = [
     openTime: '07:00 AM',
     closeTime: '10:00 PM',
     themeColor: '#00704A', // Starbucks green
+    isFeature: true,
   },
   {
     name: 'Cafe Mocha',
@@ -14,6 +15,7 @@ export const CAFE_DATA = [
     openTime: '08:00 AM',
     closeTime: '09:00 PM',
     themeColor: '#8B4513', // Chocolate brown
+    isFeature: true,
   },
   {
     name: 'The Coffee House',
@@ -22,6 +24,7 @@ export const CAFE_DATA = [
     openTime: '06:30 AM',
     closeTime: '11:00 PM',
     themeColor: '#C27C0E', // Golden brown
+    isFeature: true,
   },
   {
     name: 'Brew Haven',
@@ -30,6 +33,7 @@ export const CAFE_DATA = [
     openTime: '07:00 AM',
     closeTime: '09:30 PM',
     themeColor: '#6F4E37', // Coffee brown
+    isFeature: true,
   },
   {
     name: 'Espresso Lab',
@@ -38,6 +42,7 @@ export const CAFE_DATA = [
     openTime: '06:00 AM',
     closeTime: '08:00 PM',
     themeColor: '#3C2F2F', // Deep mocha
+    isFeature: true,
   },
   {
     name: 'Latte Lounge',
@@ -46,6 +51,7 @@ export const CAFE_DATA = [
     openTime: '07:30 AM',
     closeTime: '10:00 PM',
     themeColor: '#A67B5B', // Latte tan
+    isFeature: true,
   },
   {
     name: 'Morning Roast',
@@ -54,6 +60,7 @@ export const CAFE_DATA = [
     openTime: '05:30 AM',
     closeTime: '08:30 PM',
     themeColor: '#8B5A2B', // Roast brown
+    isFeature: false,
   },
   {
     name: 'The Bean Spot',
@@ -62,6 +69,7 @@ export const CAFE_DATA = [
     openTime: '06:00 AM',
     closeTime: '09:00 PM',
     themeColor: '#5C4033', // Earthy tone
+    isFeature: false,
   },
   {
     name: 'Cafe Aroma',
@@ -70,6 +78,7 @@ export const CAFE_DATA = [
     openTime: '07:00 AM',
     closeTime: '09:30 PM',
     themeColor: '#B5651D', // Aromatic brown
+    isFeature: false,
   },
   {
     name: 'Bistro Beans',
@@ -78,6 +87,7 @@ export const CAFE_DATA = [
     openTime: '08:00 AM',
     closeTime: '11:00 PM',
     themeColor: '#4B3832', // Deep roast
+    isFeature: false,
   },
 ];
 
@@ -269,81 +279,115 @@ export const MENU_DATA = [
   {
     cafeName: 'Starbuck',
     menus: [
-      { name: 'Caffe Latte', img: '/menu/latte.png', price: 3.5, spicyRate: 0, ingredients: ['Espresso', 'Steamed milk'], createdAt: new Date() },
-      { name: 'Cappuccino', img: '/menu/cappuccino.png', price: 3.8, spicyRate: 0, ingredients: ['Espresso', 'Steamed milk', 'Foam'], createdAt: new Date() },
-      { name: 'Mocha', img: '/menu/mocha.png', price: 4.0, spicyRate: 0, ingredients: ['Espresso', 'Chocolate', 'Steamed milk'], createdAt: new Date() },
+      { name: 'Caffe Latte', img: 'https://images.unsplash.com/photo-1627777620905-53a332869051?q=80&w=1035&auto=format&fit=crop&ixlib=rb-4.1.0', price: 3.5, spicyRate: 0, ingredients: ['Espresso', 'Steamed milk'], createdAt: new Date() },
+      { name: 'Cappuccino', img: 'https://images.unsplash.com/photo-1557772747-77ffbcf6b117?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0', price: 3.8, spicyRate: 0, ingredients: ['Espresso', 'Steamed milk', 'Foam'], createdAt: new Date() },
+      { name: 'Mocha', img: 'https://images.unsplash.com/photo-1557772611-722dabe20327?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0', price: 4.0, spicyRate: 0, ingredients: ['Espresso', 'Chocolate', 'Steamed milk'], createdAt: new Date() },
     ],
   },
   {
     cafeName: 'Cafe Mocha',
     menus: [
-      { name: 'Hot Chocolate', img: '/menu/hotchocolate.png', price: 3.0, spicyRate: 0, ingredients: ['Chocolate', 'Milk'], createdAt: new Date() },
-      { name: 'Iced Coffee', img: '/menu/icedcoffee.png', price: 3.2, spicyRate: 0, ingredients: ['Coffee', 'Ice', 'Milk'], createdAt: new Date() },
-      { name: 'Caramel Macchiato', img: '/menu/caramelmacchiato.png', price: 4.0, spicyRate: 0, ingredients: ['Espresso', 'Milk', 'Caramel syrup'], createdAt: new Date() },
+      { name: 'Hot Chocolate', img: 'https://images.unsplash.com/photo-1739542856859-d8014313ac21?q=80&w=997&auto=format&fit=crop&ixlib=rb-4.1.0', price: 3.0, spicyRate: 0, ingredients: ['Chocolate', 'Milk'], createdAt: new Date() },
+      { name: 'Iced Coffee', img: 'https://plus.unsplash.com/premium_photo-1672406486484-5452af231a51?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0', price: 3.2, spicyRate: 0, ingredients: ['Coffee', 'Ice', 'Milk'], createdAt: new Date() },
+      { name: 'Caramel Macchiato', img: 'https://images.unsplash.com/photo-1637572815755-c4b80092dce1?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0', price: 4.0, spicyRate: 0, ingredients: ['Espresso', 'Milk', 'Caramel syrup'], createdAt: new Date() },
     ],
   },
   {
     cafeName: 'The Coffee House',
     menus: [
-      { name: 'Espresso', img: '/menu/espresso.png', price: 2.5, spicyRate: 0, ingredients: ['Pure espresso shot'], createdAt: new Date() },
-      { name: 'Americano', img: '/menu/americano.png', price: 3.0, spicyRate: 0, ingredients: ['Espresso', 'Hot water'], createdAt: new Date() },
-      { name: 'Flat White', img: '/menu/flatwhite.png', price: 3.5, spicyRate: 0, ingredients: ['Espresso', 'Steamed milk'], createdAt: new Date() },
+      { name: 'Espresso', img: 'https://images.unsplash.com/photo-1628568755138-7fc8b8f63031?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0', price: 2.5, spicyRate: 0, ingredients: ['Pure espresso shot'], createdAt: new Date() },
+      { name: 'Americano', img: 'https://images.unsplash.com/photo-1584825285640-ed85c96f3667?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0', price: 3.0, spicyRate: 0, ingredients: ['Espresso', 'Hot water'], createdAt: new Date() },
+      { name: 'Flat White', img: 'https://images.unsplash.com/photo-1567041747112-3f000732e361?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0', price: 3.5, spicyRate: 0, ingredients: ['Espresso', 'Steamed milk'], createdAt: new Date() },
     ],
   },
   {
     cafeName: 'Brew Haven',
     menus: [
-      { name: 'Flat White', img: '/menu/flatwhite.png', price: 3.5, spicyRate: 0, ingredients: ['Espresso', 'Steamed milk'], createdAt: new Date() },
-      { name: 'Caramel Latte', img: '/menu/caramellatte.png', price: 4.2, spicyRate: 0, ingredients: ['Espresso', 'Milk', 'Caramel syrup'], createdAt: new Date() },
-      { name: 'Vanilla Latte', img: '/menu/vanillalatte.png', price: 4.0, spicyRate: 0, ingredients: ['Espresso', 'Milk', 'Vanilla syrup'], createdAt: new Date() },
+      { name: 'Flat White', img: 'https://images.unsplash.com/photo-1580855783586-77a1be77b611?q=80&w=927&auto=format&fit=crop&ixlib=rb-4.1.0', price: 3.5, spicyRate: 0, ingredients: ['Espresso', 'Steamed milk'], createdAt: new Date() },
+      { name: 'Caramel Latte', img: 'https://images.unsplash.com/photo-1630328868131-07902c2e6734?q=80&w=561&auto=format&fit=crop&ixlib=rb-4.1.0', price: 4.2, spicyRate: 0, ingredients: ['Espresso', 'Milk', 'Caramel syrup'], createdAt: new Date() },
+      { name: 'Vanilla Latte', img: 'https://images.unsplash.com/photo-1637085046560-43cc153c86e0?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0', price: 4.0, spicyRate: 0, ingredients: ['Espresso', 'Milk', 'Vanilla syrup'], createdAt: new Date() },
+    ],
+  },
+];
+
+
+
+export const BANNER_DATA = [
+  {
+    cafeName: 'Starbuck',
+    banners: [
+      {
+        title: 'Grand Opening!',
+        subtitle: 'Step in and savor the aroma of freshly brewed perfection. Your coffee journey starts here!',
+        imageUrl: 'https://plus.unsplash.com/premium_photo-1664970900025-1e3099ca757a?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        buttonText: 'Visit Now',
+        link: '/menu',
+        active: true,
+        startDate: new Date(),
+        endDate: new Date(new Date().setDate(new Date().getDate() + 7)),
+        createdAt: new Date(),
+      },
+    ],
+  },
+  {
+    cafeName: 'Cafe Mocha',
+    banners: [
+      {
+        title: 'Chocolate Lovers Week!',
+        subtitle: 'Indulge in rich, velvety chocolate drinks crafted for the true cocoa enthusiast.',
+        imageUrl: 'https://images.unsplash.com/photo-1621221814631-e8bfdabd5ca4?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        buttonText: 'Explore',
+        link: '/menu',
+        active: true,
+        startDate: new Date(),
+        endDate: new Date(new Date().setDate(new Date().getDate() + 5)),
+        createdAt: new Date(),
+      },
     ],
   },
   {
     cafeName: 'Espresso Lab',
-    menus: [
-      { name: 'Affogato', img: '/menu/affogato.png', price: 4.5, spicyRate: 0, ingredients: ['Espresso', 'Vanilla ice cream'], createdAt: new Date() },
-      { name: 'Nitro Cold Brew', img: '/menu/nitro.png', price: 4.0, spicyRate: 0, ingredients: ['Cold brew coffee', 'Nitrogen'], createdAt: new Date() },
-    ],
-  },
-  {
-    cafeName: 'Latte Lounge',
-    menus: [
-      { name: 'Vanilla Latte', img: '/menu/vanillalatte.png', price: 4.0, spicyRate: 0, ingredients: ['Espresso', 'Milk', 'Vanilla syrup'], createdAt: new Date() },
-      { name: 'Matcha Latte', img: '/menu/matcha.png', price: 4.2, spicyRate: 0, ingredients: ['Matcha', 'Milk', 'Sugar'], createdAt: new Date() },
-      { name: 'Chai Latte', img: '/menu/chailatte.png', price: 3.8, spicyRate: 1, ingredients: ['Black tea', 'Milk', 'Spices'], createdAt: new Date() },
-    ],
-  },
-  {
-    cafeName: 'Morning Roast',
-    menus: [
-      { name: 'Espresso', img: '/menu/espresso.png', price: 2.5, spicyRate: 0, ingredients: ['Pure espresso shot'], createdAt: new Date() },
-      { name: 'Americano', img: '/menu/americano.png', price: 3.0, spicyRate: 0, ingredients: ['Espresso', 'Hot water'], createdAt: new Date() },
-      { name: 'Caffe Latte', img: '/menu/latte.png', price: 3.5, spicyRate: 0, ingredients: ['Espresso', 'Steamed milk'], createdAt: new Date() },
+    banners: [
+      {
+        title: 'Flavor Experiments',
+        subtitle: 'Discover bold new blends and flavors. Every cup is a scientific delight!',
+        imageUrl: 'https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=800&q=80',
+        buttonText: 'Join Event',
+        link: '/events',
+        active: false,
+        startDate: new Date(),
+        endDate: new Date(new Date().setDate(new Date().getDate() + 3)),
+        createdAt: new Date(),
+      },
+      {
+        title: 'New Cold Brew Series',
+        subtitle: 'Cool, smooth, and perfectly brewed. Experience coffee like never before.',
+        imageUrl: 'https://images.unsplash.com/photo-1598533719727-86119a152259?q=80&w=1064&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        buttonText: 'Try Now',
+        link: '/menu',
+        active: true,
+        startDate: new Date(),
+        endDate: new Date(new Date().setDate(new Date().getDate() + 10)),
+        createdAt: new Date(),
+      },
     ],
   },
   {
     cafeName: 'The Bean Spot',
-    menus: [
-      { name: 'Cappuccino', img: '/menu/cappuccino.png', price: 3.8, spicyRate: 0, ingredients: ['Espresso', 'Steamed milk', 'Foam'], createdAt: new Date() },
-      { name: 'Mocha', img: '/menu/mocha.png', price: 4.0, spicyRate: 0, ingredients: ['Espresso', 'Chocolate', 'Steamed milk'], createdAt: new Date() },
-      { name: 'Iced Coffee', img: '/menu/icedcoffee.png', price: 3.2, spicyRate: 0, ingredients: ['Coffee', 'Ice', 'Milk'], createdAt: new Date() },
-    ],
-  },
-  {
-    cafeName: 'Cafe Aroma',
-    menus: [
-      { name: 'Caffe Latte', img: '/menu/latte.png', price: 3.5, spicyRate: 0, ingredients: ['Espresso', 'Steamed milk'], createdAt: new Date() },
-      { name: 'Flat White', img: '/menu/flatwhite.png', price: 3.5, spicyRate: 0, ingredients: ['Espresso', 'Steamed milk'], createdAt: new Date() },
-      { name: 'Caramel Macchiato', img: '/menu/caramelmacchiato.png', price: 4.0, spicyRate: 0, ingredients: ['Espresso', 'Milk', 'Caramel syrup'], createdAt: new Date() },
-    ],
-  },
-  {
-    cafeName: 'Bistro Beans',
-    menus: [
-      { name: 'Mocha', img: '/menu/mocha.png', price: 4.0, spicyRate: 0, ingredients: ['Espresso', 'Chocolate', 'Steamed milk'], createdAt: new Date() },
-      { name: 'Cappuccino', img: '/menu/cappuccino.png', price: 3.8, spicyRate: 0, ingredients: ['Espresso', 'Steamed milk', 'Foam'], createdAt: new Date() },
-      { name: 'Espresso', img: '/menu/espresso.png', price: 2.5, spicyRate: 0, ingredients: ['Pure espresso shot'], createdAt: new Date() },
+    banners: [
+      {
+        title: 'Coffee Conversations',
+        subtitle: 'Sip, chat, and create memories. Every cup sparks a new story!',
+        imageUrl: 'https://images.unsplash.com/photo-1558122104-355edad709f6?q=80&w=1064&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        buttonText: 'Visit Us',
+        link: '/about',
+        active: true,
+        startDate: new Date(),
+        endDate: new Date(new Date().setDate(new Date().getDate() + 7)),
+        createdAt: new Date(),
+      },
     ],
   },
 ];
+
 

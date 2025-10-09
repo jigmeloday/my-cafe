@@ -164,3 +164,27 @@
     @apply font-sans text-lg md:text-xl font-medium tracking-normal text-foreground leading-snug uppercase;  font-family: 'Playfair Display', serif;
   }
 }
+
+/* global.css or a component-specific CSS file */
+.scrollbar-x {
+  overflow-x: auto;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #FFBFBF #FFF2F2; /* thumb color / track color for Firefox */
+  margin-top: 10px;
+}
+
+/* Chrome, Edge, Safari */
+.scrollbar-x::-webkit-scrollbar {
+  height: 8px; /* horizontal scrollbar height */
+}
+
+.scrollbar-x::-webkit-scrollbar-track {
+  background: #e5e7eb; /* track color */
+  border-radius: 4px;
+}
+
+.scrollbar-x::-webkit-scrollbar-thumb {
+  background-color: #65cdb0; /* thumb color */
+  border-radius: 4px;
+  border: 2px solid #e5e7eb; /* optional: gives a little padding around thumb */
+}

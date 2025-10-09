@@ -3,7 +3,7 @@ import { PrismaClient } from '@/generated/prisma';
 import { converToPlanObject } from '../utils';
 
 
-export const CafeList = async ({ limit }: { limit?: number }) => {
+export const cafeList = async ({ limit }: { limit?: number }) => {
   const prisma = new PrismaClient();
   try {
     const data = await prisma.cafe.findMany({
@@ -24,7 +24,7 @@ export const CafeList = async ({ limit }: { limit?: number }) => {
   }
 };
 
-export const MenuList = async ({ limit }: { limit?: number }) => {
+export const menuList = async ({ limit }: { limit?: number }) => {
   const prisma = new PrismaClient();
   try {
     const data = await prisma.menu.findMany({
@@ -46,3 +46,22 @@ export const MenuList = async ({ limit }: { limit?: number }) => {
     await prisma.$disconnect();
   }
 };
+
+
+export const getFeature = async () => {
+   const prisma = new PrismaClient();
+   try {
+    const data = await prisma.cafe.findMany({
+      where:{
+        isFeature: true
+      },
+      orderBy: { createdAt: 'asc' },
+    });
+    return converToPlanObject(data);
+  } catch (error) {
+    console.error('Failed to fetch cafes:', error);
+    return []; // fallback value
+  } finally {
+    await prisma.$disconnect();
+  }
+}

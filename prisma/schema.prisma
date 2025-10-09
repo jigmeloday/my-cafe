@@ -38,39 +38,70 @@ model Cafe {
   openTime   String
   closeTime  String
   themeColor String
+  isFeature  Boolean   @default(false)
   closed     Boolean   @default(false)
   createdAt  DateTime  @default(now()) @db.Timestamp(6)
   addresses  Address[]
   menus      Menu[]
+  banner     Banner[]
+  // blogs      Blog[]    @relation("CafeBlogs")
   // reviews  Review[]
   // favorites    Favorite[]
   // folderItems  FolderItem[]
 }
 
 model Address {
-  id        String  @id @default(uuid())
+  id        String   @id @default(uuid())
   street    String
   city      String
   state     String?
   zip       String?
   country   String
   map       String?
-  isDefault Boolean @default(false)
-  cafeId    String  @db.Uuid
-  cafe      Cafe    @relation(fields: [cafeId], references: [id])
+  isDefault Boolean  @default(false)
+  cafeId    String   @db.Uuid
+  cafe      Cafe     @relation(fields: [cafeId], references: [id])
   createdAt DateTime @default(now()) @db.Timestamp(6)
-
 }
 
 model Menu {
-  id          String  @id @default(uuid())
-  cafeId      String  @db.Uuid      
-  cafe        Cafe    @relation(fields: [cafeId], references: [id])
+  id          String   @id @default(uuid())
+  cafeId      String   @db.Uuid
+  cafe        Cafe     @relation(fields: [cafeId], references: [id])
   name        String
   img         String?
   price       Float
   spicyRate   Int?
   ingredients String[]
-  createdAt DateTime @default(now()) @db.Timestamp(6)
+  createdAt   DateTime @default(now()) @db.Timestamp(6)
   // reviews  Review[]
+}
+
+// model Blog {
+//   id         String   @id @default(uuid())
+//   title      String
+//   slug       String   @unique
+//   authorId   String?  @db.Uuid
+//   author     User?    @relation(fields: [authorId], references: [id])
+//   content    String   // store rich text as plain string
+//   coverImage String?
+//   tags       String[]
+//   cafes      Cafe[]   @relation("CafeBlogs")
+//   createdAt  DateTime @default(now())
+//   updatedAt  DateTime @updatedAt
+// }
+
+model Banner {
+  id         String    @id @default(uuid())
+  cafe       Cafe      @relation(fields: [cafeId], references: [id])
+  cafeId     String    @db.Uuid
+  buttonText String
+  link       String
+  active     Boolean   @default(false)
+  title      String?
+  subtitle   String?
+  imageUrl   String
+  startDate  DateTime?
+  endDate    DateTime?
+  createdAt  DateTime  @default(now())
 }
