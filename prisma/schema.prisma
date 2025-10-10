@@ -14,21 +14,85 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// model Role {
-//   id    String   @id @default(uuid())
-//   name  String   @unique
-//   users User[]
-// }
+model Role {
+  id    String @id @default(uuid())
+  name  String @unique
+  users User[]
+}
 
-// model User {
-//   id        String   @id @default(uuid())
-//   email     String   @unique
-//   name      String
-//   phone     String?
-//   roleId    String
-//   role      Role     @relation(fields: [roleId], references: [id])
-//   createdAt DateTime @default(now())
-// }
+model User {
+  id            String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name          String?
+  email         String          @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  // Optional for WebAuthn support
+  password      String
+  roleId        String          @default(uuid())
+  role          Role            @relation(fields: [roleId], references: [id])
+  Authenticator Authenticator[]
+  addresses     Address[]
+  payment       String
+  cafes         Cafe[]          @relation("UserCafes")
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+}
+
+model Account {
+  userId            String   @db.Uuid
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String   @db.Uuid
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+// Optional for WebAuthn support
+model Authenticator {
+  credentialID         String  @unique
+  userId               String  @db.Uuid
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, credentialID])
+}
 
 model Cafe {
   id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -41,9 +105,12 @@ model Cafe {
   isFeature  Boolean   @default(false)
   closed     Boolean   @default(false)
   createdAt  DateTime  @default(now()) @db.Timestamp(6)
+  isActive   Boolean   @default(false)
   addresses  Address[]
   menus      Menu[]
   banner     Banner[]
+  ownerId    String?   @db.Uuid
+  owner      User?     @relation("UserCafes", fields: [ownerId], references: [id])
   // blogs      Blog[]    @relation("CafeBlogs")
   // reviews  Review[]
   // favorites    Favorite[]
@@ -61,6 +128,8 @@ model Address {
   isDefault Boolean  @default(false)
   cafeId    String   @db.Uuid
   cafe      Cafe     @relation(fields: [cafeId], references: [id])
+  userId    String   @db.Uuid
+  user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now()) @db.Timestamp(6)
 }
 

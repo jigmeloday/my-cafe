@@ -1,12 +1,13 @@
 "use client";
 import { HEADER_MENU } from '@/lib/constant';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useEffect, useState } from "react";
-import { Button } from '../ui/button';
 
 function Header() {
+  const { data: session } = useSession();
   const [isScrolled, setIsScrolled] = useState(false);
-
+console.log(session)
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 100);
@@ -32,7 +33,8 @@ function Header() {
           }
         </div>
         <div>
-          <Button variant="outline">Login</Button>
+          
+          <Link href='/sign-in'>Login</Link>
         </div>
       </div>
     </div>

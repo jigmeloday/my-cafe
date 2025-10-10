@@ -1,175 +1,153 @@
-import { PrismaClient, Prisma } from '../src/generated/prisma';
-import { CAFE_DATA, ADDRESS_DATA, MENU_DATA, BANNER_DATA } from './sample-data';
+import { PrismaClient } from '../src/generated/prisma';
+import { hashSync } from 'bcrypt-ts-edge';
+import { CAFE_DATA, ADDRESS_DATA, MENU_DATA, BANNER_DATA, ROLE, USER } from './sample-data';
 
 const prisma = new PrismaClient();
 
-// --------------------
-// 💡 Type Definitions
-// --------------------
-type CafeSeed = {
-  name: string;
-  subTitle?: string | null;
-  logo?: string | null;
-  openTime: string;
-  closeTime: string;
-  themeColor: string;
-  closed?: boolean;
-  isFeature: boolean;
-  createdAt?: Date;
-};
-
-type AddressSeed = {
-  street: string;
-  city: string;
-  state: string;
-  zip: string;
-  country: string;
-  isDefault: boolean;
-  map?: string;
-  createdAt: Date;
-};
-
-type AddressGroup = {
-  cafeName: string;
-  addresses: AddressSeed[];
-};
-
-type MenuSeed = {
-  name: string;
-  img?: string | null;
-  price: number;
-  spicyRate?: number;
-  ingredients: string[] | string;
-  createdAt: Date;
-};
-
-type MenuGroup = {
-  cafeName: string;
-  menus: MenuSeed[];
-};
-
-type BannerSeed = {
-  title?: string | null;
-  subtitle?: string | null;
-  imageUrl: string;
-  buttonText: string;
-  link: string;
-  active?: boolean;
-  startDate?: Date | null;
-  endDate?: Date | null;
-  createdAt?: Date;
-};
-
-type BannerGroup = {
-  cafeName: string;
-  banners: BannerSeed[];
-};
-
-// --------------------
-// 🌱 Main Seed Script
-// --------------------
-async function main(): Promise<void> {
+async function main() {
   console.log('🌱 Starting database seeding...');
 
-  // Clear existing data (order matters due to FK constraints)
+  // ---------------------------
+  // 🧹 Clear all existing data in correct order
+  // ---------------------------
+  await prisma.banner.deleteMany();
   await prisma.menu.deleteMany();
   await prisma.address.deleteMany();
-  await prisma.banner.deleteMany();
   await prisma.cafe.deleteMany();
-
+  await prisma.user.deleteMany();
+  await prisma.role.deleteMany();
   console.log('🧹 Existing data cleared.');
 
-  // Seed each cafe
-  for (const cafeData of CAFE_DATA as CafeSeed[]) {
-    const createdCafe = await prisma.cafe.create({
+  // ---------------------------
+  // 🛡️ Seed Roles
+  // ---------------------------
+  const roleMap: Record<string, string> = {};
+  for (const roleData of ROLE) {
+    const role = await prisma.role.create({ data: roleData });
+    roleMap[role.name] = role.id;
+    console.log(`🛡️ Created role: ${role.name}`);
+  }
+
+  // ---------------------------
+  // 🧑‍💻 Seed Users
+  // ---------------------------
+  const userMap: Record<string, string> = {};
+  for (const userData of USER) {
+    const roleId = roleMap[userData.name.includes('Admin') ? 'super_admin' : userData.name.includes('Owner') ? 'owner' : 'user'];
+    const user = await prisma.user.create({
+      data: {
+        name: userData.name,
+        email: userData.email,
+        password: userData.password,
+        roleId,
+        payment: 'Stripe', // default payment for seeding
+      },
+    });
+    userMap[user.name] = user.id;
+    console.log(`👤 Created user: ${user.name}`);
+  }
+
+  // Use first super_admin as system user for address assignment
+  const systemUserId = userMap['Jigme Lodey'];
+
+  // ---------------------------
+  // ☕ Seed Cafes
+  // ---------------------------
+  const cafeMap: Record<string, string> = {};
+  for (const cafeData of CAFE_DATA) {
+    const cafe = await prisma.cafe.create({
       data: {
         name: cafeData.name,
         subTitle: cafeData.subTitle,
         logo: cafeData.logo,
-        isFeature: cafeData.isFeature,
         openTime: cafeData.openTime,
         closeTime: cafeData.closeTime,
         themeColor: cafeData.themeColor,
-        closed: cafeData.closed ?? false,
-        createdAt: cafeData.createdAt ?? new Date(),
+        isFeature: cafeData.isFeature,
+        ownerId: systemUserId, // assign system user as owner for simplicity
       },
     });
-
-    console.log(`☕ Created cafe: ${createdCafe.name}`);
-
-    // Seed addresses
-    const addressEntry = (ADDRESS_DATA as AddressGroup[]).find(
-      a => a.cafeName === cafeData.name
-    );
-
-    if (addressEntry?.addresses?.length) {
-      const addresses: Prisma.AddressCreateManyInput[] = addressEntry.addresses.map(
-        addr => ({
-          ...addr,
-          cafeId: createdCafe.id,
-        })
-      );
-
-      await prisma.address.createMany({ data: addresses });
-      console.log(`🏠 Added ${addresses.length} address(es) for ${createdCafe.name}`);
-    }
-
-    // Seed menus
-    const menuEntry = (MENU_DATA as MenuGroup[]).find(
-      m => m.cafeName === cafeData.name
-    );
-
-    if (menuEntry?.menus?.length) {
-      const menus: Prisma.MenuCreateManyInput[] = menuEntry.menus.map(menu => ({
-        cafeId: createdCafe.id,
-        name: menu.name,
-        img: menu.img || null,
-        price: menu.price,
-        spicyRate: menu.spicyRate ?? 0,
-        ingredients: Array.isArray(menu.ingredients)
-          ? menu.ingredients
-          : menu.ingredients.split(',').map(i => i.trim()),
-        createdAt: menu.createdAt ?? new Date(),
-      }));
-
-      await prisma.menu.createMany({ data: menus });
-      console.log(`📜 Added ${menus.length} menu item(s) for ${createdCafe.name}`);
-    }
-
-    // Seed banners (selective)
-    const bannerEntry = (BANNER_DATA as BannerGroup[]).find(
-      b => b.cafeName === cafeData.name
-    );
-
-    if (bannerEntry?.banners?.length) {
-      for (const banner of bannerEntry.banners) {
-        await prisma.banner.create({
-          data: {
-            cafeId: createdCafe.id,
-            title: banner.title ?? null,
-            subtitle: banner.subtitle ?? null,
-            imageUrl: banner.imageUrl,
-            buttonText: banner.buttonText,
-            link: banner.link,
-            active: banner.active ?? false,
-            startDate: banner.startDate ?? null,
-            endDate: banner.endDate ?? null,
-            createdAt: banner.createdAt ?? new Date(),
-          },
-        });
-      }
-      console.log(`🎨 Added ${bannerEntry.banners.length} banner(s) for ${createdCafe.name}`);
-    }
+    cafeMap[cafe.name] = cafe.id;
+    console.log(`☕ Created cafe: ${cafe.name}`);
   }
 
-  console.log('🎉 Database seeded successfully!');
+  // ---------------------------
+  // 📍 Seed Addresses
+  // ---------------------------
+  for (const addressEntry of ADDRESS_DATA) {
+    const cafeId = cafeMap[addressEntry.cafeName];
+    if (!cafeId) continue;
+
+    for (const addr of addressEntry.addresses) {
+      await prisma.address.create({
+        data: {
+          street: addr.street,
+          city: addr.city,
+          state: addr.state,
+          zip: addr.zip,
+          country: addr.country,
+          map: addr.map,
+          isDefault: addr.isDefault,
+          cafeId,
+          userId: systemUserId, // assign system user
+        },
+      });
+    }
+    console.log(`🏠 Addresses added for ${addressEntry.cafeName}`);
+  }
+
+  // ---------------------------
+  // 🍽️ Seed Menus
+  // ---------------------------
+  for (const menuEntry of MENU_DATA) {
+    const cafeId = cafeMap[menuEntry.cafeName];
+    if (!cafeId) continue;
+
+    for (const menu of menuEntry.menus) {
+      await prisma.menu.create({
+        data: {
+          name: menu.name,
+          img: menu.img,
+          price: menu.price,
+          spicyRate: menu.spicyRate,
+          ingredients: menu.ingredients,
+          cafeId,
+        },
+      });
+    }
+    console.log(`🍴 Menu items added for ${menuEntry.cafeName}`);
+  }
+
+  // ---------------------------
+  // 🎏 Seed Banners
+  // ---------------------------
+  for (const bannerEntry of BANNER_DATA) {
+    const cafeId = cafeMap[bannerEntry.cafeName];
+    if (!cafeId) continue;
+
+    for (const banner of bannerEntry.banners) {
+      await prisma.banner.create({
+        data: {
+          cafeId,
+          buttonText: banner.buttonText,
+          link: banner.link,
+          active: banner.active,
+          title: banner.title,
+          subtitle: banner.subtitle,
+          imageUrl: banner.imageUrl,
+          startDate: banner.startDate,
+          endDate: banner.endDate,
+        },
+      });
+    }
+    console.log(`🎉 Banners added for ${bannerEntry.cafeName}`);
+  }
+
+  console.log('✅ Seeding completed successfully!');
 }
 
-// --------------------
-// 🧩 Run Seed
-// --------------------
 main()
-  .catch(error => {
+  .catch((error) => {
     console.error('❌ Seeding failed:', error);
     process.exit(1);
   })

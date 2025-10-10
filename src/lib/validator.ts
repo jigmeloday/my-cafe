@@ -34,3 +34,13 @@ export const INSERT_BANNER_SCHEMA = z.object({
   endDate: z.date().nullable().optional(),   // allow null or undefined
   createdAt: z.date().default(() => new Date()),
 })
+
+export const SIGN_IN_SCHEMA = z.object({
+ email: z.string().email('Invalid email address'),
+ password: z.string()
+    .min(8, 'Password must be at least 8 characters')
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/,
+      'Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character'
+    ),
+  })

@@ -1,3 +1,5 @@
+import {hashSync } from 'bcrypt-ts-edge'
+
 export const CAFE_DATA = [
   {
     name: 'Starbuck',
@@ -90,7 +92,6 @@ export const CAFE_DATA = [
     isFeature: false,
   },
 ];
-
 
 export const ADDRESS_DATA = [
   {
@@ -310,8 +311,6 @@ export const MENU_DATA = [
   },
 ];
 
-
-
 export const BANNER_DATA = [
   {
     cafeName: 'Starbuck',
@@ -390,4 +389,32 @@ export const BANNER_DATA = [
   },
 ];
 
+export const ROLE = [
+  {
+    name: 'super_admin',
+  }, 
+  {
+    name: 'owner'
+  },
+  {
+    name: 'user'
+  }
+]
 
+export const USER = [
+  {
+    name: 'Jigme Lodey',
+    email: 'jl@gmail.com',
+    password: hashSync('Test@123', 10),
+  },
+  {
+    name: 'Jigme Owner',
+    email: 'owner@gmail.com',
+    password: hashSync('Test@123', 10),
+  },
+  {
+    name: 'Jigme User',
+    email: 'user@gmail.com',
+    password: hashSync('Test@123', 10),
+  }
+]
