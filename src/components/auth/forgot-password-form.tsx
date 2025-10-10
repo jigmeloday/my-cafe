@@ -1,5 +1,4 @@
 'use client';
-import Link from 'next/link';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { useForm } from 'react-hook-form';
@@ -11,8 +10,10 @@ import { toast } from 'sonner';
 
 function ForgotPasswordForm({
   setNextStep,
+  setEmail
 }: {
   setNextStep: (value: boolean) => void;
+  setEmail: (value: string) => void;
 }) {
   const {
     register,
@@ -23,8 +24,10 @@ function ForgotPasswordForm({
   });
 
   const onSubmit = async (data: ForgotPasswordType) => {
+    setEmail(data.email)
     const response = await resetPassword(data);
     if (response.success) {
+      setNextStep(true)
       toast.success(response.message || 'Password reset successful!');
     } else {
       toast.error(response.message || 'Failed to reset password.');

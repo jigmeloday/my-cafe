@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 function Page() {
   const [nextStep, setNextStep] = useState(false);
-
+  const [email, setEmail] = useState('');
   return(
     <div className="flex flex-col items-center justify-center w-full">
       <div className="flex items-center justify-center border size-[80px] rounded-full">
@@ -14,9 +14,9 @@ function Page() {
       </div>
      {
       nextStep ? <>
-      <Confirmation />
+      <Confirmation email={email} setNext={setNextStep}  />
       </> : <>
-       <ForgotPasswordForm setNextStep={setNextStep} />
+       <ForgotPasswordForm setEmail={setEmail} setNextStep={setNextStep} />
       <div className="flex flex-col items-center w-full">
         <div className="flex flex-col items-center w-full">
           <div className="flex w-full items-center space-x-4">

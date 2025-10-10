@@ -15,7 +15,7 @@ async function Page({ searchParams }: PageProps) {
     tokenRes = { success: false, message: 'Invalid or expired token' };
   }
 
-  if (token || tokenRes.message === 'Invalid or expired token') {
+  if (!token || tokenRes.message === 'Invalid or expired token') {
     return (
       <div className="flex flex-col items-center justify-center text-center px-4">
         <div>
@@ -36,7 +36,7 @@ async function Page({ searchParams }: PageProps) {
             href="/forgot-password"
             className="text-red-500 font-semibold hover:underline"
           >
-            request a new reset link
+            Request a new reset link
           </Link>
           . .
         </p>
@@ -48,7 +48,7 @@ async function Page({ searchParams }: PageProps) {
       <div className="flex items-center justify-center border size-[80px] rounded-full">
         LOGO
       </div>
-      <ResetPasswordForm />
+      <ResetPasswordForm token={token} />
       <div className="flex flex-col items-center w-full">
         <div className="flex flex-col items-center w-full">
           <div className="flex w-full items-center space-x-4">

@@ -6,10 +6,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { RESET_PASSWORD_SCHEMA } from '@/lib/validator';
 import { ResetPasswordType } from '../../../types';
 import { useState } from 'react';
+import { setPassword } from '@/lib/action/password';
+import {toast} from 'sonner';
+import { useRouter } from 'next/navigation';
 
-function ResetPasswordForm() {
+function ResetPasswordForm({ token }: {token: string}) {
   const [showPassword, setShowPassword] = useState(false);
-
+  const route = useRouter();
   const {
     register,
     handleSubmit,
@@ -19,13 +22,17 @@ function ResetPasswordForm() {
   });
 
   const onSubmit = async (data: ResetPasswordType) => {
-    // const result = await signInWithCredentials(data);
-    // if (result.success) {
-    //   toast.success(result.message);
-    //   route.push('/');
-    // } else {
-    //   toast.error(result.message);
-    // }
+    const payload = {
+      ...data,
+      token: token,
+    }
+    const result = await setPassword(payload);
+    if (result.success) {
+      toast.success(result.message);
+      route.push('/');
+    } else {
+      toast.error(result.message);
+    }
   };
   return (
     <form

@@ -25,7 +25,9 @@ export type BannerType = z.infer<typeof INSERT_BANNER_SCHEMA> & {
 
 export type SigninType = z.infer<typeof SIGN_IN_SCHEMA> 
 export type SignupType = z.infer<typeof SIGN_UP_SCHEMA> 
-export type ResetPasswordType = z.infer<typeof RESET_PASSWORD_SCHEMA> 
+export type ResetPasswordType = z.infer<typeof RESET_PASSWORD_SCHEMA>  & {
+  token?: string;
+}
 export type ForgotPasswordType = z.infer<typeof FORGOT_PASSWORD_SCHEMA> 
 export interface PageProps {
    params: Promise<{ slug: string }>;

@@ -6,16 +6,29 @@ const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   const { token, password } = await req.json();
+  console.log(token)
+  if (!token) {
+    return NextResponse.json(
+      { message: 'Token is missing' },
+      { status: 400 }
+    );
+  }
 
   const user = await prisma.user.findFirst({
-    where: { resetToken: token, resetTokenExpiry: { gt: new Date() } },
+    where: { 
+      resetToken: token, 
+      resetTokenExpiry: { gt: new Date() } 
+    },
   });
 
   if (!user) {
-    return NextResponse.json({ message: 'Invalid or expired token' }, { status: 400 });
+    return NextResponse.json(
+      { message: 'Invalid or expired token' },
+      { status: 400 }
+    );
   }
 
-  const hashedPassword = await hashSync(password, 10);
+  const hashedPassword = hashSync(password, 10);
 
   await prisma.user.update({
     where: { id: user.id },
