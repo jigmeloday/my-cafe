@@ -21,25 +21,25 @@ model Role {
 }
 
 model User {
-  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name              String?
-  email             String    @unique
+  email             String          @unique
   emailVerified     DateTime?
   image             String?
   accounts          Account[]
   sessions          Session[]
-  // Optional for WebAuthn support
   password          String
-  verificationToken String?   @unique
-
-  roleId        String          @default(uuid())
-  role          Role            @relation(fields: [roleId], references: [id])
-  Authenticator Authenticator[]
-  addresses     Address[]
-  payment       String
-  cafes         Cafe[]          @relation("UserCafes")
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  verificationToken String?         @unique
+  resetToken        String?
+  resetTokenExpiry  DateTime? // token validity
+  roleId            String          @default(uuid())
+  role              Role            @relation(fields: [roleId], references: [id])
+  Authenticator     Authenticator[]
+  addresses         Address[]
+  payment           String
+  cafes             Cafe[]          @relation("UserCafes")
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
 }
 
 model Account {

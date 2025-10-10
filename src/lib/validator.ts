@@ -23,45 +23,66 @@ export const INSERT_MENU_SCHEMA = z.object({
 });
 
 export const INSERT_BANNER_SCHEMA = z.object({
- cafeId: z.string(),
-  title: z.string().nullable(),      // allows string or null
-  subtitle: z.string().nullable(),   // allows string or null
+  cafeId: z.string(),
+  title: z.string().nullable(), // allows string or null
+  subtitle: z.string().nullable(), // allows string or null
   imageUrl: z.string().url(),
   buttonText: z.string().optional(), // optional
   link: z.string().url(), // optional
   active: z.boolean().default(false),
   startDate: z.date().nullable().optional(), // allow null or undefined
-  endDate: z.date().nullable().optional(),   // allow null or undefined
+  endDate: z.date().nullable().optional(), // allow null or undefined
   createdAt: z.date().default(() => new Date()),
-})
+});
 
 export const SIGN_IN_SCHEMA = z.object({
- email: z.string().email('Invalid email address'),
- password: z.string()
+  email: z.string().email('Invalid email address'),
+  password: z
+    .string()
     .min(8, 'Password must be at least 8 characters')
     .regex(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/,
       'Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character'
     ),
-  });
+});
 
-  export const SIGN_UP_SCHEMA = z
+export const SIGN_UP_SCHEMA = z
   .object({
     name: z.string().min(3, 'Name must be at least 3 characters'),
-    email: z.string().email("Invalid email address"),
+    email: z.string().email('Invalid email address'),
     password: z
       .string()
-      .min(8, "Password must be at least 8 characters")
+      .min(8, 'Password must be at least 8 characters')
       .regex(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/,
-        "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character"
+        'Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character'
       ),
     confirmPassword: z.string(),
-    userType: z.enum(["user", "owner"], {
-      error: "Please select a user type",
+    userType: z.enum(['user', 'owner'], {
+      error: 'Please select a user type',
     }),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"], // attaches the error to confirmPassword field
+    message: 'Passwords do not match',
+    path: ['confirmPassword'], // attaches the error to confirmPassword field
+  });
+
+export const FORGOT_PASSWORD_SCHEMA = z.object({
+  email: z.string().email('Invalid email address')
+})
+
+export const RESET_PASSWORD_SCHEMA = z
+  .object({
+    password: z
+      .string()
+      .min(8, 'Password must be at least 8 characters')
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/,
+        'Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character'
+      ),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'], // attaches the error to confirmPassword field
   });

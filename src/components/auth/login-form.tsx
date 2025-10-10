@@ -14,6 +14,8 @@ import { useRouter } from 'next/navigation';
 
 function LoginForm() {
   const route = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -21,15 +23,13 @@ function LoginForm() {
   } = useForm({
     resolver: zodResolver(SIGN_IN_SCHEMA),
   });
-  const [showPassword, setShowPassword] = useState(false);
 
-  
   const onSubmit = async (data: SigninType) => {
     const result = await signInWithCredentials(data);
 
     if (result.success) {
       toast.success(result.message);
-      route.push('/')
+      route.push('/');
     } else {
       toast.error(result.message);
     }
@@ -61,7 +61,7 @@ function LoginForm() {
       <div className="w-full flex justify-end mt-[12px]">
         <Link
           className="text-primary-500 hover:text-primary-700 transition duration-300 ease-in-out text-[14px] font-bold"
-          href="#"
+          href="/forgot-password"
         >
           Forgot password?
         </Link>

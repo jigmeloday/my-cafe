@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { INSERT_BANNER_SCHEMA, INSERT_CAFE_SCHEMA, INSERT_MENU_SCHEMA, SIGN_IN_SCHEMA, SIGN_UP_SCHEMA } from '@/lib/validator';
+import { FORGOT_PASSWORD_SCHEMA, INSERT_BANNER_SCHEMA, INSERT_CAFE_SCHEMA, INSERT_MENU_SCHEMA, RESET_PASSWORD_SCHEMA, SIGN_IN_SCHEMA, SIGN_UP_SCHEMA } from '@/lib/validator';
 
 export type CafeType =z.infer<typeof INSERT_CAFE_SCHEMA> & {
   id: string;
@@ -25,3 +25,16 @@ export type BannerType = z.infer<typeof INSERT_BANNER_SCHEMA> & {
 
 export type SigninType = z.infer<typeof SIGN_IN_SCHEMA> 
 export type SignupType = z.infer<typeof SIGN_UP_SCHEMA> 
+export type ResetPasswordType = z.infer<typeof RESET_PASSWORD_SCHEMA> 
+export type ForgotPasswordType = z.infer<typeof FORGOT_PASSWORD_SCHEMA> 
+export interface PageProps {
+   params: Promise<{ slug: string }>;
+}
+export interface ResetPasswordPayload {
+  token: string;
+  password: string;
+}
+
+export interface ResetPasswordResponse {
+  message: string;
+}
