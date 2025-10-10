@@ -1,13 +1,13 @@
-import LoginForm from '@/components/auth/login-form';
+import SignupForm from '@/components/auth/signup-form';
 import Link from 'next/link';
 
-async function Page() {
-  return (
+function Page() {
+  return(
     <div className="flex flex-col items-center justify-center w-full">
       <div className="flex items-center justify-center border size-[80px] rounded-full">
         LOGO
       </div>
-      <LoginForm />
+      <SignupForm />
       <div className="flex flex-col items-center w-full">
         <div className="flex flex-col items-center w-full">
           <div className="flex w-full items-center space-x-4">
@@ -18,18 +18,18 @@ async function Page() {
         </div>
         <div className="mt-[12px]">
           <p className="text-[12px] text-black/80">
-            Don&apos;t have an account?{' '}
+            Alredy have an account?{' '}
             <Link
               className="text-primary-500 font-bold text-[14px] hover:text-primary-700 transition duration-300 ease-in-out"
-              href="/sign-up"
+              href="/sign-in"
             >
-              Signup
+              Sign In
             </Link>
           </p>
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 export default Page;

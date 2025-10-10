@@ -1,18 +1,17 @@
 'use client';
-// import { SIGN_IN_SCHEMA } from '../validator';
 import { SigninType } from '../../../types';
 import { signIn, signOut } from 'next-auth/react';
+import { SIGN_IN_SCHEMA } from '../validator';
 
 export const signInWithCredentials = async (formData: SigninType) => {
   try {
-    // const user = SIGN_IN_SCHEMA.parse({
-    //   email: formData.email,
-    //   password: formData.password,
-    // });
-    await signIn('credentials', {
+    const user = SIGN_IN_SCHEMA.parse({
       email: formData.email,
       password: formData.password,
-      redirect: false
+    });
+    await signIn('credentials', {
+      ...user,
+      redirect: false,
     });
     return {
       success: true,
@@ -28,5 +27,13 @@ export const signInWithCredentials = async (formData: SigninType) => {
 };
 
 export const signoutUser = async () => {
-  await signOut();
+  try {
+    await signOut({ redirect: false });
+    return { success: true, message: 'Signed out successfully.' };
+  } catch (error) {
+    console.error('Error signing out:', error);
+    return { success: false, message: 'Failed to sign out. Please try again.' };
+  }
 };
+
+

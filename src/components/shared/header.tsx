@@ -3,10 +3,23 @@ import { HEADER_MENU } from '@/lib/constant';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarSeparator,
+  MenubarTrigger,
+} from '../ui/menubar';
+import Image from 'next/image';
+import { signoutUser } from '@/lib/action/user.action';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 function Header() {
   const { data: session } = useSession();
   const [isScrolled, setIsScrolled] = useState(false);
+  const route = useRouter();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -17,9 +30,20 @@ function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleSignOut = async () => {
+    const result = await signoutUser();
+
+    if (result.success) {
+      toast.success(result.message);
+      route.push('/');
+    } else {
+      toast.error(result.message);
+    }
+  };
+
   return (
     <div
-      className={`flex items-center justify-between px-[16px] lg:px-[112px] py-[32px] sticky top-0 z-20 transition-all duration-300 ${
+      className={`flex items-center justify-between px-[16px] lg:px-[112px] py-[16px] sticky top-0 z-20 transition-all duration-300 ${
         isScrolled ? 'shadow-md bg-white' : 'shadow-md'
       }`}
     >
@@ -38,13 +62,46 @@ function Header() {
         </div>
         <div>
           {session?.user ? (
-            <div className="size-[50px] rounded-full cursor-pointer bg-primary-300 flex items-center justify-center">
-              {
-                session.user.image?.length? <></> : <p className='text-white text-[20px] font-bold'>
-                  {`${session.user.name?.split(' ')[0].charAt(0)}${session.user.name?.split(' ')[1].charAt(0)}` }
-                </p>
-              }
-            </div>
+            <Menubar className="border-none bg-transparent">
+              <MenubarMenu>
+                <MenubarTrigger className="p-0 focus:outline-none data-[state=open]:bg-transparent">
+                  <div className="size-[50px] rounded-full cursor-pointer bg-primary-300 flex items-center justify-center">
+                    {session.user.image?.length ? (
+                      <Image
+                        height={100}
+                        width={100}
+                        src={session.user.image}
+                        alt={session.user.name || ''}
+                        className="w-full h-full rounded-full object-cover"
+                      />
+                    ) : (
+                      <p className="text-white text-[20px] font-bold">
+                        {`${session.user.name
+                          ?.split(' ')[0]
+                          .charAt(0)}${session.user.name
+                          ?.split(' ')[1]
+                          .charAt(0)}`}
+                      </p>
+                    )}
+                  </div>
+                </MenubarTrigger>
+                <MenubarContent className="mt-2 w-[180px] rounded-md shadow-md">
+                  <MenubarItem asChild>
+                    <Link href="/profile">Profile</Link>
+                  </MenubarItem>
+                  <MenubarItem asChild>
+                    {/* <Link href="/settings">Settings</Link> */}
+                  </MenubarItem>
+                  <MenubarSeparator />
+                  <MenubarItem
+                    onClick={() => handleSignOut()}
+                    className="text-red-500 focus:text-red-600"
+                  >
+                    Sign Out
+                  </MenubarItem>
+                </MenubarContent>
+              </MenubarMenu>
+            </Menubar>
           ) : (
             <Link href="/sign-in">Login</Link>
           )}

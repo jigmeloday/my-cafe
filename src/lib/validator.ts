@@ -43,4 +43,25 @@ export const SIGN_IN_SCHEMA = z.object({
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/,
       'Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character'
     ),
+  });
+
+  export const SIGN_UP_SCHEMA = z
+  .object({
+    name: z.string().min(3, 'Name must be at least 3 characters'),
+    email: z.string().email("Invalid email address"),
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/,
+        "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character"
+      ),
+    confirmPassword: z.string(),
+    userType: z.enum(["user", "owner"], {
+      error: "Please select a user type",
+    }),
   })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"], // attaches the error to confirmPassword field
+  });
