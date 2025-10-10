@@ -1,9 +1,10 @@
-'use server'
+'use server';
 import { SIGN_UP_SCHEMA } from '../validator';
 import { hashSync } from 'bcrypt-ts-edge';
 import { SignupType } from '../../../types';
 import { PrismaClient } from '@/generated/prisma';
-
+import { randomBytes } from 'crypto';
+import { sendEmail } from '@/lib/email';
 
 export const signUpWithCredentials = async (formData: SignupType) => {
   const prisma = new PrismaClient();
@@ -23,20 +24,30 @@ export const signUpWithCredentials = async (formData: SignupType) => {
     if (!role) {
       throw new Error('Role not found');
     }
+    const verificationToken = randomBytes(32).toString('hex');
     await prisma.user.create({
       data: {
         name: user.name,
         email: user.email,
         password: user.password,
         payment: '',
+        emailVerified: null,
+        verificationToken,
         role: {
           connect: { id: role.id },
         },
       },
     });
+
+    const verifyUrl = `${process.env.NEXTAUTH_URL}/api/auth/verify?token=${verificationToken}`;
+    await sendEmail({
+      to: user.email,
+      subject: 'Verify your email',
+      html: `<p>Click <a href="${verifyUrl}">here</a> to verify your email.</p>`,
+    });
     return {
       success: true,
-      message: 'Sign up successfully',
+      message: 'Sign up successful. Please verify your email.',
     };
   } catch (error) {
     console.error(error);

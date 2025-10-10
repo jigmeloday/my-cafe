@@ -21,15 +21,17 @@ model Role {
 }
 
 model User {
-  id            String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name          String?
-  email         String          @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name              String?
+  email             String    @unique
+  emailVerified     DateTime?
+  image             String?
+  accounts          Account[]
+  sessions          Session[]
   // Optional for WebAuthn support
-  password      String
+  password          String
+  verificationToken String?   @unique
+
   roleId        String          @default(uuid())
   role          Role            @relation(fields: [roleId], references: [id])
   Authenticator Authenticator[]

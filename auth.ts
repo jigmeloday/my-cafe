@@ -34,6 +34,9 @@ export const authOptions: AuthOptions = {
 
         if (user && user.password) {
           const isMatch = compareSync(credentials.password, user.password);
+          if(isMatch && !user.emailVerified) {
+            throw new Error('Email not verify')
+          }
           if (isMatch) {
             return {
               id: user.id,

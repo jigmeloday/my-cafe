@@ -9,14 +9,16 @@ export const signInWithCredentials = async (formData: SigninType) => {
       email: formData.email,
       password: formData.password,
     });
-    await signIn('credentials', {
+    const result = await signIn('credentials', {
       ...user,
       redirect: false,
     });
-    return {
-      success: true,
-      message: 'Sign in successfully',
-    };
+
+    if (result?.error) {
+    return { success: false, message: result.error };
+  }
+
+  return { success: true, message: 'Sign in successfully' };
   } catch (error) {
     console.error(error);
     return {
