@@ -43,7 +43,7 @@ function LoginForm() {
       <div className="space-y-[16px]">
         <Input
           placeholder="Email"
-          {...register('email', { required: 'Email is required' })}
+          {...register('email')}
           error={errors.email?.message}
         />
 

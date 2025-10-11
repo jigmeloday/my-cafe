@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import TimePicker from '@/components/ui/time-picker';
 
 function Page(){
   return(
@@ -46,6 +47,7 @@ function Page(){
          <Checkbox checked={true} />
          <Slider />
          <Switch />
+         <TimePicker />
        </div>
       </div>
     </div>

@@ -7,6 +7,7 @@ export const INSERT_CAFE_SCHEMA = z.object({
   openTime: z.string().min(1, 'Open time is required'),
   closeTime: z.string().min(1, 'Close time is required'),
   isFeature: z.boolean().default(false).optional(),
+  isActive: z.boolean().default(false).optional(),
   themeColor: z
     .string()
     .regex(/^#([0-9A-F]{3}){1,2}$/i, 'Theme color must be a valid hex code'),

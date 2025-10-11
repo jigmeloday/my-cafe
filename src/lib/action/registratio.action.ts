@@ -5,6 +5,7 @@ import { SignupType } from '../../../types';
 import { PrismaClient } from '@/generated/prisma';
 import { randomBytes } from 'crypto';
 import { sendEmail } from '@/lib/email';
+import { handleError } from '../utils';
 
 export const signUpWithCredentials = async (formData: SignupType) => {
   const prisma = new PrismaClient();
@@ -38,7 +39,6 @@ export const signUpWithCredentials = async (formData: SignupType) => {
         },
       },
     });
-
     const verifyUrl = `${process.env.NEXTAUTH_URL}/api/auth/verify?token=${verificationToken}`;
     await sendEmail({
       to: user.email,
@@ -50,10 +50,10 @@ export const signUpWithCredentials = async (formData: SignupType) => {
       message: 'Sign up successful. Please verify your email.',
     };
   } catch (error) {
-    console.error(error);
-    return {
+    const { message } =  handleError(error)
+    return{
       success: false,
-      message: 'Invalid data or email already exists',
-    };
+      message
+    }
   }
 };

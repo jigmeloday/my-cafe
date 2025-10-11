@@ -1,8 +1,8 @@
 'use client';
-import { HEADER_MENU } from '@/lib/constant';
+import { HEADER_MENU, HEADER_MENU_OWNER } from '@/lib/constant';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Menubar,
   MenubarContent,
@@ -41,6 +41,16 @@ function Header() {
     }
   };
 
+  const useUserInitials = useMemo(() => {
+    const name = session?.user.name;
+
+    if (!name) return '';
+    const parts = name.split(' ');
+    const firstInitial = parts[0]?.charAt(0) || '';
+    const secondInitial = parts[1]?.charAt(0) || '';
+    return `${firstInitial}${secondInitial}`;
+  }, [session?.user.name])
+
   return (
     <div
       className={`flex items-center justify-between px-[16px] lg:px-[112px] py-[16px] sticky top-0 z-20 transition-all duration-300 ${
@@ -50,7 +60,7 @@ function Header() {
       <div className="font-semibold text-lg">CaféTales</div>
       <div className="flex space-x-4 items-center">
         <div className="flex space-x-3 p-4">
-          {HEADER_MENU.map(({ id, label, link }) => (
+          {(session?.user?.role === "owner"? HEADER_MENU_OWNER : HEADER_MENU).map(({ id, label, link }) => (
             <Link
               className="cursor-pointer hover:text-primary-500 transition-all duration-500 ease-in-out font-bold"
               key={id}
@@ -76,11 +86,7 @@ function Header() {
                       />
                     ) : (
                       <p className="text-white text-[20px] font-bold">
-                        {`${session.user.name
-                          ?.split(' ')[0]
-                          .charAt(0)}${session.user.name
-                          ?.split(' ')[1]
-                          .charAt(0)}`}
+                        {useUserInitials}
                       </p>
                     )}
                   </div>

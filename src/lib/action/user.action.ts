@@ -2,6 +2,7 @@
 import { SigninType } from '../../../types';
 import { signIn, signOut } from 'next-auth/react';
 import { SIGN_IN_SCHEMA } from '../validator';
+import { handleError } from '../utils';
 
 export const signInWithCredentials = async (formData: SigninType) => {
   try {
@@ -15,15 +16,17 @@ export const signInWithCredentials = async (formData: SigninType) => {
     });
 
     if (result?.error) {
-    return { success: false, message: result.error };
-  }
+      const { message } = handleError(result.error);
 
-  return { success: true, message: 'Sign in successfully' };
+      return { success: false, message: message };
+    }
+
+    return { success: true, message: 'Sign in successfully' };
   } catch (error) {
-    console.error(error);
+    const { message } = handleError(error);
     return {
       success: false,
-      message: 'Invalid email or password',
+      message: message,
     };
   }
 };
@@ -37,5 +40,3 @@ export const signoutUser = async () => {
     return { success: false, message: 'Failed to sign out. Please try again.' };
   }
 };
-
-
