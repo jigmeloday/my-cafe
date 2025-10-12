@@ -1,15 +1,22 @@
 'use client';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ImageUploaderProps } from '../../../types';
 
 export default function ImageUploader({
   onChange,
   value = null,
+  previewUrl,
   label = "Upload Image",
   className = "",
 }: ImageUploaderProps) {
   const [preview, setPreview] = useState<string | null>(null);
+
+  useEffect(() => {
+    if(previewUrl) {
+      setPreview(previewUrl as string)
+    }
+  }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -23,6 +30,7 @@ export default function ImageUploader({
     <div className={`flex flex-col items-center gap-2 ${className}`}>
       <label className="cursor-pointer">
         <div className="h-[200px] w-[300px] border-2 border-dashed border-primary-400 rounded-lg flex items-center justify-center bg-primary-50 hover:bg-primary-100 transition">
+          <div onClick={() => {setPreview(null); onChange(null)}}>Remove</div>
           {preview ? (
             <Image
               height={300}

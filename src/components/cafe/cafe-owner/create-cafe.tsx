@@ -20,7 +20,7 @@ function CreateCafe({ cafe, roles }: { cafe: CafeType[], roles: Role[] }) {
             {cafe.map((item) => (
               <CafeCard key={item.id} cafe={item} roles={roles} />
             ))}
-            <div className="h-full w-full rounded-md bg-primary-50 flex items-center justify-center">
+            <div className="min-h-[340px] w-full rounded-md bg-primary-50 flex items-center justify-center">
               <div
                 onClick={() => setOpen(true)}
                 className="flex flex-col size-[140px] items-center justify-center border border-dashed border-primary-600/70 rounded-md hover:shadow-lg cursor-pointer transition duration-300 group"

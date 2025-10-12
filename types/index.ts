@@ -55,10 +55,11 @@ export type NodataPropsType = {
 };
 
 export interface ImageUploaderProps {
-  onChange: (file: File) => void;
+  onChange: (file: File | null) => void;
   value?: File | null;
   label?: string;
   className?: string;
+  previewUrl?: string;
 }
 
 export type Role = {

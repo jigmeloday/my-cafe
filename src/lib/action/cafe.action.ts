@@ -165,7 +165,7 @@ export const updateCafe = async (id: string, payload: Partial<CafeType>) => {
 
   try {
     // 1️⃣ Parse and validate data
-    const cafe = payload;
+    const cafe = INSERT_CAFE_SCHEMA.parse({ ...payload });;
 
     const session = await getServerSession(authOptions);
     if (
