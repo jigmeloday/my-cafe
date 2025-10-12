@@ -98,7 +98,7 @@ function SheetOpener({
             <CafeForm />
           </ScrollArea>
 
-          <div className="flex-none w-full flex justify-end sticky bottom-0 bg-primary-50 px-[112px] p-4 shadow">
+          <div className="flex-none w-full flex justify-end sticky bottom-0 px-[112px] p-4 shadow-2xl border-t border-primary-50 ">
             <Button disabled={isSubmitting} type="submit">
               {cafe ? 'Update' : 'Create'}
             </Button>

@@ -118,7 +118,7 @@ function CreateCafe({ cafe, roles }: { cafe: CafeType[]; roles: Role[] }) {
                   c.id === updatedCafe.id ? updatedCafe : c
                 );
               }
-              return [...prev, updatedCafe]; // add new cafe
+              return [updatedCafe, ...prev]; // add new cafe
             });
           }}
         />

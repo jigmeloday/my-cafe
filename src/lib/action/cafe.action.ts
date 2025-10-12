@@ -76,7 +76,8 @@ export const getCafeByCafeOwner = async (id: string) => {
       where: {
         ownerId: id,
       },
-      orderBy: { createdAt: 'asc' },
+      take: 10,
+      orderBy: { createdAt: 'desc' },
     });
     return converToPlanObject(data);
   } catch (error) {
