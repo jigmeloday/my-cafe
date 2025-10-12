@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
   const userRole = session?.user?.role;
   const url = new URL(req.url);
-  const { active, closed, feature, openTime, closeTime, search } =
+  const { active, closed, feature, openTime, closeTime, search, sort } =
     getQueryParams(url, [
       'active',
       'closed',
@@ -18,16 +18,18 @@ export async function GET(req: NextRequest) {
       'openTime',
       'closeTime',
       'search',
+      'sort',
     ]);
   const limit = Number(url.searchParams.get('limit') ?? 10);
   const page = Number(url.searchParams.get('page') ?? 1);
   const offset = (page - 1) * limit;
   const openTimeFilter = normalizeHour(openTime);
   const closeTimeFilter = normalizeHour(closeTime);
+  const sortOrder: Prisma.SortOrder = sort === 'asc' ? 'asc' : 'desc';
 
   const where: Prisma.CafeWhereInput = {
     isActive: userRole === 'super_admin' ? parseBoolean(active, true) : true,
-    closed: parseBoolean(closed, false),
+    closed: parseBoolean(closed),
     isFeature: parseBoolean(feature),
     ...(openTimeFilter && {
       openTime: { contains: openTimeFilter, mode: 'insensitive' },
@@ -43,15 +45,15 @@ export async function GET(req: NextRequest) {
     }),
   };
 
-const [cafes, totalCount] = await Promise.all([
-  prisma.cafe.findMany({
-    skip: offset,
-    take: limit,
-    where,
-    orderBy: { createdAt: 'desc' },
-  }),
-  prisma.cafe.count({ where }), // use the same filters
-]);
+  const [cafes, totalCount] = await Promise.all([
+    prisma.cafe.findMany({
+      skip: offset,
+      take: limit,
+      where,
+      orderBy: { createdAt: sortOrder },
+    }),
+    prisma.cafe.count({ where }), 
+  ]);
 
   return NextResponse.json({ cafes, totalCount });
 }

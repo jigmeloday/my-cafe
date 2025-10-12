@@ -16,7 +16,7 @@ export default function Page() {
   // Combined filters
   const [filters, setFilters] = useState<Filters>({
     search: '',
-    closed: false,
+    closed: undefined,
     feature: undefined,
     openTime: '',
     closeTime: '',
@@ -30,11 +30,10 @@ export default function Page() {
         limit,
         page: nextPage,
         feature: filters.feature ? true : undefined,
-        close: filters.closed,
+        close: filters.closed ? true : undefined,
         openTime: filters.openTime,
         closeTime: filters.closeTime,
         query: filters.search || undefined,
-        sortBy: filters.sortBy === 'newest' ? 'createdAt' : 'name',
         sortOrder: filters.sortBy === 'oldest' ? 'asc' : 'desc',
       });
 

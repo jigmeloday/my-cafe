@@ -9,6 +9,7 @@ export const fetchCafeList = async ({
   openTime,
   closeTime,
   query,
+  sortOrder
 }: {
   limit: number;
   page: number;
@@ -18,14 +19,13 @@ export const fetchCafeList = async ({
   closeTime?: string;
   close?: boolean;
   query?: string;
-  sortBy?: 'createdAt' | 'name',
   sortOrder?: string
 }) => {
   try {
     const response = await baseAPI(
       `/cafe?limit=${
         limit || 10
-      }&page=${page}&active=${active}&closed=${close}&feature=${feature}&openTime=${openTime}&closeTime=${closeTime}&query=${query}&search=${query}`,
+      }&page=${page}&active=${active}&closed=${close}&feature=${feature}&openTime=${openTime}&closeTime=${closeTime}&query=${query}&search=${query}&sort=${sortOrder}`,
       'GET'
     );
     return response;

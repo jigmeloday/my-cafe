@@ -108,7 +108,7 @@ export interface FilterComponentProps {
 
 export interface Filters {
   search: string;
-  closed: boolean;
+  closed?: boolean;
   feature?: boolean; // optional boolean
   openTime?: string;
   closeTime?: string;
