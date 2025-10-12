@@ -31,7 +31,7 @@ export default function CafeCard(props: { cafe: CafeType; roles?: Role[] }) {
 
   if (actionType === 'close') {
     const updatedCafe = { ...cafe, closed: !cafe.closed };
-    const response = await updateCafe(updatedCafe, cafe.id as string);
+    const response = await updateCafe(cafe.id as string, updatedCafe);
     toast[response.success ? 'success' : 'error'](response.message);
   }
 
@@ -86,7 +86,7 @@ export default function CafeCard(props: { cafe: CafeType; roles?: Role[] }) {
         </div>
         <div className="relative w-[160px] h-[160px] rounded-full overflow-hidden shadow-md">
           <Image
-            src={cafe?.logo || ''}
+            src={cafe?.logo as string || ''}
             alt="cafe-logo"
             fill
             className="object-cover"
@@ -95,7 +95,11 @@ export default function CafeCard(props: { cafe: CafeType; roles?: Role[] }) {
 
         <div className="flex flex-col justify-start w-full mt-4 text-center">
           <h5 className="text-primary-800">{cafe?.name}</h5>
-          <p className="text-sm text-gray-400 mt-1">{cafe?.subTitle}</p>
+          <p className="text-sm text-gray-400 mt-1">
+            {cafe?.subTitle
+              ? `${cafe.subTitle.slice(0, 50)}${cafe.subTitle.length >= 50 ? '...' : ''}`
+              : ''}
+          </p>
 
           <div className="flex justify-center items-center mt-2 space-x-1">
             {[1, 2, 3, 4, 5].map((item) => (

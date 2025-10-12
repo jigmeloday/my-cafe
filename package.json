@@ -26,6 +26,7 @@
     "@radix-ui/react-switch": "^1.2.6",
     "bcrypt-ts-edge": "^3.0.1",
     "class-variance-authority": "^0.7.1",
+    "cloudinary": "^2.7.0",
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.22",
     "lucide-react": "^0.544.0",

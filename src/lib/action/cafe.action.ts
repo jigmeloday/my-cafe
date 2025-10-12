@@ -5,6 +5,7 @@ import { CafeType } from '../../../types';
 import { INSERT_CAFE_SCHEMA } from '../validator';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../../../auth';
+import { uploadImage } from '../services/image-upload-api';
 
 export const cafeList = async ({ limit }: { limit?: number }) => {
   const prisma = new PrismaClient();
@@ -105,9 +106,7 @@ export const createCafe = async (payload: CafeType) => {
   const prisma = new PrismaClient();
 
   try {
-    // This line can throw a ZodError
     const cafe = INSERT_CAFE_SCHEMA.parse({ ...payload });
-
     const session = await getServerSession(authOptions);
     if (
       !session?.user?.id ||
@@ -119,42 +118,54 @@ export const createCafe = async (payload: CafeType) => {
       };
     }
 
-    // If Zod passes, create the cafe
+    let logoUrl = '';
+    if (cafe.logo) {
+      const uploadedUrl = await uploadImage(cafe.logo as File, 'logo');
+      if (uploadedUrl) {
+        logoUrl = uploadedUrl;
+      } else {
+        console.log(logoUrl);
+
+        return {
+          success: false,
+          message: 'Image upload failed',
+        };
+      }
+    }
+
     const response = await prisma.cafe.create({
       data: {
         name: cafe.name,
         closeTime: cafe.closeTime,
         openTime: cafe.openTime,
         themeColor: cafe.themeColor,
-        logo: cafe.logo,
+        logo: logoUrl,
         isActive: false,
         isFeature: false,
         subTitle: cafe.subTitle,
         owner: { connect: { id: session.user.id } },
       },
     });
-
-    // ✅ No need to call handleError here
     return {
       success: true,
       message: `Cafe "${response.name}" created successfully!`,
     };
   } catch (error) {
-    // This will now catch ZodError, Prisma errors, or any other error
     const err = handleError(error);
     return {
       success: false,
       message: err.message,
-      details: err.details, // includes the Zod path/messages
+      details: err.details,
     };
   }
 };
 
-export const updateCafe = async (payload: CafeType, id: string) => {
+export const updateCafe = async (id: string, payload: Partial<CafeType>) => {
   const prisma = new PrismaClient();
 
   try {
-    const cafe = INSERT_CAFE_SCHEMA.parse({ ...payload });
+    // 1️⃣ Parse and validate data
+    const cafe = payload;
 
     const session = await getServerSession(authOptions);
     if (
@@ -163,32 +174,67 @@ export const updateCafe = async (payload: CafeType, id: string) => {
     ) {
       return {
         success: false,
-        message: 'You do not have permission to create a cafe.',
+        message: 'You do not have permission to update this cafe.',
       };
     }
-    const response = await prisma.cafe.update({
+
+    const existing = await prisma.cafe.findUnique({ where: { id } });
+    if (!existing) {
+      return { success: false, message: 'Cafe not found.' };
+    }
+    if (
+      session.user.role !== 'super_admin' &&
+      existing.ownerId !== session.user.id
+    ) {
+      return {
+        success: false,
+        message: 'You cannot update a cafe you do not own.',
+      };
+    }
+
+    // 4️⃣ Handle optional logo upload
+    let logoUrl = existing.logo || '';
+    if (
+      cafe.logo &&
+      typeof cafe.logo !== 'string' &&
+      cafe.logo instanceof File
+    ) {
+      const uploadedUrl = await uploadImage(cafe.logo, 'logo');
+      if (uploadedUrl) {
+        logoUrl = uploadedUrl;
+      } else {
+        return { success: false, message: 'Image upload failed.' };
+      }
+    }
+
+    // 5️⃣ Update the record
+    const updatedCafe = await prisma.cafe.update({
+      where: { id },
       data: {
-        ...cafe,
-      },
-      where: {
-        id: id,
-        ownerId: session.user.id,
+        name: cafe.name ?? existing.name,
+        subTitle: cafe.subTitle ?? existing.subTitle,
+        openTime: cafe.openTime ?? existing.openTime,
+        closeTime: cafe.closeTime ?? existing.closeTime,
+        themeColor: cafe.themeColor ?? existing.themeColor,
+        logo: logoUrl,
       },
     });
 
-    // ✅ No need to call handleError here
+    // 6️⃣ Success response
     return {
       success: true,
-      message: `Cafe "${response.name}" updated successfully!`,
+      message: `Cafe "${updatedCafe.name}" updated successfully!`,
+      data: updatedCafe,
     };
   } catch (error) {
-    // This will now catch ZodError, Prisma errors, or any other error
     const err = handleError(error);
     return {
       success: false,
       message: err.message,
-      details: err.details, // includes the Zod path/messages
+      details: err.details,
     };
+  } finally {
+    await prisma.$disconnect();
   }
 };
 

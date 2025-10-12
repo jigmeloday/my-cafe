@@ -11,7 +11,11 @@ async function Page() {
     redirect('/404')
   }
 
-  const cafeList = await getCafeByCafeOwner(session?.user.id as string);
+  const cafeListRaw = await getCafeByCafeOwner(session?.user.id as string);
+  const cafeList = cafeListRaw.map(cafe => ({
+    ...cafe,
+    logo: cafe.logo ?? '',
+  }));
   const roles = await fetchRole();
   return (
    <CreateCafe cafe={cafeList} roles={roles}/>

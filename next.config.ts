@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
   images: {
     domains: [
       "images.unsplash.com", // allow banner images from Unsplash
+      "res.cloudinary.com",
     ],
   }
 };

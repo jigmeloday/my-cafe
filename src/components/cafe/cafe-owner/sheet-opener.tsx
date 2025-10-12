@@ -15,8 +15,6 @@ import {
 import { CafeType, SheetOpenerProps } from '../../../../types';
 import CafeForm from './cafe-form';
 
-
-
 function SheetOpener({ setOpen, cafeId, userId }: SheetOpenerProps) {
   const [loading, setLoading] = useState(false);
 
@@ -43,7 +41,14 @@ function SheetOpener({ setOpen, cafeId, userId }: SheetOpenerProps) {
     setLoading(true);
     getCafeByCafeOwnerById(userId, cafeId)
       .then((data) => {
-        if (data && !Array.isArray(data)) reset(data);
+        if (data && !Array.isArray(data)) {
+          reset({
+            ...data,
+            logo: data.logo ?? undefined,
+            subTitle: data.subTitle ?? undefined,
+            createdAt: data.createdAt ? data.createdAt.toString() : undefined,
+          });
+        }
       })
       .finally(() => setLoading(false));
   }, [cafeId, userId, reset]);
@@ -51,10 +56,9 @@ function SheetOpener({ setOpen, cafeId, userId }: SheetOpenerProps) {
   const onSubmit = async (data: CafeType) => {
     const payload = {
       ...data,
-      logo: 'https://images.unsplash.com/photo-1602934445884-da0fa1c9d3b3?q=80&w=1558&auto=format&fit=crop',
     };
     const response = cafeId
-      ? await updateCafe(payload, cafeId as string)
+      ? await updateCafe(cafeId as string, payload)
       : await createCafe(payload);
 
     toast[response.success ? 'success' : 'error'](response.message);
@@ -92,7 +96,9 @@ function SheetOpener({ setOpen, cafeId, userId }: SheetOpenerProps) {
           </ScrollArea>
 
           <div className="flex-none w-full flex justify-end sticky bottom-0 bg-primary-50 px-[112px] p-4 shadow">
-            <Button disabled={isSubmitting} type="submit">{cafeId ? 'Update' : 'Create'}</Button>
+            <Button disabled={isSubmitting} type="submit">
+              {cafeId ? 'Update' : 'Create'}
+            </Button>
           </div>
         </form>
       </FormProvider>

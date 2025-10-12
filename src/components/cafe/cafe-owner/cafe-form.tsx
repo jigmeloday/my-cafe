@@ -1,5 +1,3 @@
-'use client';
-
 import { useFormContext } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -11,12 +9,14 @@ function CafeForm() {
   const {
     register,
     formState: { errors },
+    setValue, // <-- add this
   } = useFormContext<CafeType>();
 
   const [image, setImage] = useState<File | null>(null);
 
   const handleImageChange = (file: File) => {
     setImage(file);
+    setValue('logo', file); // <-- update RHF value
   };
 
   return (
@@ -62,6 +62,9 @@ function CafeForm() {
           onChange={handleImageChange}
           label="Upload your cafe logo"
         />
+        {errors.logo && (
+          <span className="text-red-500 text-sm mt-1">{errors.logo.message}</span>
+        )}
       </div>
     </div>
   );
