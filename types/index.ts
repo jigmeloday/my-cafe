@@ -71,6 +71,7 @@ export interface SheetOpenerProps {
   setOpen: (value: boolean) => void;
   cafeId?: string;
   userId?: string;
+  setCafe: (value: CafeType | null) => void;
   onSave?: (updatedCafe: CafeType) => void; 
 }
 
@@ -81,4 +82,5 @@ export interface DialogPropsType {
   onCancel: () => void;
   btn1: string;
   btn2: string;
+  isDisabled?: boolean;
 }

@@ -15,6 +15,7 @@ function SheetOpener({
   setOpen,
   cafe,
   onSave,
+  setCafe,
 }: Omit<SheetOpenerProps, 'userId' | 'cafeId'> & { cafe?: CafeType }) {
   const methods = useForm<CafeType>({
     resolver: zodResolver(INSERT_CAFE_SCHEMA),
@@ -60,7 +61,6 @@ function SheetOpener({
       const response = await updateCafe(cafe?.id as string, data);
       if (!response.success) return toast.error(response.message);
       toast.success(response.message);
-
       updatedCafe = response.data as CafeType;
     } else {
       // Create via API
@@ -72,6 +72,7 @@ function SheetOpener({
 
     onSave?.(updatedCafe);
     setOpen(false);
+    setCafe(null);
   };
 
   return (
@@ -81,10 +82,13 @@ function SheetOpener({
         <div className="flex w-full items-center justify-between px-[112px] border-b py-4 shadow">
           <h3>{cafe ? 'Edit Cafe' : "Let's add cafe"}</h3>
           <div
-            onClick={() => setOpen(false)}
+            onClick={() => {
+              setOpen(false);
+              if (cafe) setCafe(null);
+            }}
             className="group cursor-pointer size-[40px] border flex items-center justify-center rounded-md border-primary-400"
           >
-            <X className="text-primary-500 transition-transform duration-300 ease-in-out group-hover:rotate-180" />
+            <X className="text-primary-500 transition-transform duration-700 ease-in-out group-hover:rotate-180" />
           </div>
         </div>
       </SheetHeader>

@@ -25,16 +25,21 @@ function CreateCafe({ cafe, roles }: { cafe: CafeType[]; roles: Role[] }) {
   const [dialogOpen, setDialogOpen] = useState(false); // Dialog for close/delete
   const [selectedCafe, setSelectedCafe] = useState<CafeType | null>(null);
   const [actionType, setActionType] = useState<'close' | 'delete' | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleAction = async () => {
-    if (!permission || !actionType || !selectedCafe) return;
+    setLoading(true);
+
+    if (!permission || !actionType || !selectedCafe)
+      return toast.warning('Permission failure');
 
     if (actionType === 'close') {
       const updatedCafe = { ...selectedCafe, closed: !selectedCafe.closed };
       const response = await updateCafe(selectedCafe.id as string, updatedCafe);
       toast[response.success ? 'success' : 'error'](response.message);
-
       if (response.success) {
+        setLoading(false);
+
         setCafes((prev) =>
           prev.map((c) => (c.id === selectedCafe.id ? updatedCafe : c))
         );
@@ -46,6 +51,8 @@ function CreateCafe({ cafe, roles }: { cafe: CafeType[]; roles: Role[] }) {
       toast[response.success ? 'success' : 'error'](response.message);
 
       if (response.success) {
+        setLoading(false);
+
         setCafes((prev) => prev.filter((c) => c.id !== selectedCafe.id));
       }
     }
@@ -87,10 +94,10 @@ function CreateCafe({ cafe, roles }: { cafe: CafeType[]; roles: Role[] }) {
               >
                 <Plus
                   size={32}
-                  className="text-primary-500 transition-transform duration-300 ease-in-out group-hover:rotate-180"
+                  className="text-primary-500 transition-transform duration-700 ease-in-out group-hover:rotate-180"
                 />
-                <p className="text-center text-[14px] font-bold">
-                  Hey Let&apos;s create Cafe
+                <p className="text-center text-[14px] font-bold mt-2">
+                  Hey <br/> Let&apos;s open a Cafe
                 </p>
               </div>
             </div>
@@ -109,6 +116,7 @@ function CreateCafe({ cafe, roles }: { cafe: CafeType[]; roles: Role[] }) {
       <Sheet open={open}>
         <SheetOpener
           setOpen={setOpen}
+          setCafe={setSelectedCafe}
           cafe={selectedCafe ?? undefined}
           onSave={(updatedCafe: CafeType) => {
             setCafes((prev) => {
@@ -128,6 +136,7 @@ function CreateCafe({ cafe, roles }: { cafe: CafeType[]; roles: Role[] }) {
       <Dialog open={dialogOpen}>
         <DialogComponent
           btn1="Cancel"
+          isDisabled={loading}
           btn2={
             actionType === 'delete'
               ? 'Delete'
@@ -136,7 +145,7 @@ function CreateCafe({ cafe, roles }: { cafe: CafeType[]; roles: Role[] }) {
               : 'Close'
           }
           title="Confirm Action"
-          description={`Are you sure you want to ${actionType} this cafe?`}
+          description={`Are you sure you want to ${actionType === 'close' ? (selectedCafe?.closed ? 'open': 'close'): actionType} this cafe?`}
           onConfirm={handleAction}
           onCancel={() => setDialogOpen(false)}
         />
