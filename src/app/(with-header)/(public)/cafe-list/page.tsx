@@ -3,13 +3,8 @@ import { useEffect, useState } from 'react';
 import { fetchCafeList } from '@/lib/services/cafe/cafe-service';
 import CafeCard from '@/components/shared/cafe-card';
 import { Button } from '@/components/ui/button';
-import { CafeType, Filters } from '../../../../../types';
+import { CafeListResponse, CafeType, Filters } from '../../../../../types';
 import FilterComponent from '@/components/shared/filter';
-
-interface CafeListResponse {
-  cafes: CafeType[];
-  totalCount: number;
-}
 
 export default function Page() {
   const [cafes, setCafes] = useState<CafeType[]>([]);
@@ -62,6 +57,7 @@ export default function Page() {
   // Refetch on filter change
   useEffect(() => {
     loadCafes(1, true);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
 
   const handleLoadMore = () => {

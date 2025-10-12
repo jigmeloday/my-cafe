@@ -12,6 +12,9 @@ export const cafeList = async ({ limit }: { limit?: number }) => {
   try {
     const data = await prisma.cafe.findMany({
       take: limit || 10,
+      where:{
+        isActive: true,
+      },
       orderBy: { createdAt: 'asc' },
     });
     return converToPlanObject(data);
@@ -52,6 +55,7 @@ export const getFeature = async () => {
     const data = await prisma.cafe.findMany({
       where: {
         isFeature: true,
+        isActive:true,
       },
       orderBy: { createdAt: 'asc' },
     });

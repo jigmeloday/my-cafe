@@ -114,3 +114,8 @@ export interface Filters {
   closeTime?: string;
   sortBy: string;
 }
+
+export interface CafeListResponse {
+  cafes: CafeType[];
+  totalCount: number;
+}
