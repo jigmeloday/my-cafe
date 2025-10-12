@@ -1,4 +1,5 @@
 // src/services/baseAPI.ts
+import { toast } from 'sonner';
 
 export type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
@@ -29,6 +30,7 @@ export async function baseAPI<T = unknown>(
     try {
       data = text ? JSON.parse(text) : null;
     } catch {
+      toast.error('Invalid JSON response from server');
       throw new Error('Invalid JSON response from server');
     }
 
@@ -36,9 +38,11 @@ export async function baseAPI<T = unknown>(
     const responseData = data as Partial<ApiResponse<T>> | null;
 
     if (!res.ok) {
-      throw new Error(responseData?.message || `Request failed with status ${res.status}`);
+      toast.error(responseData?.message ||  `Request failed with status ${res.status}`);
+      throw new Error(
+        responseData?.message || `Request failed with status ${res.status}`
+      );
     }
-
     return {
       success: true,
       message: responseData?.message ?? 'Request successful',

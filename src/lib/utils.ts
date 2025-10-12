@@ -13,13 +13,6 @@ export const converToPlanObject = <T>(value: T): T => {
   return JSON.parse(JSON.stringify(value));
 };
 
-// src/lib/error-handler.ts
-interface ErrorInfo {
-  title: string;
-  message: string;
-  suggestion?: string;
-}
-
 type AuthErrorType =
   | 'CredentialsSignin'
   | 'OAuthAccountNotLinked'
@@ -162,25 +155,26 @@ export function handleError(error: unknown): {
   };
 }
 
+export const permissionCheckerAdmin = (roleName: string, roles: Role[]) => {
+  return roles?.some(({ name }) => name === roleName);
+};
 
-export const permissionCheckerAdmin = (roleName: string, roles:Role[]) => {
-  return roles?.some( ({ name }) => name === roleName) 
-}
-
-
-export const permissionChecker = ( roleName: string, roles:Role[]) => {
-  return roles?.some(({ name }) => name === roleName)
-}
-
+export const permissionChecker = (roleName: string, roles: Role[]) => {
+  return roles?.some(({ name }) => name === roleName);
+};
 
 export const cafeMenuItems = (callbacks: {
-  isClosed: boolean
+  isClosed: boolean;
   onEdit: () => void;
   onClose: () => void;
   onDelete: () => void;
 }): MenuItem[] => [
   { label: 'Edit My Cafe', onClick: callbacks.onEdit },
-  { label: callbacks.isClosed ? 'We are open' : 'We are closed', onClick: callbacks.onClose, separator: true },
+  {
+    label: callbacks.isClosed ? 'We are open' : 'We are closed',
+    onClick: callbacks.onClose,
+    separator: true,
+  },
   {
     label: 'Delete this Cafe',
     onClick: callbacks.onDelete,
@@ -189,3 +183,22 @@ export const cafeMenuItems = (callbacks: {
     separator: true,
   },
 ];
+
+export const getQueryParams = (url: URL, keys: string[]) => {
+  const params: Record<string, string | undefined> = {};
+  keys.forEach((key) => {
+    const value = url.searchParams.get(key);
+    params[key] =
+      value && value !== 'undefined' && value.trim() !== '' ? value : undefined;
+  });
+  return params;
+};
+
+export const normalizeHour = (time?: string): string | undefined => {
+  if (!time) return undefined;
+  const [hour, minute = '00'] = time.split(':');
+  return `${Number(hour)}:${minute.padStart(2, '0')}`; // '05:00' -> '5:00'
+};
+
+export const parseBoolean = (value?: string, defaultValue?: boolean) =>
+  value === 'true' ? true : value === 'false' ? false : defaultValue;

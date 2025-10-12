@@ -84,3 +84,33 @@ export interface DialogPropsType {
   btn2: string;
   isDisabled?: boolean;
 }
+
+export type ResponseType = {
+  success: boolean;
+  message: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data: any
+}
+
+
+export interface FilterComponentProps {
+  filters: {
+    search: string;
+    closed?: boolean;
+    feature?: boolean;
+    openTime?: string;
+    closeTime?: string;
+    sortBy?: string;
+  };
+  onChange: (filters: FilterComponentProps['filters']) => void;
+  onReset: () => void;
+}
+
+export interface Filters {
+  search: string;
+  closed: boolean;
+  feature?: boolean; // optional boolean
+  openTime?: string;
+  closeTime?: string;
+  sortBy: string;
+}

@@ -8,6 +8,8 @@ import Newsletter from '@/components/shared/newsletter';
 import TitleComponent from '@/components/shared/title-component';
 import { getBanners } from '@/lib/action/banner.action';
 import { cafeList, getFeature, menuList } from '@/lib/action/cafe.action';
+import { CafeType } from '../../../types';
+import Link from 'next/link';
 
 export default async function Home() {
   const cafe = await cafeList({ limit: 4 });
@@ -20,14 +22,22 @@ export default async function Home() {
         <LandingBanner banners={banners} />
       </section>
       <section className="my-[120px] px-[16px] lg:px-[112px]">
-        <TitleComponent
-          title="Top Rated Cafe"
-          subtitle="Explore cafés that our users rated the highest."
-        />
+        <div className="flex items-center justify-between">
+          <TitleComponent
+            title="Top Rated Cafe"
+            subtitle="Explore cafés that our users rated the highest."
+          />
+          <Link
+            className="text-primary-500 hover:text-primary-700 transition duration-300 ease-in-out border border-primary-500 hover:border-primary-700 py-2 px-4 rounded-md"
+            href={'/cafe-list'}
+          >
+            View all
+          </Link>
+        </div>
         <div className="flex justify-between my-[24px] space-x-10">
           {cafe.map((item) => (
             <div key={item.id} className="w-full my-[24px]">
-              <CafeCard cafe={item} />
+              <CafeCard cafe={item as CafeType} />
             </div>
           ))}
         </div>
@@ -49,14 +59,22 @@ export default async function Home() {
           subtitle="Discover cafés we’ve specially selected for you."
         />
         <div className="my-[24px]">
-          <FeatureList feature={feature} />
+          <FeatureList feature={feature as CafeType[]} />
         </div>
       </section>
       <section className="my-[120px] px-[16px] lg:px-[112px]">
-        <TitleComponent
-          title="Our Blogs"
-          subtitle="Stay inspired with stories from our café community."
-        />
+        <div className="flex items-center justify-between">
+          <TitleComponent
+            title="Our Blogs"
+            subtitle="Stay inspired with stories from our café community."
+          />
+          <Link
+            className="text-primary-500 hover:text-primary-700 transition duration-300 ease-in-out border border-primary-500 hover:border-primary-700 py-2 px-4 rounded-md"
+            href={'/blogs'}
+          >
+            View all
+          </Link>
+        </div>
         <div className="my-[32px]">
           <BlogList />
         </div>

@@ -12,11 +12,6 @@ export const cafeList = async ({ limit }: { limit?: number }) => {
   try {
     const data = await prisma.cafe.findMany({
       take: limit || 10,
-      include: {
-        addresses: {
-          where: { isDefault: true },
-        },
-      },
       orderBy: { createdAt: 'asc' },
     });
     return converToPlanObject(data);

@@ -8,7 +8,7 @@ import 'swiper/css/pagination';
 import 'swiper/css/effect-fade';
 import { BannerType } from '../../../types';
 
-export default function LandingBanner({ banners }: { banners: BannerType[] }) {
+export default function CafeBanner({ banners }: { banners: BannerType[] }) {
   return (
     <Swiper
       modules={[Pagination, Autoplay, EffectFade]}
@@ -24,12 +24,12 @@ export default function LandingBanner({ banners }: { banners: BannerType[] }) {
       {banners?.map((slide) => (
         <SwiperSlide key={slide.id}>
           <div
-            className="relative w-full h-full flex items-center justify-start px-[112px] overflow-hidden"
+            className="relative w-full h-full flex items-center justify-start px-[24px] overflow-hidden"
             style={{
               backgroundImage: `linear-gradient(to right, rgba(255, 90, 90, 0.7), rgba(255, 126, 126, 0.2)), url(${slide.imageUrl})`,
               backgroundSize: 'cover',
               backgroundPosition: 'right center',
-              backgroundRepeat: 'no-repeat'
+              backgroundRepeat: 'no-repeat',
             }}
           >
             {/* Text Content Animation */}
@@ -37,19 +37,11 @@ export default function LandingBanner({ banners }: { banners: BannerType[] }) {
               initial={{ x: -100, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 1 }}
-              className="space-y-4 max-w-lg text-white"
+              className="space-y-3 max-w-sm text-white"
             >
-              <h4 className="text-white">{slide.cafe.name}</h4>
-              <h1 className="text-black/70">{slide.title}</h1>
-              <p className="text-sm font-light">{slide.subtitle}</p>
-              <div className="mt-6">
-                <Link
-                  href={slide.link}
-                  className="inline-block py-3 px-6 font-extrabold uppercase bg-primary-400 text-white rounded-md shadow-lg hover:scale-105 transition-transform duration-300"
-                >
-                  {slide.buttonText}
-                </Link>
-              </div>
+              <h6 className="text-white">{slide.cafe.name}</h6>
+              <h3 className="text-black/70">{slide.title}</h3>
+              <p className="text-[12px] font-light">{slide.subtitle}</p>
             </motion.div>
           </div>
         </SwiperSlide>
