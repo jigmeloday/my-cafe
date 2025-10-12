@@ -71,6 +71,7 @@ export interface SheetOpenerProps {
   setOpen: (value: boolean) => void;
   cafeId?: string;
   userId?: string;
+  onSave?: (updatedCafe: CafeType) => void; 
 }
 
 export interface DialogPropsType {

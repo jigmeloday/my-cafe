@@ -4,45 +4,21 @@ import { Star } from 'lucide-react';
 import { CafeType, Role } from '../../../types';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import { cafeMenuItems, permissionChecker } from '@/lib/utils';
-import { Sheet } from '../ui/sheet';
-import SheetOpener from '../cafe/cafe-owner/sheet-opener';
-import { useState } from 'react';
-import { Dialog } from '../ui/dialog';
-import DialogComponent from '../ui/dialog-component';
+import { permissionChecker } from '@/lib/utils';
 import ActionMenu from '../ui/menu-action';
-import { deleteCafe, updateCafe } from '@/lib/action/cafe.action';
-import { toast } from 'sonner';
 
-export default function CafeCard(props: { cafe: CafeType; roles?: Role[] }) {
+export default function CafeCard(props: {
+  cafe: CafeType;
+  roles?: Role[];
+  onAction?: (cafeId: string, type: 'close' | 'delete') => void;
+  onEdit?: (cafe: CafeType) => void;
+}) {
   const { cafe } = props;
   const { data: session } = useSession();
-  const [open, setOpen] = useState(false);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [actionType, setActionType] = useState<'close' | 'delete' | null>(null);
-
   const permission = permissionChecker(
     session?.user.role as string,
     props.roles as Role[]
   );
-
-  const handleAction = async () => {
-  if (!permission || !actionType) return;
-
-  if (actionType === 'close') {
-    const updatedCafe = { ...cafe, closed: !cafe.closed };
-    const response = await updateCafe(cafe.id as string, updatedCafe);
-    toast[response.success ? 'success' : 'error'](response.message);
-  }
-
-  if (actionType === 'delete') {
-    const response = await deleteCafe( cafe.id as string); 
-    toast[response.success ? 'success' : 'error'](response.message);
-  }
-
-  setDialogOpen(false);
-  setActionType(null);
-};
 
   return (
     <>
@@ -69,24 +45,25 @@ export default function CafeCard(props: { cafe: CafeType; roles?: Role[] }) {
           </div>
           {permission && (
             <ActionMenu
-              items={cafeMenuItems({
-                isClosed: cafe.closed as boolean,
-                onEdit: () => setOpen(true),
-                onClose: () => {
-                  setActionType('close')
-                  setDialogOpen(true);
+              items={[
+                { label: 'Edit', onClick: () => props.onEdit&& props.onEdit(cafe) },
+                {
+                  label: cafe.closed ? 'Open' : 'Close',
+                  onClick: () =>
+                    props.onAction && props.onAction(cafe.id as string, 'close'),
                 },
-                onDelete: () => {
-                  setActionType('delete')
-                  setDialogOpen(true)
+                {
+                  label: 'Delete',
+                  onClick: () =>
+                    props.onAction && props.onAction(cafe.id as string, 'delete'),
                 },
-              })}
+              ]}
             />
           )}
         </div>
         <div className="relative w-[160px] h-[160px] rounded-full overflow-hidden shadow-md">
           <Image
-            src={cafe?.logo as string || ''}
+            src={(cafe?.logo as string) || ''}
             alt="cafe-logo"
             fill
             className="object-cover"
@@ -97,7 +74,9 @@ export default function CafeCard(props: { cafe: CafeType; roles?: Role[] }) {
           <h5 className="text-primary-800">{cafe?.name}</h5>
           <p className="text-sm text-gray-400 mt-1">
             {cafe?.subTitle
-              ? `${cafe.subTitle.slice(0, 50)}${cafe.subTitle.length >= 50 ? '...' : ''}`
+              ? `${cafe.subTitle.slice(0, 50)}${
+                  cafe.subTitle.length >= 50 ? '...' : ''
+                }`
               : ''}
           </p>
 
@@ -116,25 +95,6 @@ export default function CafeCard(props: { cafe: CafeType; roles?: Role[] }) {
           </p>
         </div>
       </Link>
-      {permission && open && (
-        <Sheet open={open}>
-          <SheetOpener
-            setOpen={setOpen}
-            userId={session?.user.id}
-            cafeId={cafe.id}
-          />
-        </Sheet>
-      )}
-      <Dialog open={dialogOpen}>
-        <DialogComponent
-          btn1="Cancel"
-          btn2={actionType === "delete"? 'Delete' : (cafe.closed ? 'Open' : 'Close') }
-          title="Confirm Action"
-          description={`Are you sure you want to ${actionType} this cafe?`}
-          onConfirm={handleAction}
-          onCancel={() => setDialogOpen(false)}
-        />
-      </Dialog>
     </>
   );
 }

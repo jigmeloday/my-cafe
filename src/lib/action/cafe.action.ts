@@ -149,6 +149,7 @@ export const createCafe = async (payload: CafeType) => {
     return {
       success: true,
       message: `Cafe "${response.name}" created successfully!`,
+      data: response,
     };
   } catch (error) {
     const err = handleError(error);
@@ -166,7 +167,6 @@ export const updateCafe = async (id: string, payload: Partial<CafeType>) => {
   try {
     // 1️⃣ Parse and validate data
     const cafe = INSERT_CAFE_SCHEMA.parse({ ...payload });;
-
     const session = await getServerSession(authOptions);
     if (
       !session?.user?.id ||
@@ -211,6 +211,7 @@ export const updateCafe = async (id: string, payload: Partial<CafeType>) => {
     const updatedCafe = await prisma.cafe.update({
       where: { id },
       data: {
+        closed: cafe.closed ?? existing.closed,
         name: cafe.name ?? existing.name,
         subTitle: cafe.subTitle ?? existing.subTitle,
         openTime: cafe.openTime ?? existing.openTime,

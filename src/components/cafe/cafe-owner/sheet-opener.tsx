@@ -1,23 +1,21 @@
-import { useEffect, useState } from 'react';
+'use client';
+import { useEffect } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { X } from 'lucide-react';
-import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { INSERT_CAFE_SCHEMA } from '@/lib/validator';
-import {
-  getCafeByCafeOwnerById,
-  createCafe,
-  updateCafe,
-} from '@/lib/action/cafe.action';
 import { CafeType, SheetOpenerProps } from '../../../../types';
 import CafeForm from './cafe-form';
-
-function SheetOpener({ setOpen, cafeId, userId }: SheetOpenerProps) {
-  const [loading, setLoading] = useState(false);
-
+import { createCafe, updateCafe } from '@/lib/action/cafe.action';
+import { toast } from 'sonner';
+function SheetOpener({
+  setOpen,
+  cafe,
+  onSave,
+}: Omit<SheetOpenerProps, 'userId' | 'cafeId'> & { cafe?: CafeType }) {
   const methods = useForm<CafeType>({
     resolver: zodResolver(INSERT_CAFE_SCHEMA),
     defaultValues: {
@@ -31,46 +29,57 @@ function SheetOpener({ setOpen, cafeId, userId }: SheetOpenerProps) {
   });
 
   const { reset, handleSubmit, formState } = methods;
-
   const { isSubmitting } = formState;
 
-  // Fetch cafe details if editing
+  // Reset form whenever the sheet opens or cafe changes
   useEffect(() => {
-    if (!cafeId || !userId) return;
-
-    setLoading(true);
-    getCafeByCafeOwnerById(userId, cafeId)
-      .then((data) => {
-        if (data && !Array.isArray(data)) {
-          reset({
-            ...data,
-            logo: data.logo ?? undefined,
-            subTitle: data.subTitle ?? undefined,
-            createdAt: data.createdAt ? data.createdAt.toString() : undefined,
-          });
-        }
-      })
-      .finally(() => setLoading(false));
-  }, [cafeId, userId, reset]);
+    if (cafe) {
+      reset({
+        ...cafe,
+        logo: cafe.logo ?? undefined,
+        subTitle: cafe.subTitle ?? undefined,
+      });
+    } else {
+      // Creating: reset to default
+      reset({
+        name: '',
+        themeColor: '',
+        openTime: '',
+        closeTime: '',
+        subTitle: '',
+        logo: '',
+      });
+    }
+  }, [cafe, reset]);
 
   const onSubmit = async (data: CafeType) => {
-    const payload = {
-      ...data,
-    };
-    const response = cafeId
-      ? await updateCafe(cafeId as string, payload)
-      : await createCafe(payload);
+    let updatedCafe: CafeType;
 
-    toast[response.success ? 'success' : 'error'](response.message);
+    if (cafe) {
+      // Update via API
+      const response = await updateCafe(cafe?.id as string, data);
+      if (!response.success) return toast.error(response.message);
+      toast.success(response.message);
+
+      updatedCafe = response.data as CafeType;
+    } else {
+      // Create via API
+      const response = await createCafe(data);
+      if (!response.success) return toast.error(response.message);
+      toast.success(response.message);
+      updatedCafe = response.data as CafeType;
+    }
+
+    onSave?.(updatedCafe);
+    setOpen(false);
   };
 
   return (
     <SheetContent side="bottom" className="h-[90vh]">
-      {/* Header */}
       <SheetHeader>
-        <SheetTitle></SheetTitle>
+        <SheetTitle />
         <div className="flex w-full items-center justify-between px-[112px] border-b py-4 shadow">
-          <h3>Let&apos;s add cafe</h3>
+          <h3>{cafe ? 'Edit Cafe' : "Let's add cafe"}</h3>
           <div
             onClick={() => setOpen(false)}
             className="group cursor-pointer size-[40px] border flex items-center justify-center rounded-md border-primary-400"
@@ -86,18 +95,12 @@ function SheetOpener({ setOpen, cafeId, userId }: SheetOpenerProps) {
           className="flex-1 flex flex-col overflow-hidden"
         >
           <ScrollArea className="flex-1 min-h-0">
-            {loading ? (
-              <div className="flex justify-center items-center h-full">
-                Loading...
-              </div>
-            ) : (
-              <CafeForm />
-            )}
+            <CafeForm />
           </ScrollArea>
 
           <div className="flex-none w-full flex justify-end sticky bottom-0 bg-primary-50 px-[112px] p-4 shadow">
             <Button disabled={isSubmitting} type="submit">
-              {cafeId ? 'Update' : 'Create'}
+              {cafe ? 'Update' : 'Create'}
             </Button>
           </div>
         </form>
