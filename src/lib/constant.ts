@@ -88,3 +88,73 @@ export const CAFE_TABS = [
     label: 'Events'
   }
 ]
+
+export const CATEGORY = [
+  { id: 1, name: 'Coffee', slug: 'coffee' },
+  { id: 2, name: 'Tea', slug: 'tea' },
+  { id: 3, name: 'Smoothies', slug: 'smoothies' },
+  { id: 4, name: 'Juices', slug: 'juices' },
+  { id: 5, name: 'Bakery', slug: 'bakery' },
+  { id: 6, name: 'Sandwiches', slug: 'sandwiches' },
+  { id: 7, name: 'Burgers', slug: 'burgers' },
+  { id: 8, name: 'Pizza', slug: 'pizza' },
+  { id: 9, name: 'Patties', slug: 'patties' },
+  { id: 10, name: 'Salads', slug: 'salads' },
+  { id: 11, name: 'Desserts', slug: 'desserts' },
+  { id: 12, name: 'Snacks', slug: 'snacks' },
+  { id: 13, name: 'Specials', slug: 'specials' },
+  { id: 14, name: 'Others', slug: 'other' },
+];
+
+export const DUMMY_MENU = [
+  {
+    id: '1',
+    cafeId: 'cafe-1',
+    name: 'Espresso',
+    img: '/images/coffee/espresso.jpg',
+    price: 3.5,
+    spicyRate: 0,
+    ingredients: ['Espresso beans', 'Water'],
+    createdAt: new Date(),
+  },
+  {
+    id: '2',
+    cafeId: 'cafe-1',
+    name: 'Latte',
+    img: '/images/coffee/latte.jpg',
+    price: 4.5,
+    spicyRate: 0,
+    ingredients: ['Espresso', 'Steamed milk', 'Foam'],
+    createdAt: new Date(),
+  },
+  {
+    id: '3',
+    cafeId: 'cafe-1',
+    name: 'Chicken Burger',
+    img: '/images/food/chicken-burger.jpg',
+    price: 6.0,
+    spicyRate: 2,
+    ingredients: ['Chicken patty', 'Lettuce', 'Tomato', 'Cheese', 'Bun'],
+    createdAt: new Date(),
+  },
+  {
+    id: '4',
+    cafeId: 'cafe-1',
+    name: 'Veggie Pizza',
+    img: '/images/food/veggie-pizza.jpg',
+    price: 8.5,
+    spicyRate: 1,
+    ingredients: ['Pizza base', 'Tomato sauce', 'Cheese', 'Bell peppers', 'Olives'],
+    createdAt: new Date(),
+  },
+  {
+    id: '5',
+    cafeId: 'cafe-1',
+    name: 'Chocolate Muffin',
+    img: '/images/bakery/chocolate-muffin.jpg',
+    price: 2.5,
+    spicyRate: 0,
+    ingredients: ['Flour', 'Cocoa', 'Sugar', 'Eggs', 'Butter'],
+    createdAt: new Date(),
+  },
+];

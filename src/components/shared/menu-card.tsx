@@ -30,7 +30,7 @@ function MenuCard({ menu }: { menu: MenuType }) {
          </div>
        </div>
         <h6>{menu.name}</h6>
-        <p className='mt-[4px] text-black/50 text-[14px]'>{menu.cafe.name}</p>
+        <p className='mt-[4px] text-black/50 text-[14px]'>{menu.cafe?.name}</p>
         <div className='flex flex-wrap gap-2 my-[12px]'>
           {menu.ingredients?.map((item, index) => (
             <div key={item + index} className='px-[8px] py-[1px] border border-primary-200 rounded-md text-[12px]'>

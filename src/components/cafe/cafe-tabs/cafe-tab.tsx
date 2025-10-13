@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { CAFE_TABS } from '@/lib/constant';
 
 function CafeTab() {
-  const [active, setActive] = useState(2);
+  const [active, setActive] = useState(1);
   return (
     <div className="py-4 w-full">
       <div className="flex w-full border rounded-md space-x-4 px-4 py-2  bg-gray-200 sticky top-[90px] z-10">
