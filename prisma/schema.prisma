@@ -26,20 +26,26 @@ model User {
   email             String          @unique
   emailVerified     DateTime?
   image             String?
-  accounts          Account[]
-  sessions          Session[]
   password          String
   verificationToken String?         @unique
   resetToken        String?
   resetTokenExpiry  DateTime? // token validity
   roleId            String          @default(uuid())
   role              Role            @relation(fields: [roleId], references: [id])
-  Authenticator     Authenticator[]
-  addresses         Address[]
   payment           String
-  cafes             Cafe[]          @relation("UserCafes")
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
+  Cafes             Cafe[]          @relation("UserCafes")
+  Banner            Banner[]
+  Event             Event[]
+  EventsJoined      EventAttendee[]
+  Reviews           Review[]
+  Blog              Blog[]
+  Authenticator     Authenticator[]
+  Addresses         Address[]
+  Accounts          Account[]
+  Sessions          Session[]
+  Like              Like[]
 }
 
 model Account {
@@ -56,8 +62,7 @@ model Account {
   session_state     String?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([provider, providerAccountId])
 }
@@ -67,9 +72,8 @@ model Session {
   userId       String   @db.Uuid
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model VerificationToken {
@@ -90,31 +94,35 @@ model Authenticator {
   credentialDeviceType String
   credentialBackedUp   Boolean
   transports           String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                 User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, credentialID])
 }
 
 model Cafe {
-  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name       String
-  subTitle   String?
-  logo       String?
-  openTime   String
-  closeTime  String
-  themeColor String
-  isFeature  Boolean   @default(false)
-  closed     Boolean   @default(false)
-  createdAt  DateTime  @default(now()) @db.Timestamp(6)
-  isActive   Boolean   @default(false)
-  addresses  Address[]
-  menus      Menu[]
-  banner     Banner[]
-  ownerId    String?   @db.Uuid
-  owner      User?     @relation("UserCafes", fields: [ownerId], references: [id])
-  // blogs      Blog[]    @relation("CafeBlogs")
-  // reviews  Review[]
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String
+  subTitle    String?
+  description String?
+  website     String?
+  phone       String?
+  email       String?
+  socialLinks Json?
+  googleMap   String?
+  logo        String?
+  openTime    String
+  closeTime   String
+  themeColor  String
+  isFeature   Boolean   @default(false)
+  closed      Boolean   @default(false)
+  createdAt   DateTime  @default(now()) @db.Timestamp(6)
+  isActive    Boolean   @default(false)
+  ownerId     String?   @db.Uuid
+  Addresses   Address[]
+  Menus       Menu[]
+  Banner      Banner[]
+  Event       Event[]
+  Owner       User?     @relation("UserCafes", fields: [ownerId], references: [id])
   // favorites    Favorite[]
   // folderItems  FolderItem[]
 }
@@ -136,36 +144,50 @@ model Address {
 }
 
 model Menu {
-  id          String   @id @default(uuid())
-  cafeId      String   @db.Uuid
-  cafe        Cafe     @relation(fields: [cafeId], references: [id])
+  id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cafeId      String      @db.Uuid
   name        String
-  img         String?
+  slug        String      @unique
   price       Float
+  discount    Float?
   spicyRate   Int?
   ingredients String[]
-  createdAt   DateTime @default(now()) @db.Timestamp(6)
-  // reviews  Review[]
+  description String
+  categoryId  String      @db.Uuid
+  isAvailable Boolean     @default(true)
+  prepTime    Int?
+  tags        Json?
+  popularity  Int?        @default(0)
+  calories    Int?
+  protein     Float?
+  fat         Float?
+  carbs       Float?
+  createdAt   DateTime    @default(now()) @db.Timestamp(6)
+  archived    Boolean     @default(false)
+  Images      MenuImage[]
+  category    Category    @relation(fields: [categoryId], references: [id])
+  cafe        Cafe        @relation(fields: [cafeId], references: [id])
 }
 
-// model Blog {
-//   id         String   @id @default(uuid())
-//   title      String
-//   slug       String   @unique
-//   authorId   String?  @db.Uuid
-//   author     User?    @relation(fields: [authorId], references: [id])
-//   content    String   // store rich text as plain string
-//   coverImage String?
-//   tags       String[]
-//   cafes      Cafe[]   @relation("CafeBlogs")
-//   createdAt  DateTime @default(now())
-//   updatedAt  DateTime @updatedAt
-// }
+model Category {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Menus     Menu[]
+}
+
+model MenuImage {
+  id     String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  menuId String @db.Uuid
+  url    String
+  menu   Menu   @relation(fields: [menuId], references: [id])
+}
 
 model Banner {
-  id         String    @id @default(uuid())
-  cafe       Cafe      @relation(fields: [cafeId], references: [id])
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   cafeId     String    @db.Uuid
+  creatorId  String    @db.Uuid
   buttonText String
   link       String
   active     Boolean   @default(false)
@@ -175,4 +197,88 @@ model Banner {
   startDate  DateTime?
   endDate    DateTime?
   createdAt  DateTime  @default(now())
+  cafe       Cafe      @relation(fields: [cafeId], references: [id])
+  creator    User      @relation(fields: [creatorId], references: [id])
+}
+
+model Event {
+  id          String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String
+  description String
+  startDate   DateTime
+  endDate     DateTime
+  address     String
+  googleMap   String
+  creatorId   String          @db.Uuid
+  hostId      String          @db.Uuid
+  host        Cafe            @relation(fields: [hostId], references: [id])
+  creator     User            @relation(fields: [creatorId], references: [id])
+  Attendees   EventAttendee[]
+}
+
+model EventAttendee {
+  id       String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  eventId  String   @db.Uuid
+  userId   String   @db.Uuid
+  joinedAt DateTime @default(now())
+  event    Event    @relation(fields: [eventId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
+
+  @@unique([eventId, userId]) // ensures a user cannot join the same event twice
+}
+
+model Review {
+  id             String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId         String  @db.Uuid
+  reviewableType String // "Cafe" | "Menu"
+  reviewableId   String // UUID of Cafe or Menu
+  rating         Int? // 1-5
+  comment        String?
+  images         Json? // optional images
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Blog {
+  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title           String
+  slug            String        @unique
+  authorId        String?       @db.Uuid
+  content         String
+  coverImage      String?
+  categoryId      String?       @db.Uuid
+  tags            Json?
+  status          String        @default("draft")
+  isFeatured      Boolean       @default(false)
+  readTime        Int?
+  views           Int?          @default(0)
+  likes           Int?          @default(0)
+  metaTitle       String?
+  metaDescription String?
+  metaImage       String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  Author          User?         @relation(fields: [authorId], references: [id])
+  category        BlogCategory? @relation(fields: [categoryId], references: [id])
+}
+
+model BlogCategory {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Blogs     Blog[]
+}
+
+model Like {
+  id     String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId String @db.Uuid
+  user   User   @relation(fields: [userId], references: [id])
+  likeableType String // "Blog" | "Cafe" | "Menu"
+  likeableId   String // UUID of the entity
+  createdAt DateTime @default(now())
+  @@unique([userId, likeableType, likeableId]) // prevent duplicate likes
+  @@index([likeableType, likeableId]) // fast lookup
 }
