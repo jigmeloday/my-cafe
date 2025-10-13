@@ -29,6 +29,7 @@ model User {
   password          String
   verificationToken String?         @unique
   resetToken        String?
+  cafeCreation      Boolean?        @default(false)
   resetTokenExpiry  DateTime? // token validity
   roleId            String          @default(uuid())
   role              Role            @relation(fields: [roleId], references: [id])
@@ -102,17 +103,18 @@ model Authenticator {
 model Cafe {
   id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name        String
-  subTitle    String?
-  description String?
+  subTitle    String
+  description String
   website     String?
   phone       String?
-  email       String?
+  email       String
   socialLinks Json?
   googleMap   String?
   logo        String?
   openTime    String
   closeTime   String
   themeColor  String
+  agreeTerms Boolean @default(false)
   isFeature   Boolean   @default(false)
   closed      Boolean   @default(false)
   createdAt   DateTime  @default(now()) @db.Timestamp(6)

@@ -88,7 +88,7 @@ export default async function Home() {
           <EventCard />
         </div>
       </section>
-      <section className="py-[120px] bg-primary-50 px-[16px] lg:px-[112px]">
+      <section className="py-[120px] bg-primary-50/20 px-[16px] lg:px-[112px]">
         <div className=" py-[96px]">
           <div className="mx-auto max-w-2xl text-center">
             <h4>

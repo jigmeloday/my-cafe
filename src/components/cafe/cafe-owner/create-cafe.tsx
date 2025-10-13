@@ -85,21 +85,23 @@ function CreateCafe({ cafe, roles }: { cafe: CafeType[]; roles: Role[] }) {
                 }}
               />
             ))}
-
-            {/* Create Cafe Card */}
-            <div className="min-h-[340px] w-full rounded-md bg-primary-50 flex items-center justify-center">
-              <div
-                onClick={() => setOpen(true)}
-                className="flex flex-col size-[140px] items-center justify-center border border-dashed border-primary-600/70 rounded-md hover:shadow-lg cursor-pointer transition duration-300 group"
-              >
-                <Plus
-                  size={32}
-                  className="text-primary-500 transition-transform duration-700 ease-in-out group-hover:rotate-180"
-                />
-                <p className="text-center text-[14px] font-bold mt-2">
-                  Hey <br/> Let&apos;s open a Cafe
-                </p>
-              </div>
+            <div
+              onClick={() => setOpen(true)}
+              className="min-h-[340px] w-full rounded-md flex flex-col items-center justify-center border-2 border-dashed border-primary-500 p-6 cursor-pointer group transition-all duration-300 hover:shadow-lg"
+            >
+              <Plus
+                size={32}
+                className="text-primary-500 transition-transform duration-700 ease-in-out group-hover:rotate-180"
+              />
+              <p className="mt-4 text-center text-sm font-medium">
+                Open your cafe by{' '}
+                <span className="font-semibold text-primary-500">
+                  clicking here
+                </span>
+              </p>
+              <p className="mt-2 text-center text-xs text-black/70">
+                Cafe will remain inactive until admin permit
+              </p>
             </div>
           </div>
         </div>
@@ -145,7 +147,13 @@ function CreateCafe({ cafe, roles }: { cafe: CafeType[]; roles: Role[] }) {
               : 'Close'
           }
           title="Confirm Action"
-          description={`Are you sure you want to ${actionType === 'close' ? (selectedCafe?.closed ? 'open': 'close'): actionType} this cafe?`}
+          description={`Are you sure you want to ${
+            actionType === 'close'
+              ? selectedCafe?.closed
+                ? 'open'
+                : 'close'
+              : actionType
+          } this cafe?`}
           onConfirm={handleAction}
           onCancel={() => setDialogOpen(false)}
         />

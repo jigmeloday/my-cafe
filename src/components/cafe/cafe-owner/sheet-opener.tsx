@@ -26,6 +26,15 @@ function SheetOpener({
       closeTime: '',
       subTitle: '',
       logo: '',
+      agreeTerms: false, // ✅ initialize boolean
+      closed: false, // ✅ initialize boolean
+      isActive: false, // optional, but safe to initialize
+      isFeature: false, // optional, but safe to initialize
+      website: '',
+      phone: '',
+      email: '',
+      socialLinks: null,
+      googleMap: '',
     },
   });
 
@@ -39,6 +48,15 @@ function SheetOpener({
         ...cafe,
         logo: cafe.logo ?? undefined,
         subTitle: cafe.subTitle ?? undefined,
+        agreeTerms: cafe.agreeTerms ?? false, // ✅ ensure boolean
+        closed: cafe.closed ?? false,
+        isActive: cafe.isActive ?? false,
+        isFeature: cafe.isFeature ?? false,
+        website: cafe.website ?? '',
+        phone: cafe.phone ?? '',
+        email: cafe.email ?? '',
+        socialLinks: cafe.socialLinks ?? null,
+        googleMap: cafe.googleMap ?? '',
       });
     } else {
       // Creating: reset to default
@@ -49,11 +67,21 @@ function SheetOpener({
         closeTime: '',
         subTitle: '',
         logo: '',
+        agreeTerms: false,
+        closed: false,
+        isActive: false,
+        isFeature: false,
+        website: '',
+        phone: '',
+        email: '',
+        socialLinks: null,
+        googleMap: '',
       });
     }
   }, [cafe, reset]);
 
   const onSubmit = async (data: CafeType) => {
+    console.log(data);
     let updatedCafe: CafeType;
 
     if (cafe) {
@@ -76,7 +104,7 @@ function SheetOpener({
   };
 
   return (
-    <SheetContent side="bottom" className="h-[90vh]">
+    <SheetContent side="bottom" className="h-screen">
       <SheetHeader>
         <SheetTitle />
         <div className="flex w-full items-center justify-between px-[112px] border-b py-4 shadow">
@@ -103,7 +131,7 @@ function SheetOpener({
           </ScrollArea>
 
           <div className="flex-none w-full flex justify-end sticky bottom-0 px-[112px] p-4 shadow-2xl border-t border-primary-50 ">
-            <Button disabled={isSubmitting} type="submit">
+            <Button className="w-fit" disabled={isSubmitting} type="submit">
               {cafe ? 'Update' : 'Create'}
             </Button>
           </div>

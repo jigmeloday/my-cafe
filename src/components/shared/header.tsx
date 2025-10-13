@@ -53,8 +53,8 @@ function Header() {
 
   return (
     <div
-      className={`flex items-center justify-between px-[16px] lg:px-[112px] py-[16px] sticky top-0 z-20 transition-all duration-300 ${
-        isScrolled ? 'shadow-md bg-white' : 'shadow-md'
+      className={`flex items-center bg-white justify-between px-[16px] lg:px-[112px] py-[16px] sticky top-0 z-20 transition-all duration-300 ${
+        isScrolled ? 'shadow-md ' : 'shadow-md'
       }`}
     >
       <div className="font-semibold text-lg">CaféTales</div>

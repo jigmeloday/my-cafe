@@ -6,13 +6,14 @@ import { INSERT_CAFE_SCHEMA } from '../validator';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../../../auth';
 import { uploadImage } from '../services/image-upload-api';
+import DOMPurify from 'isomorphic-dompurify';
 
 export const cafeList = async ({ limit }: { limit?: number }) => {
   const prisma = new PrismaClient();
   try {
     const data = await prisma.cafe.findMany({
       take: limit || 10,
-      where:{
+      where: {
         isActive: true,
       },
       orderBy: { createdAt: 'asc' },
@@ -55,7 +56,7 @@ export const getFeature = async () => {
     const data = await prisma.cafe.findMany({
       where: {
         isFeature: true,
-        isActive:true,
+        isActive: true,
       },
       orderBy: { createdAt: 'asc' },
     });
@@ -85,30 +86,30 @@ export const getCafeByCafeOwner = async (id: string) => {
   }
 };
 
-export const getCafeByCafeOwnerById = async (cafeId: string) => {
-  const prisma = new PrismaClient();
-  try {
-    const data = await prisma.cafe.findFirst({
-      include: {
-        addresses: {
-         select: {
-            id: true,
-            street: true,
-            city: true,
-            country: true,
-          },
-        }
-      },
-      where: {
-        id: cafeId,
-      },
-    });
-    return converToPlanObject(data);
-  } catch (error) {
-    console.error('Failed to fetch cafes:', error);
-    return []; // fallback value
-  }
-};
+// export const getCafeByCafeOwnerById = async (cafeId: string) => {
+//   const prisma = new PrismaClient();
+//   try {
+//     const data = await prisma.cafe.findFirst({
+//       include: {
+//         addresses: {
+//           select: {
+//             id: true,
+//             street: true,
+//             city: true,
+//             country: true,
+//           },
+//         },
+//       },
+//       where: {
+//         id: cafeId,
+//       },
+//     });
+//     return converToPlanObject(data);
+//   } catch (error) {
+//     console.error('Failed to fetch cafes:', error);
+//     return []; // fallback value
+//   }
+// };
 
 export const createCafe = async (payload: CafeType) => {
   const prisma = new PrismaClient();
@@ -116,6 +117,11 @@ export const createCafe = async (payload: CafeType) => {
   try {
     const cafe = INSERT_CAFE_SCHEMA.parse({ ...payload });
     const session = await getServerSession(authOptions);
+    if (!cafe.agreeTerms)
+      return {
+        success: false,
+        message: 'Need to agree terms and conditions',
+      };
     if (
       !session?.user?.id ||
       (session.user.role !== 'super_admin' && session.user.role !== 'owner')
@@ -140,20 +146,28 @@ export const createCafe = async (payload: CafeType) => {
         };
       }
     }
-
     const response = await prisma.cafe.create({
       data: {
-        name: cafe.name,
-        closeTime: cafe.closeTime,
+        name: DOMPurify.sanitize(cafe.name),
+        subTitle: DOMPurify.sanitize(cafe.subTitle),
+        description: DOMPurify.sanitize(cafe.description),
+        website: cafe.website || null,
+        phone: cafe.phone || '',
+        email: cafe.email || '',
+        socialLinks: cafe.socialLinks || null,
+        googleMap: cafe.googleMap || null,
+        logo: logoUrl || null,
         openTime: cafe.openTime,
+        closeTime: cafe.closeTime,
         themeColor: cafe.themeColor,
-        logo: logoUrl,
-        isActive: false,
-        isFeature: false,
-        subTitle: cafe.subTitle,
-        owner: { connect: { id: session.user.id } },
+        agreeTerms: cafe.agreeTerms,
+        isFeature: cafe.isFeature ?? false,
+        closed: cafe.closed ?? false,
+        isActive: cafe.isActive ?? false,
+        ownerId: session.user.id,
       },
     });
+
     return {
       success: true,
       message: `Cafe "${response.name}" created successfully!`,
@@ -173,63 +187,89 @@ export const updateCafe = async (id: string, payload: Partial<CafeType>) => {
   const prisma = new PrismaClient();
 
   try {
-    // 1️⃣ Parse and validate data
-    const cafe = INSERT_CAFE_SCHEMA.parse({ ...payload });;
-    const session = await getServerSession(authOptions);
-    if (
-      !session?.user?.id ||
-      (session.user.role !== 'super_admin' && session.user.role !== 'owner')
-    ) {
+    // 1️⃣ Validate data with Zod
+    const cafe = INSERT_CAFE_SCHEMA.parse({ ...payload });
+
+    // 2️⃣ Check that user agreed to terms
+    if (!cafe.agreeTerms) {
       return {
         success: false,
-        message: 'You do not have permission to update this cafe.',
+        message:
+          'You must agree to the terms and conditions to update the cafe.',
       };
     }
 
-    const existing = await prisma.cafe.findUnique({ where: { id } });
-    if (!existing) {
-      return { success: false, message: 'Cafe not found.' };
+    // 3️⃣ Validate session and role
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return {
+        success: false,
+        message: 'You must be logged in to update a cafe.',
+      };
     }
-    if (
-      session.user.role !== 'super_admin' &&
-      existing.ownerId !== session.user.id
-    ) {
+
+    const isSuperAdmin = session.user.role === 'super_admin';
+
+    // 4️⃣ Fetch existing cafe
+    const existing = await prisma.cafe.findUnique({ where: { id } });
+    if (!existing) return { success: false, message: 'Cafe not found.' };
+
+    if (!isSuperAdmin && existing.ownerId !== session.user.id) {
       return {
         success: false,
         message: 'You cannot update a cafe you do not own.',
       };
     }
 
-    // 4️⃣ Handle optional logo upload
-    let logoUrl = existing.logo || '';
+    // 5️⃣ Handle secure logo upload
+    let logoUrl = existing.logo ?? null;
     if (
       cafe.logo &&
       typeof cafe.logo !== 'string' &&
       cafe.logo instanceof File
     ) {
-      const uploadedUrl = await uploadImage(cafe.logo, 'logo');
-      if (uploadedUrl) {
-        logoUrl = uploadedUrl;
-      } else {
-        return { success: false, message: 'Image upload failed.' };
+      if (
+        !['image/jpeg', 'image/png', 'image/svg+xml'].includes(cafe.logo.type)
+      ) {
+        return { success: false, message: 'Invalid image type.' };
       }
-    }
+      if (cafe.logo.size > 10 * 1024 * 1024) {
+        return { success: false, message: 'Image size exceeds 10MB.' };
+      }
 
-    // 5️⃣ Update the record
+      const uploadedUrl = await uploadImage(cafe.logo, 'logo');
+      if (!uploadedUrl)
+        return { success: false, message: 'Image upload failed.' };
+      logoUrl = uploadedUrl;
+    } else if (typeof cafe.logo === 'string') {
+      logoUrl = cafe.logo;
+    }
+    // 6️⃣ Sanitize strings to prevent XSS
+    const sanitizedData = {
+      name: DOMPurify.sanitize(cafe.name ?? existing.name),
+      subTitle: DOMPurify.sanitize(cafe.subTitle ?? existing.subTitle),
+      description: DOMPurify.sanitize(cafe.description ?? existing.description),
+      website: cafe.website ?? existing.website,
+      phone: cafe.phone ?? existing.phone,
+      email: cafe.email ?? existing.email,
+      socialLinks: cafe.socialLinks ?? existing.socialLinks,
+      googleMap: cafe.googleMap ?? existing.googleMap,
+      openTime: cafe.openTime ?? existing.openTime,
+      closeTime: cafe.closeTime ?? existing.closeTime,
+      themeColor: cafe.themeColor ?? existing.themeColor,
+      logo: logoUrl,
+      agreeTerms: cafe.agreeTerms, // must be true
+      isFeature: cafe.isFeature ?? existing.isFeature,
+      closed: cafe.closed ?? existing.closed,
+      isActive: cafe.isActive ?? existing.isActive,
+    };
+
+    // 7️⃣ Update the cafe securely
     const updatedCafe = await prisma.cafe.update({
       where: { id },
-      data: {
-        closed: cafe.closed ?? existing.closed,
-        name: cafe.name ?? existing.name,
-        subTitle: cafe.subTitle ?? existing.subTitle,
-        openTime: cafe.openTime ?? existing.openTime,
-        closeTime: cafe.closeTime ?? existing.closeTime,
-        themeColor: cafe.themeColor ?? existing.themeColor,
-        logo: logoUrl,
-      },
+      data: sanitizedData,
     });
 
-    // 6️⃣ Success response
     return {
       success: true,
       message: `Cafe "${updatedCafe.name}" updated successfully!`,
@@ -237,11 +277,7 @@ export const updateCafe = async (id: string, payload: Partial<CafeType>) => {
     };
   } catch (error) {
     const err = handleError(error);
-    return {
-      success: false,
-      message: err.message,
-      details: err.details,
-    };
+    return { success: false, message: err.message, details: err.details };
   } finally {
     await prisma.$disconnect();
   }
