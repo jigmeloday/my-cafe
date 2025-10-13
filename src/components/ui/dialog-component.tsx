@@ -11,8 +11,8 @@ function DialogComponent({ title, description, onConfirm, onCancel, btn1, btn2, 
               {description}
             </DialogDescription>
             <div className='w-full flex justify-end space-x-2'>
-              <Button disabled={isDisabled} onClick={() => onCancel()} variant="outline">{btn1}</Button>
-              <Button disabled={isDisabled} onClick={() => onConfirm()}>{btn2}</Button>
+              <Button className='w-fit' disabled={isDisabled} onClick={() => onCancel()} variant="outline">{btn1}</Button>
+              <Button className='w-fit' disabled={isDisabled} onClick={() => onConfirm()}>{btn2}</Button>
               </div>
           </DialogHeader>
         </DialogContent>

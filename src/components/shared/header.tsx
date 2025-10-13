@@ -75,7 +75,7 @@ function Header() {
             <Menubar className="border-none bg-transparent">
               <MenubarMenu>
                 <MenubarTrigger className="p-0 focus:outline-none data-[state=open]:bg-transparent">
-                  <div className="size-[50px] rounded-full cursor-pointer bg-primary-300 flex items-center justify-center">
+                  <div className="size-[50px] rounded-full cursor-pointer bg-primary-50 flex items-center justify-center">
                     {session.user.image?.length ? (
                       <Image
                         height={100}
