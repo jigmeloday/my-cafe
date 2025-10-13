@@ -23,7 +23,7 @@ export default function CafeCard(props: {
   return (
     <>
       <Link
-        href={`cafe/${cafe.id}`}
+        href={`cafe-list/${cafe.id}`}
         className="w-full rounded-md p-4 flex flex-col items-center transition-all duration-300 border-[0.5px] border-primary-50 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary-500/10 cursor-pointer"
       >
         <div

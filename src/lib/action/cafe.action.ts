@@ -85,15 +85,23 @@ export const getCafeByCafeOwner = async (id: string) => {
   }
 };
 
-export const getCafeByCafeOwnerById = async (id: string, cafeId: string) => {
+export const getCafeByCafeOwnerById = async (cafeId: string) => {
   const prisma = new PrismaClient();
   try {
     const data = await prisma.cafe.findFirst({
+      include: {
+        addresses: {
+         select: {
+            id: true,
+            street: true,
+            city: true,
+            country: true,
+          },
+        }
+      },
       where: {
-        ownerId: id,
         id: cafeId,
       },
-      orderBy: { createdAt: 'asc' },
     });
     return converToPlanObject(data);
   } catch (error) {

@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
       'search',
       'sort',
     ]);
-  const limit = Number(url.searchParams.get('limit') ?? 10);
+  const limit = Number(url.searchParams.get('limit') ?? 8);
   const page = Number(url.searchParams.get('page') ?? 1);
   const offset = (page - 1) * limit;
   const openTimeFilter = normalizeHour(openTime);
