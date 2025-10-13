@@ -24,7 +24,7 @@ function MenuCard({ menu }: { menu: MenuType }) {
             <Star
               key={item}
               size={14}
-              className="text-primary-500 fill-primary-400/80"
+              className="text-primary-500 fill-primary-500/80"
             />
           ))}
          </div>

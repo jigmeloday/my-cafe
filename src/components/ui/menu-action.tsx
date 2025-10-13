@@ -26,7 +26,7 @@ export default function ActionMenu({ items }: ActionMenuProps) {
     <Menubar className="border-none bg-transparent">
       <MenubarMenu>
         <MenubarTrigger className="p-0 focus:outline-none data-[state=open]:bg-transparent cursor-pointer">
-          <EllipsisVertical className="text-primary-400 hover:text-primary-600 transition duration-500 ease-in-out" />
+          <EllipsisVertical className="text-primary-500 hover:text-primary-600 transition duration-500 ease-in-out" />
         </MenubarTrigger>
         <MenubarContent className="mt-2 w-[180px] shadow-md">
           {items.map((item, index) => (

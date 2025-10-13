@@ -30,10 +30,10 @@ export default function ImageUploader({
   return (
     <div className={`flex flex-col items-center gap-2 ${className}`}>
       <label className="cursor-pointer">
-        <div className="relative h-[200px] w-[300px] border-2 border-dashed border-primary-400 rounded-lg flex items-center justify-center hover:bg-primary-50 transition">
+        <div className="relative h-[200px] w-[300px] border-2 border-dashed border-primary-500 rounded-lg flex items-center justify-center hover:bg-primary-50 transition">
           {preview && (
             <div
-              className="absolute top-2 right-2 h-5 w-5 rounded-full bg-primary-400 flex items-center justify-center cursor-pointer z-10"
+              className="absolute top-2 right-2 h-5 w-5 rounded-full bg-primary-500 flex items-center justify-center cursor-pointer z-10"
               onClick={() => {
                 setPreview(null);
                 onChange(null);

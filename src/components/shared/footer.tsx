@@ -2,11 +2,11 @@ import Link from 'next/link';
 
 function Footer() {
   return (
-    <footer className="bg-black text-primary-50 px-[16px] lg:px-[112px] py-[80px]">
+    <footer className="bg-black text-white px-[16px] lg:px-[112px] py-[80px]">
       <div className="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-5 gap-12">
         {/* About Section */}
         <div>
-          <h5 className="text-primary-50 mb-4">About Us</h5>
+          <h5 className="text-white mb-4">About Us</h5>
           <p className="opacity-80">
             Discover, review, and bookmark your favorite cafés. Connect with a
             community of coffee lovers and stay inspired.
@@ -15,7 +15,7 @@ function Footer() {
 
         {/* Explore Section */}
         <div>
-          <h5 className="text-primary-50 mb-4">Explore</h5>
+          <h5 className="text-white mb-4">Explore</h5>
           <ul className="space-y-2 text-md opacity-80">
             <li>
               <Link
@@ -51,7 +51,7 @@ function Footer() {
 
         {/* Quick Links / Café Owners */}
         <div>
-          <h5 className="text-primary-50 mb-4">Café Owners</h5>
+          <h5 className="text-white mb-4">Café Owners</h5>
           <ul className="space-y-2 text-md opacity-80">
             <li>
               <Link
@@ -89,7 +89,7 @@ function Footer() {
         </div>
 
         <div>
-          <h5 className="text-primary-50 mb-4">Users</h5>
+          <h5 className="text-white mb-4">Users</h5>
           <ul className="space-y-2 text-md opacity-80">
             <li>
               <Link
@@ -128,7 +128,7 @@ function Footer() {
 
         {/* Social Links */}
         <div>
-          <h5 className="text-primary-50 mb-4">Follow Us</h5>
+          <h5 className="text-white mb-4">Follow Us</h5>
           <div className="flex space-x-4 text-primary-300">
             <Link href="#" className="hover:text-primary-50 transition">
               FB

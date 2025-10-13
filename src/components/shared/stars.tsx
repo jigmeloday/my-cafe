@@ -19,7 +19,7 @@ function Stars({ rate }: { rate: number }) {
             {full && (
               <Star
                 size={16}
-                className="absolute top-0 left-0 text-primary-400 fill-primary-400/80"
+                className="absolute top-0 left-0 text-primary-500 fill-primary-500/80"
               />
             )}
 
@@ -27,7 +27,7 @@ function Stars({ rate }: { rate: number }) {
               <div className="absolute top-0 left-0 w-1/2 overflow-hidden">
                 <Star
                   size={16}
-                  className="text-primary-400 fill-primary-400/80"
+                  className="text-primary-500 fill-primary-500/80"
                 />
               </div>
             )}

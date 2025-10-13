@@ -28,7 +28,7 @@ function OverviewTab() {
           <h6>Reviews for the daily grind</h6>
           <div className="flex items-center my-[32px] space-x-6 border rounded-md">
             <div className="flex flex-col items-center justify-center w-[20%]">
-              <p className="text-[102px] text-primary-400">4.5</p>
+              <p className="text-[102px] text-primary-500">4.5</p>
               <Stars rate={4} />
             </div>
             <div className="w-[80%] p-4">
@@ -39,7 +39,7 @@ function OverviewTab() {
                 >
                   <span className="text-gray-700 font-bold">{rating}</span>
                   <div className="w-full h-2 bg-gray-200 rounded-md">
-                    <div className="w-[40%] bg-primary-400 rounded-full h-full" />
+                    <div className="w-[40%] bg-primary-500 rounded-full h-full" />
                   </div>
                   <span className="text-[14px] text-primary-600">50%</span>
                 </div>
@@ -103,7 +103,7 @@ function OverviewTab() {
                     onClick={() => setRating(star)}
                     className={`cursor-pointer transition-transform duration-200 ${
                       star <= (hover ?? rating)
-                        ? 'text-primary-400 fill-primary-400/80 scale-110'
+                        ? 'text-primary-500 fill-primary-500/80 scale-110'
                         : 'text-gray-300 fill-gray-300'
                     }`}
                   />

@@ -7,36 +7,24 @@ import { Map, MapPin, Phone, Timer } from 'lucide-react';
 import { FaFacebook, FaInstagram, FaLink, FaTiktok } from 'react-icons/fa';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { CAFE_TABS } from '@/lib/constant';
 
 function CafeTab() {
   const [active, setActive] = useState(2);
   return (
     <div className="py-4 w-full">
       <div className="flex w-full border rounded-md space-x-4 px-4 py-2  bg-gray-200 sticky top-[90px] z-10">
-        <div
-          onClick={() => setActive(1)}
-          className={`${
-            active === 1 ? 'bg-white shadow' : 'hover:bg-gray-300'
-          } w-full  rounded-full py-3 text-center cursor-pointer transition-all duration-300 ease-in-out`}
-        >
-          Menu List
-        </div>
-        <div
-          onClick={() => setActive(2)}
-          className={`${
-            active === 2 ? 'bg-white shadow' : 'hover:bg-gray-300'
-          } w-full  rounded-full py-3 text-center cursor-pointer transition-all duration-300 ease-in-out`}
-        >
-          Overview
-        </div>
-        <div
-          onClick={() => setActive(3)}
-          className={`${
-            active === 3 ? 'bg-white shadow' : 'hover:bg-gray-300'
-          } w-full  rounded-full py-3 text-center cursor-pointer transition-all duration-300 ease-in-out`}
-        >
-          Upcoming Events
-        </div>
+        {CAFE_TABS.map(({ id, label }) => (
+          <div
+            key={id}
+            onClick={() => setActive(id)}
+            className={`${
+              active === id ? 'bg-white shadow text-primary-500' : 'hover:bg-gray-300'
+            } w-full  rounded-full py-3 text-center cursor-pointer font-bold transition-all duration-300 ease-in-out`}
+          >
+           {label}
+          </div>
+        ))}
       </div>
       <div className="flex space-x-6">
         <div className="w-[80%] mt-[32px] border rounded-md p-[20px]">
@@ -83,10 +71,22 @@ function CafeTab() {
           <div className="mt-[28px]">
             <h6>Follow Us</h6>
             <div className="flex mt-[20px] space-x-[8px]">
-              <FaFacebook size={20} className='cursor-pointer text-primary-400 hover:text-primary-600 hover:scale-110 transition duration-500 ease-in-out' />
-              <FaInstagram size={20} className='cursor-pointer text-primary-400 hover:text-primary-600 hover:scale-110 transition duration-500 ease-in-out' />
-              <FaTiktok size={20} className='cursor-pointer text-primary-400 hover:text-primary-600 hover:scale-110 transition duration-500 ease-in-out' />
-              <FaLink size={20} className='cursor-pointer text-primary-400 hover:text-primary-600 hover:scale-110 transition duration-500 ease-in-out' />
+              <FaFacebook
+                size={20}
+                className="cursor-pointer text-primary-500 hover:text-primary-600 hover:scale-110 transition duration-500 ease-in-out"
+              />
+              <FaInstagram
+                size={20}
+                className="cursor-pointer text-primary-500 hover:text-primary-600 hover:scale-110 transition duration-500 ease-in-out"
+              />
+              <FaTiktok
+                size={20}
+                className="cursor-pointer text-primary-500 hover:text-primary-600 hover:scale-110 transition duration-500 ease-in-out"
+              />
+              <FaLink
+                size={20}
+                className="cursor-pointer text-primary-500 hover:text-primary-600 hover:scale-110 transition duration-500 ease-in-out"
+              />
             </div>
           </div>
           <div className="mt-[30px] space-y-[8px] w-full">

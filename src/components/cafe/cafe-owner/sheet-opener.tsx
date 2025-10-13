@@ -86,7 +86,7 @@ function SheetOpener({
               setOpen(false);
               if (cafe) setCafe(null);
             }}
-            className="group cursor-pointer size-[40px] border flex items-center justify-center rounded-md border-primary-400"
+            className="group cursor-pointer size-[40px] border flex items-center justify-center rounded-md border-primary-500"
           >
             <X className="text-primary-500 transition-transform duration-700 ease-in-out group-hover:rotate-180" />
           </div>

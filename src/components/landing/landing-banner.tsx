@@ -26,10 +26,10 @@ export default function LandingBanner({ banners }: { banners: BannerType[] }) {
           <div
             className="relative w-full h-full flex items-center justify-start px-[112px] overflow-hidden"
             style={{
-              backgroundImage: `linear-gradient(to right, rgba(255, 90, 90, 0.7), rgba(255, 126, 126, 0.2)), url(${slide.imageUrl})`,
+              backgroundImage: `linear-gradient(to right, rgba(211, 47, 125, 0.7), rgba(255, 180, 200, 0.2)), url(${slide.imageUrl})`,
               backgroundSize: 'cover',
               backgroundPosition: 'right center',
-              backgroundRepeat: 'no-repeat'
+              backgroundRepeat: 'no-repeat',
             }}
           >
             {/* Text Content Animation */}
@@ -45,7 +45,7 @@ export default function LandingBanner({ banners }: { banners: BannerType[] }) {
               <div className="mt-6">
                 <Link
                   href={slide.link}
-                  className="inline-block py-3 px-6 font-extrabold uppercase bg-primary-400 text-white rounded-md shadow-lg hover:scale-105 transition-transform duration-300"
+                  className="inline-block py-3 px-6 font-extrabold uppercase bg-primary-500 text-white rounded-md shadow-lg hover:scale-105 transition-transform duration-300"
                 >
                   {slide.buttonText}
                 </Link>

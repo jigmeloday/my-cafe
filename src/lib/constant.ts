@@ -73,3 +73,18 @@ export const TIME_OPTION = [
   '22:00',
   '23:00',
 ];
+
+export const CAFE_TABS = [
+  {
+    id: 1,
+    label: 'Menu'
+  },
+  {
+    id: 2,
+    label: 'Overview'
+  },
+  {
+    id: 3,
+    label: 'Events'
+  }
+]

@@ -11,7 +11,7 @@ function Page(){
     <div>
       <div className='flex space-x-2'>
         {
-          [{className: 'bg-primary-50'}, {className: 'bg-primary-100'},{className: 'bg-primary-200'},{className: 'bg-primary-300'},{className: 'bg-primary-400'},{className: 'bg-primary-500'},{className: 'bg-primary-600'},{className: 'bg-primary-700'},{className: 'bg-primary-800'},{className: 'bg-primary-900'}].map((item) => (
+          [{className: 'bg-primary-50'}, {className: 'bg-primary-100'},{className: 'bg-primary-200'},{className: 'bg-primary-300'},{className: 'bg-primary-500'},{className: 'bg-primary-500'},{className: 'bg-primary-600'},{className: 'bg-primary-700'},{className: 'bg-primary-800'},{className: 'bg-primary-900'}].map((item) => (
             <div className={`size-[150px] ${item.className}`} key={item.className}>
               hello
             </div>
