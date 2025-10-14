@@ -52,8 +52,29 @@ export async function GET(req: NextRequest) {
       where,
       orderBy: { createdAt: sortOrder },
     }),
-    prisma.cafe.count({ where }), 
+    prisma.cafe.count({ where }),
   ]);
 
-  return NextResponse.json({ cafes, totalCount });
+  // Fetch average stars (out of 5) for each cafe
+  const cafesWithStars = await Promise.all(
+    cafes.map(async (cafe) => {
+      const aggregate = await prisma.review.aggregate({
+        _sum: { rating: true },
+        _count: { rating: true },
+        where: { reviewableType: 'cafe', reviewableId: cafe.id },
+      });
+
+      const totalRating = aggregate._sum.rating || 0;
+      const reviewCount = aggregate._count.rating || 0;
+      const averageStars = reviewCount > 0 ? totalRating / reviewCount : 0;
+
+      return {
+        ...cafe,
+        totalStars: averageStars, // average rating out of 5
+        reviewCount,
+      };
+    })
+  );
+
+  return NextResponse.json({ cafes: cafesWithStars, totalCount });
 }

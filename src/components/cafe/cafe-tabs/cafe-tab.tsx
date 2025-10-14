@@ -8,9 +8,12 @@ import { FaFacebook, FaInstagram, FaLink, FaTiktok } from 'react-icons/fa';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { CAFE_TABS } from '@/lib/constant';
+import { CafeType } from '../../../../types';
+import { timeFormatter } from '@/lib/utils';
 
-function CafeTab() {
-  const [active, setActive] = useState(1);
+function CafeTab({ cafe }: { cafe: CafeType }) {
+  const [active, setActive] = useState(2);
+
   return (
     <div className="py-4 w-full">
       <div className="flex w-full border rounded-md space-x-4 px-4 py-2  bg-gray-200 sticky top-[90px] z-10">
@@ -19,10 +22,12 @@ function CafeTab() {
             key={id}
             onClick={() => setActive(id)}
             className={`${
-              active === id ? 'bg-white shadow text-primary-500' : 'hover:bg-gray-300'
+              active === id
+                ? 'bg-white shadow text-primary-500'
+                : 'hover:bg-gray-300'
             } w-full  rounded-full py-3 text-center cursor-pointer font-bold transition-all duration-300 ease-in-out`}
           >
-           {label}
+            {label}
           </div>
         ))}
       </div>
@@ -31,7 +36,7 @@ function CafeTab() {
           {active === 1 ? (
             <MenuTab />
           ) : active === 2 ? (
-            <OverviewTab />
+            <OverviewTab cafe={cafe} />
           ) : (
             <EventTabs />
           )}
@@ -41,52 +46,89 @@ function CafeTab() {
           <div className="mt-[20px] space-y-[8px]">
             <div className="flex items-center space-x-2">
               <Timer size={16} />
-              <p className="text-[14px]">7:00 AM - 12:00 AM</p>
+              <p className="text-[14px]">
+                {timeFormatter(cafe?.openTime as string)} -{' '}
+                {timeFormatter(cafe?.closeTime)}
+              </p>
             </div>
             <div className="flex items-center space-x-2">
               <MapPin size={16} />
-              <p className="text-[14px]">Babesa Thimphu Bhutan</p>
+              {cafe?.address ? (
+                <span className="text-[14px]">Babesa, Thimphu</span>
+              ) : (
+                <span className="text-[14px]">Address not found</span>
+              )}
             </div>
             <div className="flex items-center space-x-2">
               <Map size={16} />
-              <Link
-                href="/"
-                className="text-[14px] text-primary-500 hover:text-primary-800 ease-in-out transition duration-300"
-              >
-                Google Map
-              </Link>
+              {cafe.googleMap ? (
+                <Link
+                  href={cafe.googleMap}
+                  className="text-[14px] text-primary-500 hover:text-primary-800 ease-in-out transition duration-300"
+                >
+                  Google Map
+                </Link>
+              ) : (
+                <span className="text-[14px]">No google map link</span>
+              )}
             </div>
             <div className="flex items-center space-x-2">
               <Phone size={16} />
-              <Link
-                type="tel"
-                href="/"
-                className="text-[14px] text-primary-500 hover:text-primary-800 ease-in-out transition duration-300"
-              >
-                +975-77455740
-              </Link>
+              {cafe.phone ? (
+                <Link
+                  type="tel"
+                  href="/"
+                  className="text-[14px] text-primary-500 hover:text-primary-800 ease-in-out transition duration-300"
+                >
+                  +975-77455740
+                </Link>
+              ) : (
+                <span className="text-[14px]">No google map link</span>
+              )}
             </div>
           </div>
 
           <div className="mt-[28px]">
             <h6>Follow Us</h6>
             <div className="flex mt-[20px] space-x-[8px]">
-              <FaFacebook
-                size={20}
-                className="cursor-pointer text-primary-500 hover:text-primary-600 hover:scale-110 transition duration-500 ease-in-out"
-              />
-              <FaInstagram
-                size={20}
-                className="cursor-pointer text-primary-500 hover:text-primary-600 hover:scale-110 transition duration-500 ease-in-out"
-              />
-              <FaTiktok
-                size={20}
-                className="cursor-pointer text-primary-500 hover:text-primary-600 hover:scale-110 transition duration-500 ease-in-out"
-              />
-              <FaLink
-                size={20}
-                className="cursor-pointer text-primary-500 hover:text-primary-600 hover:scale-110 transition duration-500 ease-in-out"
-              />
+              {cafe.socialLinks ? (
+                <>
+                  {cafe.socialLinks.facebook && (
+                    <Link target="_blank" href={cafe.socialLinks.facebook}>
+                      <FaFacebook
+                        size={20}
+                        className="cursor-pointer text-primary-500 hover:text-primary-600 hover:scale-110 transition duration-500 ease-in-out"
+                      />
+                    </Link>
+                  )}
+                  {cafe.socialLinks.instagram && (
+                    <Link target="_blank" href={cafe.socialLinks.instagram}>
+                      <FaInstagram
+                        size={20}
+                        className="cursor-pointer text-primary-500 hover:text-primary-600 hover:scale-110 transition duration-500 ease-in-out"
+                      />
+                    </Link>
+                  )}
+                  {cafe.socialLinks.tiktok && (
+                    <Link target="_blank" href={cafe.socialLinks.tiktok}>
+                      <FaTiktok
+                        size={20}
+                        className="cursor-pointer text-primary-500 hover:text-primary-600 hover:scale-110 transition duration-500 ease-in-out"
+                      />
+                    </Link>
+                  )}
+                </>
+              ) : (
+                <span className="text-[14px]">No social link</span>
+              )}
+              {cafe.website && (
+                <Link target="_blank" href={cafe.website}>
+                  <FaLink
+                    size={20}
+                    className="cursor-pointer text-primary-500 hover:text-primary-600 hover:scale-110 transition duration-500 ease-in-out"
+                  />
+                </Link>
+              )}
             </div>
           </div>
           <div className="mt-[30px] space-y-[8px] w-full">

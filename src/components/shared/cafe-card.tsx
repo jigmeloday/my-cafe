@@ -1,11 +1,11 @@
 'use client';
 import Image from 'next/image';
-import { Star } from 'lucide-react';
 import { CafeType, Role } from '../../../types';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import { permissionChecker } from '@/lib/utils';
+import { permissionChecker, timeFormatter } from '@/lib/utils';
 import ActionMenu from '../ui/menu-action';
+import Stars from './stars';
 
 export default function CafeCard(props: {
   cafe: CafeType;
@@ -30,7 +30,6 @@ export default function CafeCard(props: {
           onClick={(e) => {
             e.preventDefault(); // prevents Link navigation
             e.stopPropagation(); // stops event from bubbling up to Link
-            console.log('Icon clicked, navigation stopped');
           }}
           className="w-full flex justify-between"
         >
@@ -46,16 +45,21 @@ export default function CafeCard(props: {
           {permission && (
             <ActionMenu
               items={[
-                { label: 'Edit', onClick: () => props.onEdit&& props.onEdit(cafe) },
+                {
+                  label: 'Edit',
+                  onClick: () => props.onEdit && props.onEdit(cafe),
+                },
                 {
                   label: cafe.closed ? 'Open' : 'Close',
                   onClick: () =>
-                    props.onAction && props.onAction(cafe.id as string, 'close'),
+                    props.onAction &&
+                    props.onAction(cafe.id as string, 'close'),
                 },
                 {
                   label: 'Delete',
                   onClick: () =>
-                    props.onAction && props.onAction(cafe.id as string, 'delete'),
+                    props.onAction &&
+                    props.onAction(cafe.id as string, 'delete'),
                 },
               ]}
             />
@@ -74,24 +78,18 @@ export default function CafeCard(props: {
           <h5 className="text-primary-800">{cafe?.name}</h5>
           <p className="text-sm text-gray-400 mt-1">
             {cafe?.subTitle
-              ? `${cafe.subTitle.slice(0, 50)}${
-                  cafe.subTitle.length >= 50 ? '...' : ''
+              ? `${cafe.subTitle.slice(0, 40)}${
+                  cafe.subTitle.length >= 40 ? '...' : ''
                 }`
               : ''}
           </p>
 
           <div className="flex justify-center items-center mt-2 space-x-1">
-            {[1, 2, 3, 4, 5].map((item) => (
-              <Star
-                key={item}
-                size={14}
-                className="text-primary-500 fill-primary-500/80"
-              />
-            ))}
+            <Stars rate={cafe?.totalStars as number} />
           </div>
 
           <p className="text-xs text-gray-500 mt-2">
-            {cafe.openTime} – {cafe.closeTime}
+            {timeFormatter(cafe.openTime)} – {timeFormatter(cafe.closeTime)}
           </p>
         </div>
       </Link>

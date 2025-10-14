@@ -2,7 +2,7 @@
 import { HEADER_MENU, HEADER_MENU_OWNER } from '@/lib/constant';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Menubar,
   MenubarContent,
@@ -15,6 +15,7 @@ import Image from 'next/image';
 import { signoutUser } from '@/lib/action/user.action';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { getInitials } from '@/lib/utils';
 
 function Header() {
   const { data: session } = useSession();
@@ -41,15 +42,15 @@ function Header() {
     }
   };
 
-  const useUserInitials = useMemo(() => {
-    const name = session?.user.name;
+  // const useUserInitials = useMemo(() => {
+  //   const name = session?.user.name;
 
-    if (!name) return '';
-    const parts = name.split(' ');
-    const firstInitial = parts[0]?.charAt(0) || '';
-    const secondInitial = parts[1]?.charAt(0) || '';
-    return `${firstInitial}${secondInitial}`;
-  }, [session?.user.name])
+  //   if (!name) return '';
+  //   const parts = name.split(' ');
+  //   const firstInitial = parts[0]?.charAt(0) || '';
+  //   const secondInitial = parts[1]?.charAt(0) || '';
+  //   return `${firstInitial}${secondInitial}`;
+  // }, [session?.user.name])
 
   return (
     <div
@@ -86,7 +87,7 @@ function Header() {
                       />
                     ) : (
                       <p className="text-white text-[20px] font-bold">
-                        {useUserInitials}
+                        {getInitials(session.user?.name as string)}
                       </p>
                     )}
                   </div>

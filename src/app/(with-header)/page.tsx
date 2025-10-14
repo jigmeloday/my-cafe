@@ -16,6 +16,7 @@ export default async function Home() {
   const menu = await menuList({ limit: 4 });
   const banners = await getBanners();
   const feature = await getFeature();
+
   return (
     <main>
       <section className="flex lg:h-[80vh] mt-[12px]">

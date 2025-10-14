@@ -7,25 +7,51 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '../../../auth';
 import { uploadImage } from '../services/image-upload-api';
 import DOMPurify from 'isomorphic-dompurify';
-
 export const cafeList = async ({ limit }: { limit?: number }) => {
   const prisma = new PrismaClient();
   try {
-    const data = await prisma.cafe.findMany({
+    const cafes = await prisma.cafe.findMany({
       take: limit || 10,
-      where: {
-        isActive: true,
-      },
+      where: { isActive: true },
       orderBy: { createdAt: 'asc' },
     });
-    return converToPlanObject(data);
+
+    const cafesWithStars = await Promise.all(
+      cafes.map(async (cafe) => {
+        const aggregate = await prisma.review.aggregate({
+          _sum: { rating: true },
+          _count: { rating: true },
+          where: { reviewableType: 'cafe', reviewableId: cafe.id },
+        });
+
+        const totalRating = aggregate._sum.rating || 0;
+        const reviewCount = aggregate._count.rating || 0;
+        const averageStars = reviewCount > 0 ? totalRating / reviewCount : 0;
+
+        return {
+          ...cafe,
+          totalStars: averageStars,
+          reviewCount,
+        };
+      })
+    );
+
+    // Sort cafes: top rated first
+    const sortedCafes = cafesWithStars.sort((a, b) => {
+      if (b.totalStars !== a.totalStars) return b.totalStars - a.totalStars; // top rated first
+      return a.createdAt.getTime() - b.createdAt.getTime(); // then by createdAt
+    });
+
+    return converToPlanObject(sortedCafes);
   } catch (error) {
     console.error('Failed to fetch cafes:', error);
-    return []; // fallback value
+    return [];
   } finally {
     await prisma.$disconnect();
   }
 };
+
+
 
 export const menuList = async ({ limit }: { limit?: number }) => {
   const prisma = new PrismaClient();
@@ -86,30 +112,37 @@ export const getCafeByCafeOwner = async (id: string) => {
   }
 };
 
-// export const getCafeByCafeOwnerById = async (cafeId: string) => {
-//   const prisma = new PrismaClient();
-//   try {
-//     const data = await prisma.cafe.findFirst({
-//       include: {
-//         addresses: {
-//           select: {
-//             id: true,
-//             street: true,
-//             city: true,
-//             country: true,
-//           },
-//         },
-//       },
-//       where: {
-//         id: cafeId,
-//       },
-//     });
-//     return converToPlanObject(data);
-//   } catch (error) {
-//     console.error('Failed to fetch cafes:', error);
-//     return []; // fallback value
-//   }
-// };
+export const getCafeByCafeOwnerById = async (
+  cafeId: string
+): Promise<CafeType | null> => {
+  const prisma = new PrismaClient();
+  try {
+    const data = await prisma.cafe.findFirst({
+      where: { id: cafeId },
+      include: {
+        Addresses: {
+          select: {
+            id: true,
+            street: true,
+            city: true,
+            country: true,
+          },
+        },
+      },
+    });
+
+    if (!data) {
+      return null; // cafe not found
+    }
+
+    return converToPlanObject(data) as CafeType;
+  } catch (error) {
+    console.error('Failed to fetch cafe:', error);
+    throw error;
+  } finally {
+    await prisma.$disconnect();
+  }
+};
 
 export const createCafe = async (payload: CafeType) => {
   const prisma = new PrismaClient();
@@ -138,8 +171,6 @@ export const createCafe = async (payload: CafeType) => {
       if (uploadedUrl) {
         logoUrl = uploadedUrl;
       } else {
-        console.log(logoUrl);
-
         return {
           success: false,
           message: 'Image upload failed',

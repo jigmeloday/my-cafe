@@ -202,3 +202,22 @@ export const normalizeHour = (time?: string): string | undefined => {
 
 export const parseBoolean = (value?: string, defaultValue?: boolean) =>
   value === 'true' ? true : value === 'false' ? false : defaultValue;
+
+export const timeFormatter = (time: string) => {
+  const [hourStr, minute] = time?.split(':');
+  let hour = parseInt(hourStr, 10);
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+  
+  // convert 24-hour to 12-hour
+  hour = hour % 12;
+  if (hour === 0) hour = 12;
+
+  return `${hour}:${minute} ${ampm}`;
+};
+
+export const getInitials = (name?: string) => {
+  if (!name) return "A"; // default for anonymous
+  const names = name.split(" ");
+  const initials = names.map((n) => n[0].toUpperCase());
+  return initials.slice(0, 2).join("");
+}

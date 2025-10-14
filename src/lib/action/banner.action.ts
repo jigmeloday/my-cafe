@@ -2,7 +2,7 @@ import { PrismaClient } from '@/generated/prisma';
 import { converToPlanObject } from '../utils';
 import { BannerType } from '../../../types';
 
-export const getBanners = async (): Promise<BannerType[]> => {
+export const getBanners = async (cafeId?: string): Promise<BannerType[]> => {
   const prisma = new PrismaClient();
   try {
     const data = await prisma.banner.findMany({

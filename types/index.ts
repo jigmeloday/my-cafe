@@ -8,10 +8,13 @@ import {
   SIGN_IN_SCHEMA,
   SIGN_UP_SCHEMA,
 } from '@/lib/validator';
+import { Address } from '@/generated/prisma';
 
 export type CafeType = z.infer<typeof INSERT_CAFE_SCHEMA> & {
   id?: string;
+  address?: Address;
   createdAt?: Date | string;
+  totalStars?: number;
 };
 
 export type MenuType = z.infer<typeof INSERT_MENU_SCHEMA> & {
@@ -72,7 +75,7 @@ export interface SheetOpenerProps {
   cafeId?: string;
   userId?: string;
   setCafe: (value: CafeType | null) => void;
-  onSave?: (updatedCafe: CafeType) => void; 
+  onSave?: (updatedCafe: CafeType) => void;
 }
 
 export interface DialogPropsType {
@@ -89,9 +92,8 @@ export type ResponseType = {
   success: boolean;
   message: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data: any
-}
-
+  data: any;
+};
 
 export interface FilterComponentProps {
   filters: {
@@ -118,4 +120,55 @@ export interface Filters {
 export interface CafeListResponse {
   cafes: CafeType[];
   totalCount: number;
+}
+
+export type ReviewsResponse = {
+  success: boolean;
+  reviews: Review[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+  ratings: RatingsInfo;
+};
+export interface FetchReviewListResponse {
+  success: boolean;
+  message?: string;
+  data: ReviewsResponse | null;
+}
+
+export type Review = {
+  id: string;
+  rating?: number | null;
+  comment?: string | null;
+  createdAt: string;
+  user: {
+    id: string;
+    name: string | null;
+    image: string | null;
+  };
+};
+
+export type RatingsInfo = {
+  starCounts: Record<number, number>;
+  starPercentages: Record<number, number>;
+  overallScore: number;
+};
+
+export interface Pagination {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export interface OverviewTabProps {
+  cafe: CafeType;
+}
+
+export interface Ratings {
+  overallScore: number;
+  starPercentages: Record<number, number>; // 1-5 stars
 }
