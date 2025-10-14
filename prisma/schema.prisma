@@ -147,9 +147,9 @@ model Address {
 
 model Menu {
   id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  cafeId      String      @db.Uuid
+  cafeId      String     @db.Uuid
   name        String
-  slug        String      @unique
+  slug        String?      @unique
   price       Float
   discount    Float?
   spicyRate   Int?
@@ -159,7 +159,7 @@ model Menu {
   isAvailable Boolean     @default(true)
   prepTime    Int?
   tags        Json?
-  popularity  Int?        @default(0)
+  // popularity  Int?      @default(0)
   calories    Int?
   protein     Float?
   fat         Float?
@@ -237,7 +237,6 @@ model Review {
   rating         Int? // 1-5
   comment        String?
   images         Json? // optional images
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   user      User     @relation(fields: [userId], references: [id])

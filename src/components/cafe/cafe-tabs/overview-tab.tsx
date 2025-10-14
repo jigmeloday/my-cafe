@@ -55,16 +55,13 @@ function OverviewTab({ cafe }: { cafe: CafeType }) {
       <div className="w-full">
         <h6>About us</h6>
         <p className="mt-4 text-[14px] text-justify">{cafe.description}</p>
-        {/* Ratings summary */}
         <ReviewsSummary ratings={reviewsData.ratings as Ratings} />
 
-        {/* Review list */}
         <ReviewList
           reviews={reviewsData.reviews}
           pagination={reviewsData.pagination as Pagination}
         />
 
-        {/* Review form */}
         {session?.user.id && session.user.role !== 'owner' && (
           <ReviewForm slug={slug as string} onReviewSubmit={loadReviews} />
         )}
