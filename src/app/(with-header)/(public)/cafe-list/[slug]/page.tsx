@@ -7,13 +7,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { CafeType } from '../../../../../../types';
 import { redirect } from 'next/navigation';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '../../../../../../auth';
 import { getCafeDetails } from '@/lib/services/cafe/cafe-service';
 
 async function Page(props: { params: Promise<{ slug: string }> }) {
   const { params } = props;
-  const session = await getServerSession(authOptions);
   const banners = await getBanners((await params)?.slug as string);
   const { data:cafeDtails } = await getCafeDetails(
     (

@@ -8,17 +8,20 @@ import { Select, SelectContent, SelectValue } from '../ui/select';
 import { SelectItem, SelectTrigger } from '@radix-ui/react-select';
 import { CATEGORY } from '@/lib/constant';
 import { Checkbox } from '../ui/checkbox';
+import MultiImageUploader from '../ui/multi-image-uploader';
+import { ScrollArea } from '../ui/scroll-area';
+import { Button } from '../ui/button';
 
 function MenuCreation({
   setOpen,
   menu,
 }: {
   setOpen: Dispatch<SetStateAction<boolean>>;
-  menu: MenuType[] | [];
+  menu?: MenuType[] | [];
 }) {
   const Category = CATEGORY;
   return (
-    <SheetContent side="bottom" className="h-screen">
+    <SheetContent side="bottom" className="min-h-screen">
       <SheetHeader>
         <SheetTitle>
           <div className="flex w-full items-center justify-between px-[112px] border-b py-4 shadow">
@@ -35,7 +38,8 @@ function MenuCreation({
           </div>
         </SheetTitle>
       </SheetHeader>
-      <div className="h-full px-[112px]">
+     <div className='h-full flex flex-col justify-between'>
+       <ScrollArea className="h-[80vh] px-[112px] py-[20px]">
         <div className="space-y-[32px]">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
@@ -81,15 +85,15 @@ function MenuCreation({
             // {...register('description')}
             placeholder="Describe the menu item..."
           />
-          <div>
-            <Select
+             <div className='flex space-x-6'>
+             <Select
             // onValueChange={field.onChange} value={field.value ?? ''}
             >
               <SelectTrigger
-                className="[&[data-placeholder]]:text-black/50"
+                className="[&[data-placeholder]]:text-black/50 h-12  w-full border border-input rounded-md py-2"
                 // error={fieldState.error?.message}
               >
-                <SelectValue placeholder="Category" />
+                <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
                 {Category.map(({ id, name }) => (
@@ -99,6 +103,11 @@ function MenuCreation({
                 ))}
               </SelectContent>
             </Select>
+             <Input
+              // error={errors.slug?.message}
+              // {...register('slug')}
+              placeholder="unique-slug"
+            />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Input
@@ -122,22 +131,29 @@ function MenuCreation({
               // {...register('carbs', { valueAsNumber: true })}
             />
           </div>
-          <div className="flex items-center gap-4">
+         
+          <MultiImageUploader />
+            <div className="flex items-center gap-4">
             <div className="flex items-center space-x-2">
+              <span className='text-black/50'>Available</span>
               <Checkbox
               //  {...register('isAvailable')}
               />
             </div>
 
             <div className="flex items-center space-x-2">
+              <span className='text-black/50'>Archived</span>
               <Checkbox
               //  {...register('archived')}
               />
             </div>
           </div>
         </div>
+      </ScrollArea>
+      <div className="sticky bottom-0 bg-white shadow-2xl border-t-[0.5px] py-[20px] px-[112px] flex justify-end">
+        <Button className='w-fit'>Create menu</Button>
       </div>
-      <div className="sticky bottom-0">hell</div>
+     </div>
     </SheetContent>
   );
 }
