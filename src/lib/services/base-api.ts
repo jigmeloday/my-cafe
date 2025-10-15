@@ -1,13 +1,8 @@
 // src/services/baseAPI.ts
 import { toast } from 'sonner';
+import { ApiResponse } from '../../../types';
 
 export type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-
-export interface ApiResponse<T = unknown> {
-  success: boolean;
-  message: string;
-  data?: T;
-}
 
 export async function baseAPI<T = unknown>(
   url: string,
@@ -43,10 +38,14 @@ export async function baseAPI<T = unknown>(
         responseData?.message || `Request failed with status ${res.status}`
       );
     }
+    if(method === 'POST') {
+      toast.success(responseData?.message ?? 'Request successful')
+    }
     return {
       success: true,
       message: responseData?.message ?? 'Request successful',
       data: (responseData?.data ?? responseData) as T,
+      pagination: (responseData?.pagination ?? null)
     };
   } catch (error) {
     const message =

@@ -30,10 +30,11 @@ function OverviewTab({ cafe }: { cafe: CafeType }) {
       limit: 10,
       page: 1,
       cafeId: slug as string,
+      type: 'Cafe'
     });
     if (res.success && res.data) {
       setLoading(false);
-      setReviewsData(res.data);
+      setReviewsData(res.data as ReviewsResponse);
     } else {
       setLoading(false);
 
@@ -57,10 +58,12 @@ function OverviewTab({ cafe }: { cafe: CafeType }) {
         <p className="mt-4 text-[14px] text-justify">{cafe.description}</p>
         <ReviewsSummary ratings={reviewsData.ratings as Ratings} />
 
-        <ReviewList
+       {
+        reviewsData.reviews.length ?  <ReviewList
           reviews={reviewsData.reviews}
           pagination={reviewsData.pagination as Pagination}
-        />
+        /> : null
+       }
 
         {session?.user.id && session.user.role !== 'owner' && (
           <ReviewForm slug={slug as string} onReviewSubmit={loadReviews} />

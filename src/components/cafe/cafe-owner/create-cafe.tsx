@@ -2,162 +2,186 @@
 import NoData from '@/components/shared/no-data';
 import { CafeType, Role } from '../../../../types';
 import CafeCard from '@/components/shared/cafe-card';
-import { Plus } from 'lucide-react';
 import { Sheet } from '@/components/ui/sheet';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import SheetOpener from './sheet-opener';
-import { permissionChecker } from '@/lib/utils';
-import { useSession } from 'next-auth/react';
 import { toast } from 'sonner';
 import { Dialog } from '@/components/ui/dialog';
 import DialogComponent from '@/components/ui/dialog-component';
-import { deleteCafe, updateCafe } from '@/lib/action/cafe.action';
+import {
+  deleteCafeApi,
+  fetchCafeList,
+  updateCafeApi,
+} from '@/lib/services/cafe/cafe-service';
+import CreateCard from '@/components/shared/create-card';
+import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 
-function CreateCafe({ cafe, roles }: { cafe: CafeType[]; roles: Role[] }) {
-  const { data: session } = useSession();
-  const permission = permissionChecker(
-    session?.user.role as string,
-    roles as Role[]
-  );
-
-  const [cafes, setCafes] = useState<CafeType[]>(cafe);
-  const [open, setOpen] = useState(false); // Sheet for create/edit
-  const [dialogOpen, setDialogOpen] = useState(false); // Dialog for close/delete
-  const [selectedCafe, setSelectedCafe] = useState<CafeType | null>(null);
-  const [actionType, setActionType] = useState<'close' | 'delete' | null>(null);
+function CreateCafe({ roles }: { roles: Role[] }) {
+  const [cafes, setCafes] = useState<CafeType[]>([]);
+  const [open, setOpen] = useState(false);
+  const [selectedCafe, setSelectedCafe] = useState<CafeType | null>();
+  const [actionType, setActionType] = useState<'close' | 'delete' | ''>('');
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true);
+  const { data: session } = useSession();
 
-  const handleAction = async () => {
-    setLoading(true);
+  useEffect(() => {
+    setFetching(true);
+    const fetchCafe = async () => {
+      const cafe = await fetchCafeList({ limit: 6, page: 1 });
+      setCafes(cafe?.data ?? []);
+      setFetching(false);
+    };
+    fetchCafe();
+  }, []);
 
-    if (!permission || !actionType || !selectedCafe)
-      return toast.warning('Permission failure');
-
-    if (actionType === 'close') {
-      const updatedCafe = { ...selectedCafe, closed: !selectedCafe.closed };
-      const response = await updateCafe(selectedCafe.id as string, updatedCafe);
-      toast[response.success ? 'success' : 'error'](response.message);
-      if (response.success) {
-        setLoading(false);
-
-        setCafes((prev) =>
-          prev.map((c) => (c.id === selectedCafe.id ? updatedCafe : c))
-        );
-      }
-    }
-
-    if (actionType === 'delete') {
-      const response = await deleteCafe(selectedCafe.id as string);
-      toast[response.success ? 'success' : 'error'](response.message);
-
-      if (response.success) {
-        setLoading(false);
-
-        setCafes((prev) => prev.filter((c) => c.id !== selectedCafe.id));
-      }
-    }
-
-    setDialogOpen(false);
-    setActionType(null);
-    setSelectedCafe(null);
+  const handleSubmit = (updatedCafe: CafeType) => {
+    setCafes((prev) => {
+      const cafeMap = new Map(prev.map((c) => [c.id, c]));
+      cafeMap.set(updatedCafe.id, updatedCafe);
+      return Array.from(cafeMap.values());
+    });
   };
 
+  const handleAction = async () => {
+    if (!selectedCafe) return;
+    setLoading(true);
+
+    try {
+      let response;
+
+      if (actionType === 'delete' && selectedCafe?.id) {
+        response = await deleteCafeApi(selectedCafe.id);
+      } else if (actionType === 'close' && selectedCafe?.id) {
+        response = await updateCafeApi(selectedCafe?.id, {
+          ...selectedCafe,
+          logo: selectedCafe.logo,
+          closed: !selectedCafe.closed,
+        });
+      } else {
+        throw new Error('Invalid action');
+      }
+
+      if (response.success) {
+        toast.success(
+          actionType === 'delete'
+            ? 'Cafe deleted successfully!'
+            : selectedCafe.closed
+            ? 'Cafe is now open!'
+            : 'Cafe closed successfully!'
+        );
+
+        // Update local state
+        setCafes((prev) => {
+          if (actionType === 'delete') {
+            return prev.filter((c) => c.id !== selectedCafe.id);
+          } else {
+            return prev.map((c) =>
+              c.id === selectedCafe.id ? { ...c, closed: !c.closed } : c
+            );
+          }
+        });
+      } else {
+        toast.error(response.message || 'Action failed.');
+      }
+    } catch (err) {
+      toast.error('Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+      setDialogOpen(false);
+      setSelectedCafe(null);
+      setActionType('');
+    }
+  };
   return (
     <div>
-      {cafes.length ? (
-        <div className="min-h-screen px-[112px] my-[52px]">
-          <div className="grid grid-cols-4 gap-4">
-            {cafes.map((item) => (
-              <CafeCard
-                key={item?.id}
-                cafe={item}
-                roles={roles}
-                onEdit={(cafe) => {
-                  setSelectedCafe(cafe); // set cafe to edit
-                  setOpen(true); // open the sheet
-                }}
-                onAction={(cafeId, type) => {
-                  const cafeObj = cafes?.find((c) => c.id === cafeId);
-                  if (!cafeObj) return;
-                  setSelectedCafe(cafeObj);
-                  setActionType(type);
-                  setDialogOpen(true);
-                }}
-              />
-            ))}
-            <div
-              onClick={() => setOpen(true)}
-              className="min-h-[340px] w-full rounded-md flex flex-col items-center justify-center border-2 border-dashed border-primary-500 p-6 cursor-pointer group transition-all duration-300 hover:shadow-lg"
-            >
-              <Plus
-                size={32}
-                className="text-primary-500 transition-transform duration-700 ease-in-out group-hover:rotate-180"
-              />
-              <p className="mt-4 text-center text-sm font-medium">
-                Open your cafe by{' '}
-                <span className="font-semibold text-primary-500">
-                  clicking here
-                </span>
-              </p>
-              <p className="mt-2 text-center text-xs text-black/70">
-                Cafe will remain inactive until admin permit
-              </p>
-            </div>
-          </div>
+      {
+        !session?.user.cafeCreation && <div className="w-full bg-primary-500 py-2 px-[112px] text-[14px] text-white sticky top-[88px]">
+        Congrats! Your café is pending admin approval. Please wait 1–24 hours or
+        contact admin if delayed <Link className="font-bold underline ml-2" href="/contact">CONTACT US</Link>.
+      </div>
+      }
+      {fetching ? (
+        <div className="h-screen flex items-center justify-center">
+          Please wait
         </div>
       ) : (
-        <NoData
-          title="No Cafe"
-          description="No cafes here… yet! 😢 But don’t worry, you can brew your first one by hitting the ‘Create’ button!"
-          buttonText="Create Cafe"
-          action={setOpen}
-        />
-      )}
+        <div>
+          {cafes.length ? (
+            <div className="px-[112px] my-[52px] grid grid-cols-4 gap-4">
+              {cafes.map((item) => (
+                <CafeCard
+                  key={item?.id}
+                  cafe={item}
+                  roles={roles}
+                  onEdit={(cafe) => {
+                    setSelectedCafe(cafe); // set cafe to edit
+                    setOpen(true); // open the sheet
+                  }}
+                  onAction={(cafeId, type) => {
+                    const cafeObj = cafes?.find((c) => c.id === cafeId);
+                    if (!cafeObj) return;
+                    setSelectedCafe(cafeObj);
+                    setActionType(type);
+                    setDialogOpen(true);
+                  }}
+                />
+              ))}
+              <CreateCard
+                setOpen={setOpen}
+                title="Open your cafe by"
+                primaryText="clicking here"
+                description=" Cafe will remain inactive until admin permit"
+              />
+            </div>
+          ) : (
+            <NoData
+              title="No Cafe"
+              description="No cafes here… yet! 😢 But don’t worry, you can brew your first one by hitting the ‘Create’ button!"
+              buttonText="Create Cafe"
+              action={setOpen}
+            />
+          )}
+          {/* Sheet for creating/editing cafe */}
+          <Sheet open={open}>
+            <SheetOpener
+              setOpen={setOpen}
+              setCafe={setSelectedCafe}
+              cafe={selectedCafe ?? undefined}
+              onSave={(updatedCafe: CafeType) => {
+                handleSubmit(updatedCafe);
+              }}
+            />
+          </Sheet>
 
-      {/* Sheet for creating/editing cafe */}
-      <Sheet open={open}>
-        <SheetOpener
-          setOpen={setOpen}
-          setCafe={setSelectedCafe}
-          cafe={selectedCafe ?? undefined}
-          onSave={(updatedCafe: CafeType) => {
-            setCafes((prev) => {
-              const exists = prev.find((c) => c.id === updatedCafe.id);
-              if (exists) {
-                return prev.map((c) =>
-                  c.id === updatedCafe.id ? updatedCafe : c
-                );
+          {/* Dialog for close/delete */}
+          <Dialog open={dialogOpen}>
+            <DialogComponent
+              btn1="Cancel"
+              isDisabled={loading}
+              btn2={
+                actionType === 'delete'
+                  ? 'Delete'
+                  : selectedCafe?.closed
+                  ? 'Open'
+                  : 'Close'
               }
-              return [updatedCafe, ...prev]; // add new cafe
-            });
-          }}
-        />
-      </Sheet>
-
-      {/* Dialog for close/delete */}
-      <Dialog open={dialogOpen}>
-        <DialogComponent
-          btn1="Cancel"
-          isDisabled={loading}
-          btn2={
-            actionType === 'delete'
-              ? 'Delete'
-              : selectedCafe?.closed
-              ? 'Open'
-              : 'Close'
-          }
-          title="Confirm Action"
-          description={`Are you sure you want to ${
-            actionType === 'close'
-              ? selectedCafe?.closed
-                ? 'open'
-                : 'close'
-              : actionType
-          } this cafe?`}
-          onConfirm={handleAction}
-          onCancel={() => setDialogOpen(false)}
-        />
-      </Dialog>
+              title="Confirm Action"
+              description={`Are you sure you want to ${
+                actionType === 'close'
+                  ? selectedCafe?.closed
+                    ? 'open'
+                    : 'close'
+                  : actionType
+              } this cafe?`}
+              onConfirm={handleAction}
+              onCancel={() => setDialogOpen(false)}
+            />
+          </Dialog>
+        </div>
+      )}
     </div>
   );
 }

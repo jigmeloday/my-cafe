@@ -23,7 +23,7 @@ export default function ReviewForm({
     const payload = {
       stars: rating,
       comment: comment,
-      reviewableType: 'cafe',
+      reviewableType: 'Cafe',
       reviewableId: slug,
     };
     const response = await sendReview(payload);

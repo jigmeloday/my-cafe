@@ -1,4 +1,4 @@
-import NextAuth, { AuthOptions } from 'next-auth';
+import NextAuth, { AuthOptions, User } from 'next-auth';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { compareSync } from 'bcrypt-ts-edge';
@@ -44,7 +44,8 @@ export const authOptions: AuthOptions = {
               email: user.email!,
               role: user.role?.name,
               image: user.image,
-            };
+             cafeCreation: user.cafeCreation
+            } as unknown as User;;
           }
         }
         return null;
@@ -57,6 +58,7 @@ export const authOptions: AuthOptions = {
       token.id = user.id;
       token.role = user.role;
       token.image = user.image;
+      token.cafeCreation = user.cafeCreation
     }
     return token;
   },
@@ -65,6 +67,7 @@ export const authOptions: AuthOptions = {
       session.user.id = token.id;
       session.user.role = token.role;
       session.user.image = token.image;
+      session.user.cafeCreation = token.cafeCreation;
     }
     return session;
   },

@@ -1,12 +1,9 @@
-import { PrismaClient } from '@/generated/prisma';
 import { NextResponse } from 'next/server';
 import { hashSync } from 'bcrypt-ts-edge';
-
-const prisma = new PrismaClient();
+import prisma from '@/lib/prisma';
 
 export async function POST(req: Request) {
   const { token, password } = await req.json();
-  console.log(token)
   if (!token) {
     return NextResponse.json(
       { message: 'Token is missing' },

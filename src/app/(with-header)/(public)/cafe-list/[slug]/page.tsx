@@ -1,7 +1,6 @@
 import CafeBanner from '@/components/cafe/cafe-banner';
 import CafeTab from '@/components/cafe/cafe-tabs/cafe-tab';
 import { getBanners } from '@/lib/action/banner.action';
-import { getCafeByCafeOwnerById } from '@/lib/action/cafe.action';
 import { timeFormatter } from '@/lib/utils';
 import { MapPin, Phone, Timer } from 'lucide-react';
 import Image from 'next/image';
@@ -10,12 +9,13 @@ import { CafeType } from '../../../../../../types';
 import { redirect } from 'next/navigation';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../../../../../../auth';
+import { getCafeDetails } from '@/lib/services/cafe/cafe-service';
 
 async function Page(props: { params: Promise<{ slug: string }> }) {
   const { params } = props;
   const session = await getServerSession(authOptions);
   const banners = await getBanners((await params)?.slug as string);
-  const cafeDtails = await getCafeByCafeOwnerById(
+  const { data:cafeDtails } = await getCafeDetails(
     (
       await params
     )?.slug as string

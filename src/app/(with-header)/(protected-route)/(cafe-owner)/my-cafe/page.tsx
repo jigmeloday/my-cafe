@@ -1,25 +1,25 @@
 import { getServerSession } from 'next-auth';
-import { getCafeByCafeOwner } from '@/lib/action/cafe.action';
 import CreateCafe from '@/components/cafe/cafe-owner/create-cafe';
 import { authOptions } from '../../../../../../auth';
 import { redirect } from 'next/navigation';
 import { fetchRole } from '@/lib/action/get-role.action';
+import { fetchCafeList } from '@/lib/services/cafe/cafe-service';
+import { permissionChecker } from '@/lib/utils';
+import { Role } from '../../../../../../types';
 
 async function Page() {
   const session = await getServerSession(authOptions);
-  if(session?.user.role !== 'owner' && session?.user.role !== 'super_admin') {
-    redirect('/404')
+  const roles = await fetchRole();
+  const permission = permissionChecker(
+    session?.user.role as string,
+    roles as Role[]
+  );
+
+  if (!permission) {
+    redirect('/404');
   }
 
-  const cafeListRaw = await getCafeByCafeOwner(session?.user.id as string);
-  const cafeList = cafeListRaw.map(cafe => ({
-    ...cafe,
-    logo: cafe.logo ?? '',
-  }));
-  const roles = await fetchRole();
-  return (
-   <CreateCafe cafe={cafeList} roles={roles}/>
-  )
+  return <CreateCafe roles={roles} />;
 }
 
 export default Page;

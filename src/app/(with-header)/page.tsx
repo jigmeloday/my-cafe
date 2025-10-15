@@ -6,22 +6,22 @@ import EventCard from '@/components/shared/event-cards';
 import MenuCard from '@/components/shared/menu-card';
 import Newsletter from '@/components/shared/newsletter';
 import TitleComponent from '@/components/shared/title-component';
-import { getBanners } from '@/lib/action/banner.action';
-import { cafeList, getFeature, menuList } from '@/lib/action/cafe.action';
+// import { getBanners } from '@/lib/action/banner.action';
+import { topRatedCafeList } from '@/lib/action/cafe.action';
 import { CafeType } from '../../../types';
 import Link from 'next/link';
 
 export default async function Home() {
-  const cafe = await cafeList({ limit: 4 });
-  const menu = await menuList({ limit: 4 });
-  const banners = await getBanners();
-  const feature = await getFeature();
+  const cafe = await topRatedCafeList();
+  // const banners = await getBanners();
+  // const feature = await getFeature();
+  // const menu = await menuList({ limit: 4 });
 
   return (
     <main>
-      <section className="flex lg:h-[80vh] mt-[12px]">
+      {/* <section className="flex lg:h-[80vh] mt-[12px]">
         <LandingBanner banners={banners} />
-      </section>
+      </section> */}
       <section className="my-[120px] px-[16px] lg:px-[112px]">
         <div className="flex items-center justify-between">
           <TitleComponent
@@ -43,7 +43,7 @@ export default async function Home() {
           ))}
         </div>
       </section>
-      <section className="my-[120px] px-[16px] lg:px-[112px]">
+      {/* <section className="my-[120px] px-[16px] lg:px-[112px]">
         <TitleComponent
           title="Top Rated"
           subtitle="See which cafés are winning hearts in our community."
@@ -53,8 +53,8 @@ export default async function Home() {
             <MenuCard key={item.id} menu={item} />
           ))}
         </div>
-      </section>
-      <section className="my-[120px] px-[16px] lg:px-[112px]">
+      </section> */}
+      {/* <section className="my-[120px] px-[16px] lg:px-[112px]">
         <TitleComponent
           title="Featured Cafe"
           subtitle="Discover cafés we’ve specially selected for you."
@@ -62,8 +62,8 @@ export default async function Home() {
         <div className="my-[24px]">
           <FeatureList feature={feature as CafeType[]} />
         </div>
-      </section>
-      <section className="my-[120px] px-[16px] lg:px-[112px]">
+      </section> */}
+      {/* <section className="my-[120px] px-[16px] lg:px-[112px]">
         <div className="flex items-center justify-between">
           <TitleComponent
             title="Our Blogs"
@@ -79,8 +79,8 @@ export default async function Home() {
         <div className="my-[32px]">
           <BlogList />
         </div>
-      </section>
-      <section className="my-[120px] px-[16px] lg:px-[112px]">
+      </section> */}
+      {/* <section className="my-[120px] px-[16px] lg:px-[112px]">
         <TitleComponent
           title="Upcoming Events"
           subtitle="Stay updated on our latest events and experiences."
@@ -88,8 +88,8 @@ export default async function Home() {
         <div className="grid grid-cols-4 my-[32px]">
           <EventCard />
         </div>
-      </section>
-      <section className="py-[120px] bg-primary-50/20 px-[16px] lg:px-[112px]">
+      </section> */}
+      {/* <section className="py-[120px] bg-primary-50/20 px-[16px] lg:px-[112px]">
         <div className=" py-[96px]">
           <div className="mx-auto max-w-2xl text-center">
             <h4>
@@ -106,7 +106,7 @@ export default async function Home() {
             </p>
           </div>
         </div>
-      </section>
+      </section> */}
     </main>
   );
 }

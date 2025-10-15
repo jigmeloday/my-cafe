@@ -91,6 +91,12 @@ export default function CafeCard(props: {
           <p className="text-xs text-gray-500 mt-2">
             {timeFormatter(cafe.openTime)} – {timeFormatter(cafe.closeTime)}
           </p>
+          {permission && !cafe.isActive && (
+            <p className="text-[12px] text-red-500 mt-4">
+              *Your café is being reviewed — we’ll notify you once it’s{' '}
+              <span className="font-bold uppercase">approved!</span>
+            </p>
+          )}
         </div>
       </Link>
     </>

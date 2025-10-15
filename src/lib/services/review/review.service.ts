@@ -1,18 +1,20 @@
-import { FetchReviewListResponse } from '../../../../types';
+import { ApiResponse } from '../../../../types';
 import { baseAPI } from '../base-api';
 
 export const fetchReviewList = async ({
   limit,
   page,
-  cafeId
+  cafeId,
+  type
 }: {
   limit: number;
   page: number;
-  cafeId: string
-}):Promise<FetchReviewListResponse> => {
+  cafeId: string;
+  type: string;
+}):Promise<ApiResponse> => {
   try {
     const response = await baseAPI(
-      `/review?limit=${limit || 10}&page=${page}&cafeId=${cafeId}`,
+      `/review?limit=${limit || 10}&page=${page}&cafeId=${cafeId}&type=${type}`,
       'GET'
     );
     return response;

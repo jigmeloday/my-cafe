@@ -12,6 +12,7 @@ import { Address } from '@/generated/prisma';
 
 export type CafeType = z.infer<typeof INSERT_CAFE_SCHEMA> & {
   id?: string;
+  logo?: string
   address?: Address;
   createdAt?: Date | string;
   totalStars?: number;
@@ -133,12 +134,6 @@ export type ReviewsResponse = {
   };
   ratings: RatingsInfo;
 };
-export interface FetchReviewListResponse {
-  success: boolean;
-  message?: string;
-  data: ReviewsResponse | null;
-}
-
 export type Review = {
   id: string;
   rating?: number | null;
@@ -171,4 +166,11 @@ export interface OverviewTabProps {
 export interface Ratings {
   overallScore: number;
   starPercentages: Record<number, number>; // 1-5 stars
+}
+
+export interface ApiResponse<T = unknown> {
+  success: boolean;
+  message: string;
+  data?: T;
+  pagination?: Pagination | null;
 }

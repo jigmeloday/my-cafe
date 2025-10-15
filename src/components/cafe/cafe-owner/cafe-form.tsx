@@ -3,11 +3,18 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import ImageUploader from '@/components/ui/image-uploader';
 import { CafeType } from '../../../../types';
-import { useState } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Switch } from '@/components/ui/switch';
 
-function CafeForm() {
+function CafeForm(
+  {
+  image,
+  setImage,
+}: {
+  image: File | null;
+  setImage: (file: File | null) => void;
+}
+) {
   const {
     register,
     formState: { errors },
@@ -15,11 +22,8 @@ function CafeForm() {
     watch,
   } = useFormContext<CafeType>();
   const logo = watch('logo');
-  const [image, setImage] = useState<File | null>(null);
-
   const handleImageChange = (file: File | null) => {
-    setImage(file);
-    setValue('logo', file as File);
+   setImage(file);
   };
 
   return (
