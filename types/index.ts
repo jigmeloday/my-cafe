@@ -19,12 +19,17 @@ export type CafeType = z.infer<typeof INSERT_CAFE_SCHEMA> & {
 };
 
 export type MenuType = z.infer<typeof INSERT_MENU_SCHEMA> & {
-  id: string;
-  createdAt: Date | string;
-  cafe: {
+  id?: string;
+  createdAt?: Date | string;
+  Images?: Images[], 
+  cafe?: {
     name: string;
   };
 };
+
+export interface Images {
+  url: string
+}
 
 export type BannerType = z.infer<typeof INSERT_BANNER_SCHEMA> & {
   id: string;
@@ -173,4 +178,8 @@ export interface ApiResponse<T = unknown> {
   message: string;
   data?: T;
   pagination?: Pagination | null;
+}
+export interface CategoryType {
+  id: string;
+  name: string
 }

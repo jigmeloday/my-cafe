@@ -194,7 +194,7 @@ export async function GET(
   { params }: { params: { cafeId: string } }
 ) {
   try {
-    const { cafeId } = params;
+    const { cafeId } = await params;
 
     const cafe = await prisma.cafe.findUnique({
       where: { id: cafeId },

@@ -418,3 +418,21 @@ export const USER = [
     password: hashSync('Test@123', 10),
   }
 ]
+
+
+export const CATEGORY = [
+  { name: 'Coffee' },
+  { name: 'Tea' },
+  { name: 'Smoothies' },
+  { name: 'Juices' },
+  { name: 'Bakery' },
+  { name: 'Sandwiches' },
+  { name: 'Burgers' },
+  { name: 'Pizza' },
+  { name: 'Patties' },
+  { name: 'Salads' },
+  { name: 'Desserts' },
+  { name: 'Snacks' },
+  { name: 'Specials'},
+  { name: 'Others' },
+];

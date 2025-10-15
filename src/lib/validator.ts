@@ -34,18 +34,54 @@ export const INSERT_CAFE_BE_SCHEMA = INSERT_CAFE_SCHEMA.extend({
   logo: z.string().url('Invalide url'),
 });
 
+export const INSERT_MENU_SCHEMA = z.object({
+  name: z
+    .string()
+    .min(2, 'Menu name must be at least 2 characters long')
+    .max(100, 'Menu name cannot exceed 100 characters'),
+
+  slug: z.string().optional(),
+  price: z.number().nonnegative('Price cannot be negative'),
+  discount: z
+    .number()
+    .min(0, 'Discount cannot be negative')
+    .max(100, 'Discount cannot exceed 100%')
+    .optional(),
+  spicyRate: z
+    .number()
+    .int('Spicy rate must be a whole number')
+    .min(0, 'Spicy rate must be at least 0')
+    .max(5, 'Spicy rate cannot exceed 5')
+    .nullable()
+    .optional(),
+  prepTime: z
+    .number()
+    .int('Preparation time must be a whole number')
+    .min(1, 'Preparation time must be at least 1 minute')
+    .optional(),
+  description: z
+    .string()
+    .min(5, 'Description must be at least 5 characters long'),
+  categoryId: z.string().min(1, 'Please select a category'),
+  ingredients: z.array(z.string().min(1, 'Ingredient cannot be empty')),
+  calories: z.number().nonnegative('Calories cannot be negative').optional(),
+  protein: z.number().nonnegative('Protein cannot be negative').optional(),
+  fat: z.number().nonnegative('Fat cannot be negative').optional(),
+  carbs: z.number().nonnegative('Carbohydrates cannot be negative').optional(),
+  isAvailable: z.boolean(),
+  archived: z.boolean(),
+});
+
+export const INSERT_MENU_BE_SCHEMA = INSERT_MENU_SCHEMA.extend({
+  imageUrls: z.array(z.string()), 
+  cafeId: z.string(),
+});
+
 export const INSERT_IMAGE_SCHEMA = z.object({
   image: z.instanceof(File),
 });
 
-export const INSERT_MENU_SCHEMA = z.object({
-  cafeId: z.string().uuid('Cafe ID must be a valid UUID'),
-  name: z.string().min(2, 'Menu name must be at least 2 characters long'),
-  img: z.string().url('Image must be a valid URL').nullable().optional(),
-  price: z.number().nonnegative('Price must be a non-negative number'),
-  spicyRate: z.number().int().min(0).max(5).nullable().optional(), // assuming a scale 0-5
-  ingredients: z.array(z.string()).nullable().optional(),
-});
+
 
 export const INSERT_BANNER_SCHEMA = z.object({
   cafeId: z.string(),

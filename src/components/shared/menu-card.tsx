@@ -9,7 +9,7 @@ function MenuCard({ menu }: { menu: MenuType }) {
     <Link href={`/menu-details/${menu.id}`} className="w-full shadow rounded-md overflow-hidden hover:-translate-y-1 hover:shadow-lg hover:shadow-primary-500/10 cursor-pointer transition duration-500 ease-in-out">
       <div className="h-[350px] w-full">
         <Image
-          src={menu?.img || '/banner/dummy/globe.jpg'}
+          src={menu?.Images?.[0]?.url || '/banner/dummy/globe.jpg'}
           alt=""
           height={500}
           width={500}
