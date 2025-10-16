@@ -1,24 +1,24 @@
 import { ApiResponse, MenuType } from '../../../../types';
 import { baseAPI } from '../base-api';
 
-export const createMenuApi = async (payload: MenuType) => {
+export const createMenuApi = async (payload: MenuType): Promise<ApiResponse<MenuType>> => {
   try {
     return await baseAPI('/menu', 'POST', payload);
   } catch (error) {
     return {
       success: false,
-      message: error || 'Something went wrong',
+      message: 'Something went wrong',
     };
   }
 };
 
-export const updateMenuApi = async (id: string, payload: MenuType) => {
+export const updateMenuApi = async (id: string, payload: MenuType): Promise<ApiResponse<MenuType>> => {
   try {
     return await baseAPI(`/menu/${id}`, 'PUT', payload);
   } catch (error) {
     return {
       success: false,
-      message: error || 'Something went wrong',
+      message: 'Something went wrong',
     };
   }
 };

@@ -38,15 +38,12 @@ export default function MenuForm({
     register,
     handleSubmit,
     control,
-    reset,
     setValue,
-    watch,
     formState: { errors, isSubmitting },
   } = useForm<MenuType>({
     resolver: zodResolver(INSERT_MENU_SCHEMA),
     defaultValues: menu ?? {
       name: '',
-      slug: '',
       price: 0,
       discount: 0,
       spicyRate: null,
@@ -84,16 +81,28 @@ export default function MenuForm({
         <ScrollArea className="h-[80vh] px-[112px] py-6 space-y-8">
           {/* Basic Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
-            {['name', 'slug'].map((f) => (
-              <Input
-                key={f}
-                {...register(f as keyof MenuType)}
-                placeholder={f[0].toUpperCase() + f.slice(1)}
-                error={
-                  errors[f as keyof MenuType]?.message as string | undefined
-                }
-              />
-            ))}
+            <Input
+              {...register('name')}
+              placeholder={'Menu name'}
+              error={errors.name?.message as string | undefined}
+            />
+            <div>
+              <Select onValueChange={(val) => setValue('categoryId', val)}>
+                <SelectTrigger
+                  className="border rounded-md w-full"
+                  error={errors.categoryId?.message}
+                >
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      {c.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             {['price', 'discount', 'spicyRate', 'prepTime'].map((f) =>
               renderNumberInput(
                 f as keyof MenuType,
@@ -107,27 +116,21 @@ export default function MenuForm({
             placeholder="Describe this menu..."
             error={errors.description?.message}
           />
-          <div className="my-4">
-            <Select onValueChange={(val) => setValue('categoryId', val)}>
-              <SelectTrigger
-                className="border rounded-md w-full"
-                error={errors.categoryId?.message}
-              >
-                <SelectValue placeholder="Select category" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          {/* Nutrition */}
+          <div className="my-8">
+            <h6>Nutrition</h6>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 my-4">
+              {['calories', 'protein', 'fat', 'carbs'].map((f) =>
+                renderNumberInput(
+                  f as keyof MenuType,
+                  f[0].toUpperCase() + f.slice(1)
+                )
+              )}
+            </div>
           </div>
-
           {/* Ingredients */}
 
-          <div className="space-y-3 py-6 border-y my-4">
+          <div className="space-y-3 py-6 border-y my-8">
             <h6>Ingredients</h6>
             {fields.map((f, i) => (
               <div key={f.id} className="flex gap-2">
@@ -159,17 +162,6 @@ export default function MenuForm({
               <Plus className="h-4 w-4 mr-2" />
               Add Ingredient
             </Button>
-          </div>
-
-          {/* Nutrition */}
-          <h6>Nutrition</h6>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 my-4">
-            {['calories', 'protein', 'fat', 'carbs'].map((f) =>
-              renderNumberInput(
-                f as keyof MenuType,
-                f[0].toUpperCase() + f.slice(1)
-              )
-            )}
           </div>
 
           <MultiImageUploader value={imageUrls} onChange={setImageUrls} />

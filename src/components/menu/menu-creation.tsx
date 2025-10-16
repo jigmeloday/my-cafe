@@ -2,7 +2,7 @@
 
 import { useState, Dispatch, SetStateAction } from 'react';
 import { useParams } from 'next/navigation';
-import { CategoryType, MenuType } from '../../../types';
+import { MenuType } from '../../../types';
 import { SheetContent, SheetHeader, SheetTitle } from '../ui/sheet';
 import { X } from 'lucide-react';
 import { Button } from '../ui/button';
@@ -13,11 +13,11 @@ import { imageUpload } from '@/lib/services/image-upload-shared/image-upload.ser
 export default function MenuCreation({
   setOpen,
   menu,
-  categories
+  onMenuCreated,
 }: {
   setOpen: Dispatch<SetStateAction<boolean>>;
   menu?: MenuType | null;
-  categories: CategoryType[]
+  onMenuCreated?: (menu: MenuType) => void;
 }) {
   const { slug } = useParams();
   const cafeId = String(slug);
@@ -27,8 +27,8 @@ export default function MenuCreation({
   const handleSubmit = async (data: MenuType) => {
     const urls: string[] = [];
     if (imageUrls) {
-      for (const file of imageUrls) {
-        const res = await imageUpload(file); // await works here
+      for (const file of imageUrls.slice(0, 3)) {
+        const res = await imageUpload(file);
         if (res) urls.push(res);
       }
     }
@@ -42,7 +42,12 @@ export default function MenuCreation({
     const response = menu
       ? await updateMenuApi(menu.id as string, payload)
       : await createMenuApi(payload);
-    if (response.success) setOpen(false);
+    if (response.success) {
+      if (onMenuCreated && response.data) {
+        onMenuCreated(response?.data as MenuType);
+      }
+      setOpen(false);
+    }
   };
 
   return (

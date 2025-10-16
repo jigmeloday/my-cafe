@@ -2,13 +2,12 @@
 
 import MenuCard from '@/components/shared/menu-card';
 import { useEffect, useState } from 'react';
-import { CategoryType, MenuType } from '../../../../types';
+import { MenuType } from '../../../../types';
 import { Button } from '@/components/ui/button';
 import { useSession } from 'next-auth/react';
 import { Sheet } from '@/components/ui/sheet';
 import MenuCreation from '@/components/menu/menu-creation';
 import { fetchMenu } from '@/lib/services/menu/menu.service';
-import { fetchCategory } from '@/lib/services/share.service';
 import { useParams } from 'next/navigation';
 import { useCategories } from '@/context/category-context';
 
@@ -59,23 +58,21 @@ function MenuTab() {
         <h4>Categories</h4>
         <div className="mt-[24px] space-y-1 h-[70vh] overflow-y-auto rounded-md">
           <div
-              onClick={() => handleCategoryClick('')}
-              className={`transition-all duration-500 border ease-in-out rounded-md px-[8px] py-2 cursor-pointer ${
-                activeCategory === ''
-                  ? 'border-primary-500 bg-primary-50/20 shadow'
-                  : 'hover:bg-primary-50/10 border-white'
+            onClick={() => handleCategoryClick('')}
+            className={`transition-all duration-500 border ease-in-out rounded-md px-[8px] py-2 cursor-pointer ${
+              activeCategory === ''
+                ? 'border-primary-500 bg-primary-50/20 shadow'
+                : 'hover:bg-primary-50/10 border-white'
+            }`}
+          >
+            <p
+              className={`font-bold ${
+                activeCategory === '' ? 'text-primary-300' : 'text-primary-500'
               }`}
             >
-              <p
-                className={`font-bold ${
-                  activeCategory === ''
-                    ? 'text-primary-300'
-                    : 'text-primary-500'
-                }`}
-              >
-                All menu
-              </p>
-            </div>
+              All menu
+            </p>
+          </div>
           {categories.map(({ id, name }) => (
             <div
               key={id}
@@ -126,7 +123,12 @@ function MenuTab() {
 
       {/* Menu Creation Sheet */}
       <Sheet open={open}>
-        <MenuCreation categories={categories} setOpen={setOpen} />
+        <MenuCreation
+          onMenuCreated={() => {
+            loadMenus(activeCategory);
+          }}
+          setOpen={setOpen}
+        />
       </Sheet>
     </div>
   );

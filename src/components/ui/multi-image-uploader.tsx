@@ -11,14 +11,19 @@ function MultiImageUploader({ value, onChange }: MultiImageUploaderProps) {
   const [error, setError] = useState<string | null>(null);
 
   const MAX_SIZE_MB = 7;
+  const MAX_IMAGES = 3;
 
   const handleFilesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
 
     const filesArray = Array.from(e.target.files);
+    const totalImages = value.length + filesArray.length;
+    if (totalImages > MAX_IMAGES) {
+      setError(`You can only upload up to ${MAX_IMAGES} images.`);
+      return;
+    }
     const validFiles: File[] = [];
     const previewUrls: string[] = [];
-
     for (const file of filesArray) {
       if (file.size / 1024 / 1024 > MAX_SIZE_MB) {
         setError(`"${file.name}" exceeds ${MAX_SIZE_MB} MB and was skipped.`);
@@ -28,8 +33,8 @@ function MultiImageUploader({ value, onChange }: MultiImageUploaderProps) {
       previewUrls.push(URL.createObjectURL(file));
     }
     const newFiles = [...value, ...validFiles];
-     onChange(newFiles);
-     setPreviews(newFiles.map((file) => URL.createObjectURL(file)));
+    onChange(newFiles);
+    setPreviews(newFiles.map((file) => URL.createObjectURL(file)));
     // if (validFiles.length > 0) {
     //   value((prev) => [...prev, ...validFiles]);
     //   setPreviews((prev) => [...prev, ...previewUrls]);
@@ -64,7 +69,10 @@ function MultiImageUploader({ value, onChange }: MultiImageUploaderProps) {
 
       {/* Error Message */}
       {error && (
-        <p className="text-sm text-red-500 p-2 text-start hover:bg-primary-50/20 cursor-pointer rounded-md transition duration-300 ease-in-out" onClick={() => setError('')}>
+        <p
+          className="text-sm text-red-500 p-2 text-start hover:bg-primary-50/20 cursor-pointer rounded-md transition duration-300 ease-in-out"
+          onClick={() => setError('')}
+        >
           {error}
         </p>
       )}

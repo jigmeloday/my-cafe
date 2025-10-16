@@ -63,7 +63,7 @@ export const INSERT_MENU_SCHEMA = z.object({
     .string()
     .min(5, 'Description must be at least 5 characters long'),
   categoryId: z.string().min(1, 'Please select a category'),
-  ingredients: z.array(z.string().min(1, 'Ingredient cannot be empty')),
+  ingredients: z.array(z.string().min(1, 'Ingredient cannot be empty')).max(4, 'You can add up to 4 ingredients only'),
   calories: z.number().nonnegative('Calories cannot be negative').optional(),
   protein: z.number().nonnegative('Protein cannot be negative').optional(),
   fat: z.number().nonnegative('Fat cannot be negative').optional(),
