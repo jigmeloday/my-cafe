@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { CAFE_TABS } from '@/lib/constant';
 import { CafeType } from '../../../../types';
 import { timeFormatter } from '@/lib/utils';
+import Image from 'next/image';
 
 function CafeTab({ cafe }: { cafe: CafeType }) {
   const [active, setActive] = useState(2);
@@ -20,7 +21,9 @@ function CafeTab({ cafe }: { cafe: CafeType }) {
         {CAFE_TABS.map(({ id, label }) => (
           <div
             key={id}
-            onClick={() => setActive(id)}
+            onClick={() => {
+              if (cafe.isActive) setActive(id);
+            }}
             className={`${
               active === id
                 ? 'bg-white shadow text-primary-500'
@@ -31,16 +34,42 @@ function CafeTab({ cafe }: { cafe: CafeType }) {
           </div>
         ))}
       </div>
-      <div className="flex space-x-6">
-        <div className="w-[80%] mt-[32px] border rounded-md p-[20px]">
-          {active === 1 ? (
-            <MenuTab />
-          ) : active === 2 ? (
-            <OverviewTab cafe={cafe} />
-          ) : (
-            <EventTabs />
-          )}
-        </div>
+      <div className="flex space-x-6 min-h-[80%]">
+        {cafe.isActive ? (
+          <div className="w-[80%] mt-[32px] border rounded-md p-[20px]">
+            {active === 1 ? (
+              <MenuTab />
+            ) : active === 2 ? (
+              <OverviewTab cafe={cafe} />
+            ) : (
+              <EventTabs />
+            )}
+          </div>
+        ) : (
+          <div className="w-[80%] flex flex-col items-center justify-center h-full text-center p-8 ">
+            <div className="size-[220px] animate-fade-in-up mb-6">
+              <Image
+                src="/svg/cheer.svg"
+                alt="Cafe Opening Celebration"
+                width={300}
+                height={300}
+                className="h-full w-full object-contain drop-shadow-xl"
+              />
+            </div>
+
+            <div className="space-y-3 max-w-[500px]">
+              <h6 className="text-primary-500/80">
+                ☕ Cheers to a fresh beginning!
+              </h6>
+              <p className="text-[14px] text-black/60">
+                Your cafe has officially entered our review queue — the aroma of success is already brewing. 🌿
+              </p>
+              <p className="text-primary-500 text-[12px] italic">
+                Sit back and relax — your grand opening is just around the corner. ✨
+              </p>
+            </div>
+          </div>
+        )}
         <div className="mt-[32px] border p-[20px] rounded-md h-fit sticky top-[160px]">
           <h6>More details</h6>
           <div className="mt-[20px] space-y-[8px]">

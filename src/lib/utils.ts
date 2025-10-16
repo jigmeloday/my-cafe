@@ -221,3 +221,4 @@ export const getInitials = (name?: string) => {
   const initials = names.map((n) => n[0].toUpperCase());
   return initials.slice(0, 2).join("");
 }
+

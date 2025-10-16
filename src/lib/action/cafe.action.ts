@@ -26,6 +26,24 @@ export const topRatedCafeList = async () => {
   }
 };
 
+export const getCafeByCafeOwner = async () => {
+  const prisma = new PrismaClient();
+  const session = await getServerSession(authOptions);
+  try {
+    const data = await prisma.cafe.findMany({
+      where: {
+        ownerId: session?.user.id,
+      },
+      take: 10,
+      orderBy: { createdAt: 'desc' },
+    });
+    return converToPlanObject(data);
+  } catch (error) {
+    console.error('Failed to fetch cafes:', error);
+    return []; // fallback value
+  }
+};
+
 
 
 // export const menuList = async ({ limit }: { limit?: number }) => {
@@ -70,22 +88,7 @@ export const topRatedCafeList = async () => {
 //   }
 // };
 
-// export const getCafeByCafeOwner = async (id: string) => {
-//   const prisma = new PrismaClient();
-//   try {
-//     const data = await prisma.cafe.findMany({
-//       where: {
-//         ownerId: id,
-//       },
-//       take: 10,
-//       orderBy: { createdAt: 'desc' },
-//     });
-//     return converToPlanObject(data);
-//   } catch (error) {
-//     console.error('Failed to fetch cafes:', error);
-//     return []; // fallback value
-//   }
-// };
+
 
 // export const getCafeByCafeOwnerById = async (
 //   cafeId: string

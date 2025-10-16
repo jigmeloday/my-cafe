@@ -65,7 +65,6 @@ export default function MenuCreation({
 
       <MenuForm
         menu={menu}
-        categories={categories}
         imageUrls={imageUrls}
         setImageUrls={setImageUrls}
         onSubmit={handleSubmit}

@@ -1,7 +1,7 @@
 'use client';
 
 import MenuCard from '@/components/shared/menu-card';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { CategoryType, MenuType } from '../../../../types';
 import { Button } from '@/components/ui/button';
 import { useSession } from 'next-auth/react';
@@ -9,64 +9,48 @@ import { Sheet } from '@/components/ui/sheet';
 import MenuCreation from '@/components/menu/menu-creation';
 import { fetchMenu } from '@/lib/services/menu/menu.service';
 import { fetchCategory } from '@/lib/services/share.service';
+import { useParams } from 'next/navigation';
+import { useCategories } from '@/context/category-context';
 
 function MenuTab() {
   const { data: session } = useSession();
+  const { slug } = useParams();
+
   const [activeCategory, setActiveCategory] = useState<string>('');
-  const [open, setOpen] = useState(false);
   const [menus, setMenus] = useState<MenuType[]>([]);
-  const [categories, setCategories] = useState<CategoryType[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const { categories } = useCategories();
 
-  // Fetch categories and default menu
-  const loadCategoriesAndMenu = useCallback(async () => {
-    setLoading(true);
+  const loadMenus = async (categoryId?: string) => {
     try {
-      const categoryRes = await fetchCategory();
-      const categoriesData = categoryRes?.data || [];
-      setCategories(categoriesData as CategoryType[]);
-
-      if (categoriesData?.length) {
-        const firstCategoryId = categoriesData[0].id;
-        setActiveCategory(firstCategoryId);
-
-        const menuRes = await fetchMenu({
-          limit: 10,
-          page: 1,
-          category: firstCategoryId,
-        });
-        setMenus(menuRes.data || []);
-      }
-    } catch (error) {
-      console.error('Failed to fetch categories or menus', error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  const loadMenusByCategory = useCallback(async (categoryId: string) => {
-    setLoading(true);
-    try {
+      setLoading(true);
       const menuRes = await fetchMenu({
         limit: 10,
         page: 1,
+        cafeId: slug as string,
+        myCafe: true,
         category: categoryId,
       });
       setMenus(menuRes.data || []);
     } catch (error) {
-      console.error('Failed to fetch menus for category', error);
+      console.error('Failed to fetch menus', error);
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
+  // Initial load: all menus
   useEffect(() => {
-    loadCategoriesAndMenu();
-  }, [loadCategoriesAndMenu]);
+    loadMenus();
+  }, [slug]);
 
-  useEffect(() => {
-    if (activeCategory) loadMenusByCategory(activeCategory);
-  }, [activeCategory, loadMenusByCategory]);
+  // Handle category click
+  const handleCategoryClick = (categoryId: string) => {
+    if (categoryId === activeCategory) return;
+    setActiveCategory(categoryId);
+    loadMenus(categoryId);
+  };
 
   return (
     <div className="flex px-[4px] py-[20px] space-x-[42px]">
@@ -74,10 +58,28 @@ function MenuTab() {
       <div className="w-[16%] px-2 sticky top-[80px] self-start">
         <h4>Categories</h4>
         <div className="mt-[24px] space-y-1 h-[70vh] overflow-y-auto rounded-md">
+          <div
+              onClick={() => handleCategoryClick('')}
+              className={`transition-all duration-500 border ease-in-out rounded-md px-[8px] py-2 cursor-pointer ${
+                activeCategory === ''
+                  ? 'border-primary-500 bg-primary-50/20 shadow'
+                  : 'hover:bg-primary-50/10 border-white'
+              }`}
+            >
+              <p
+                className={`font-bold ${
+                  activeCategory === ''
+                    ? 'text-primary-300'
+                    : 'text-primary-500'
+                }`}
+              >
+                All menu
+              </p>
+            </div>
           {categories.map(({ id, name }) => (
             <div
               key={id}
-              onClick={() => setActiveCategory(id)}
+              onClick={() => handleCategoryClick(id)}
               className={`transition-all duration-500 border ease-in-out rounded-md px-[8px] py-2 cursor-pointer ${
                 activeCategory === id
                   ? 'border-primary-500 bg-primary-50/20 shadow'
@@ -97,6 +99,7 @@ function MenuTab() {
           ))}
         </div>
       </div>
+
       {/* Menu List */}
       <div className="w-full px-2">
         {session?.user.role === 'owner' && (

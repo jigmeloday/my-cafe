@@ -27,14 +27,18 @@ export const fetchMenu = async ({
   limit,
   page,
   category,
+  cafeId,
+  myCafe
 }: {
   limit?: number;
   page?: number;
+  cafeId: string;
+  myCafe: boolean;
   category: string | undefined;
 }): Promise<ApiResponse<MenuType[]>> => {
   try {
     return await baseAPI(
-      `/menu?page=${page}&limit=${limit}&category=${category}`,
+      `/menu?page=${page}&limit=${limit}&category=${category ?? ''}&cafeId=${cafeId ?? ''}&myCafe=${myCafe}`,
       'GET'
     );
   } catch (error) {

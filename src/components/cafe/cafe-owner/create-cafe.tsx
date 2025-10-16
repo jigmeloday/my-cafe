@@ -10,12 +10,12 @@ import { Dialog } from '@/components/ui/dialog';
 import DialogComponent from '@/components/ui/dialog-component';
 import {
   deleteCafeApi,
-  fetchCafeList,
   updateCafeApi,
 } from '@/lib/services/cafe/cafe-service';
 import CreateCard from '@/components/shared/create-card';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import { getCafeByCafeOwner } from '@/lib/action/cafe.action';
 
 function CreateCafe({ roles }: { roles: Role[] }) {
   const [cafes, setCafes] = useState<CafeType[]>([]);
@@ -30,8 +30,8 @@ function CreateCafe({ roles }: { roles: Role[] }) {
   useEffect(() => {
     setFetching(true);
     const fetchCafe = async () => {
-      const cafe = await fetchCafeList({ limit: 6, page: 1 });
-      setCafes(cafe?.data ?? []);
+      const cafe = await getCafeByCafeOwner();
+      setCafes(cafe as CafeType[]);
       setFetching(false);
     };
     fetchCafe();

@@ -3,7 +3,6 @@ import CreateCafe from '@/components/cafe/cafe-owner/create-cafe';
 import { authOptions } from '../../../../../../auth';
 import { redirect } from 'next/navigation';
 import { fetchRole } from '@/lib/action/get-role.action';
-import { fetchCafeList } from '@/lib/services/cafe/cafe-service';
 import { permissionChecker } from '@/lib/utils';
 import { Role } from '../../../../../../types';
 
