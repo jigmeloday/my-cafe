@@ -164,7 +164,6 @@ model Menu {
   id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   cafeId      String      @db.Uuid
   name        String
-  slug        String?     @unique
   price       Float
   discount    Float?
   spicyRate   Int?

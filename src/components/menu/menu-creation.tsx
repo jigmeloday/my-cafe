@@ -1,5 +1,4 @@
 'use client';
-
 import { useState, Dispatch, SetStateAction } from 'react';
 import { useParams } from 'next/navigation';
 import { MenuType } from '../../../types';
@@ -14,9 +13,11 @@ export default function MenuCreation({
   setOpen,
   menu,
   onMenuCreated,
+  setMenu
 }: {
   setOpen: Dispatch<SetStateAction<boolean>>;
   menu?: MenuType | null;
+  setMenu: (menu: MenuType | null) => void;
   onMenuCreated?: (menu: MenuType) => void;
 }) {
   const { slug } = useParams();
@@ -46,6 +47,9 @@ export default function MenuCreation({
       if (onMenuCreated && response.data) {
         onMenuCreated(response?.data as MenuType);
       }
+      if(menu) {
+        setMenu(null)
+      }
       setOpen(false);
     }
   };
@@ -59,7 +63,7 @@ export default function MenuCreation({
             <Button
               variant="outline"
               size="icon"
-              onClick={() => setOpen(false)}
+              onClick={() => {setOpen(false); setMenu(null)}}
               className="border-primary-500"
             >
               <X className="text-primary-500" />

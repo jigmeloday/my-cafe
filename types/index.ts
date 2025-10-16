@@ -22,6 +22,7 @@ export type MenuType = z.infer<typeof INSERT_MENU_SCHEMA> & {
   id?: string;
   createdAt?: Date | string;
   Images?: Images[], 
+  totalStars?: number;
   cafe?: {
     name: string;
   };

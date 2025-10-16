@@ -44,8 +44,8 @@ export default function MenuForm({
     resolver: zodResolver(INSERT_MENU_SCHEMA),
     defaultValues: menu ?? {
       name: '',
-      price: 0,
-      discount: 0,
+      price: null,
+      discount: null,
       spicyRate: null,
       prepTime: undefined,
       description: '',
@@ -86,8 +86,9 @@ export default function MenuForm({
               placeholder={'Menu name'}
               error={errors.name?.message as string | undefined}
             />
-            <div>
-              <Select onValueChange={(val) => setValue('categoryId', val)}>
+            <Select 
+            value={menu?.categoryId || ''}
+            onValueChange={(val) => setValue('categoryId', val)}>
                 <SelectTrigger
                   className="border rounded-md w-full"
                   error={errors.categoryId?.message}
@@ -102,7 +103,6 @@ export default function MenuForm({
                   ))}
                 </SelectContent>
               </Select>
-            </div>
             {['price', 'discount', 'spicyRate', 'prepTime'].map((f) =>
               renderNumberInput(
                 f as keyof MenuType,
@@ -164,7 +164,9 @@ export default function MenuForm({
             </Button>
           </div>
 
-          <MultiImageUploader value={imageUrls} onChange={setImageUrls} />
+          {
+            !menu?.id ? <MultiImageUploader value={imageUrls} onChange={setImageUrls} /> : null
+          }
 
           {/* Toggles */}
           <div className="flex gap-6 items-center my-4">

@@ -6,13 +6,13 @@ import { authOptions } from '../../../../../auth';
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: { menuId: string } }
 ) {
   try {
     const body = await req.json();
     const session = await getServerSession(authOptions);
     const userId = session?.user?.id;
-    const { slug } = await params;
+    const { menuId } = await params;
 
     if (!userId) {
       return NextResponse.json(
@@ -46,7 +46,7 @@ export async function PUT(
     const menuData = parsed.data;
     const { imageUrls, ...menuDataWithoutImages } = menuData;
 
-    if (!slug) {
+    if (!menuId) {
       return NextResponse.json(
         { success: false, message: 'Menu ID is required for update.' },
         { status: 400 }
@@ -70,7 +70,7 @@ export async function PUT(
 
     // ✅ Check if the menu belongs to user's cafe
     const existingMenu = await prisma.menu.findUnique({
-      where: { id: slug },
+      where: { id: menuId },
       include: { cafe: true, Images: true },
     });
 
@@ -104,7 +104,7 @@ export async function PUT(
     const updatedMenu = await prisma.$transaction(async (tx) => {
       // Update base menu info
       const menu = await tx.menu.update({
-        where: { id: slug },
+        where: { id: menuId },
         data: {
           ...menuDataWithoutImages,
         },
@@ -114,14 +114,14 @@ export async function PUT(
       if (imageUrls && imageUrls.length > 0) {
         // Delete existing images
         await tx.menuImage.deleteMany({
-          where: { menuId: slug },
+          where: { menuId: menuId },
         });
 
         // Add new ones (limit to 3)
         await tx.menuImage.createMany({
           data: imageUrls.slice(0, 3).map((url) => ({
             url,
-            menuId: slug,
+            menuId: menuId,
           })),
         });
       }
@@ -154,71 +154,71 @@ export async function PUT(
   }
 }
 
-export async function GET(req: NextRequest) {
-  try {
-    const session = await getServerSession(authOptions);
-    const userId = session?.user?.id;
-    const role = session?.user?.role;
+// export async function GET(req: NextRequest) {
+//   try {
+//     const session = await getServerSession(authOptions);
+//     const userId = session?.user?.id;
+//     const role = session?.user?.role;
 
-    const url = new URL(req.url);
-    const limit = parseInt(url.searchParams.get('limit') || '10');
-    const page = parseInt(url.searchParams.get('page') || '1');
-    const skip = (page - 1) * limit;
+//     const url = new URL(req.url);
+//     const limit = parseInt(url.searchParams.get('limit') || '10');
+//     const page = parseInt(url.searchParams.get('page') || '1');
+//     const skip = (page - 1) * limit;
 
-    const cafeId = url.searchParams.get('cafeId');
-    const category = url.searchParams.get('category');
-    const myCafe = url.searchParams.get('myCafe') === 'true';
+//     const cafeId = url.searchParams.get('cafeId');
+//     const category = url.searchParams.get('category');
+//     const myCafe = url.searchParams.get('myCafe') === 'true';
 
-    if (myCafe && !cafeId) {
-      return NextResponse.json(
-        { success: false, message: 'Cafe id is required' },
-        { status: 400 }
-      );
-    }
+//     if (myCafe && !cafeId) {
+//       return NextResponse.json(
+//         { success: false, message: 'Cafe id is required' },
+//         { status: 400 }
+//       );
+//     }
 
-    let menuList;
+//     let menuList;
 
-    if (role === 'owner' || role === 'super_admin') {
-      const cafes = await prisma.cafe.findMany({
-        where: { ownerId: userId },
-      });
+//     if (role === 'owner' || role === 'super_admin') {
+//       const cafes = await prisma.cafe.findMany({
+//         where: { ownerId: userId },
+//       });
 
-      const verifiedCafe = cafes.find((c) => c.id === cafeId);
+//       const verifiedCafe = cafes.find((c) => c.id === cafeId);
 
-      menuList = await prisma.menu.findMany({
-        where: {
-          categoryId: category || undefined,
-          cafeId: verifiedCafe?.id || undefined,
-        },
-        skip,
-        take: limit,
-        include: { Images: true },
-      });
-    } else {
-      menuList = await prisma.menu.findMany({
-        where: {
-          archived: false,
-          categoryId: category || undefined,
-          cafeId: cafeId || undefined,
-        },
-        skip,
-        take: limit,
-        include: { Images: true },
-      });
-    }
+//       menuList = await prisma.menu.findMany({
+//         where: {
+//           categoryId: category || undefined,
+//           cafeId: verifiedCafe?.id || undefined,
+//         },
+//         skip,
+//         take: limit,
+//         include: { Images: true },
+//       });
+//     } else {
+//       menuList = await prisma.menu.findMany({
+//         where: {
+//           archived: false,
+//           categoryId: category || undefined,
+//           cafeId: cafeId || undefined,
+//         },
+//         skip,
+//         take: limit,
+//         include: { Images: true },
+//       });
+//     }
 
-    return NextResponse.json(
-      { success: true, data: menuList },
-      { status: 200 }
-    );
-  } catch (error) {
-    console.error('Error fetching menu list:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        message: 'Something went wrong. Please try again later.',
-      },
-      { status: 500 }
-    );
-  }
-}
+//     return NextResponse.json(
+//       { success: true, data: menuList },
+//       { status: 200 }
+//     );
+//   } catch (error) {
+//     console.error('Error fetching menu list:', error);
+//     return NextResponse.json(
+//       {
+//         success: false,
+//         message: 'Something went wrong. Please try again later.',
+//       },
+//       { status: 500 }
+//     );
+//   }
+// }

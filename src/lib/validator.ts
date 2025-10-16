@@ -41,11 +41,11 @@ export const INSERT_MENU_SCHEMA = z.object({
     .max(100, 'Menu name cannot exceed 100 characters'),
 
   slug: z.string().optional(),
-  price: z.number().nonnegative('Price cannot be negative'),
+  price: z.number().nonnegative('Price cannot be negative').nullable(),
   discount: z
     .number()
     .min(0, 'Discount cannot be negative')
-    .max(100, 'Discount cannot exceed 100%')
+    .max(100, 'Discount cannot exceed 100%').nullable()
     .optional(),
   spicyRate: z
     .number()
@@ -74,6 +74,7 @@ export const INSERT_MENU_SCHEMA = z.object({
 
 export const INSERT_MENU_BE_SCHEMA = INSERT_MENU_SCHEMA.extend({
   imageUrls: z.array(z.string()), 
+  price: z.number().nonnegative('Price cannot be negative'),
   cafeId: z.string(),
 });
 
