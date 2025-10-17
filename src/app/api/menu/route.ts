@@ -120,7 +120,6 @@ export async function GET(req: NextRequest) {
     const session = await getServerSession(authOptions);
     const userId = session?.user?.id;
     const role = session?.user?.role;
-
     const url = new URL(req.url);
     const limit = parseInt(url.searchParams.get('limit') || '10');
     const page = parseInt(url.searchParams.get('page') || '1');
@@ -153,7 +152,11 @@ export async function GET(req: NextRequest) {
         },
         skip,
         take: limit,
-        include: { Images: true }
+        include: { Images: true, cafe: {
+          select: {
+            name: true
+          }
+        } }
       });
     } else {
       menuList = await prisma.menu.findMany({

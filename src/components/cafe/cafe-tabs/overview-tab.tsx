@@ -13,6 +13,7 @@ import ReviewsSummary from '@/components/reviews/review-summary';
 import ReviewList from '@/components/reviews/review-list';
 import ReviewForm from '@/components/reviews/review-form';
 import { useSession } from 'next-auth/react';
+import Loader from '@/components/shared/loader';
 
 function OverviewTab({ cafe }: { cafe: CafeType }) {
   const { slug } = useParams();
@@ -47,7 +48,10 @@ function OverviewTab({ cafe }: { cafe: CafeType }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
-  if (loading) return <p>Loading reviews...</p>;
+  if (loading) return <Loader
+            className="h-screen flex items-center justify-center"
+            title="Please wait while searching for menu..."
+          /> ;
   if (error) return <p className="text-red-500">{error}</p>;
   if (!reviewsData) return null;
 

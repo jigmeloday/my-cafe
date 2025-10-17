@@ -1,3 +1,4 @@
+'use client';
 import Image from 'next/image';
 import Link from 'next/link';
 import { MenuType } from '../../../types';
@@ -5,6 +6,7 @@ import Stars from './stars';
 import { FaPepperHot } from 'react-icons/fa';
 import { useSession } from 'next-auth/react';
 import ActionMenu from '../ui/menu-action';
+import { cloudinaryLoader } from '@/lib/utils';
 
 function MenuCard({
   menu,
@@ -25,6 +27,7 @@ function MenuCard({
       {/* Menu Image */}
       <div className="h-[250px] w-full relative">
         <Image
+        loader={cloudinaryLoader}
           src={menu?.Images?.[0]?.url || '/banner/dummy/globe.jpg'}
           alt={menu.name}
           height={500}

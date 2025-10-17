@@ -45,7 +45,7 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        'h-12 w-full rounded-md border bg-transparent px-3 py-2 text-base flex items-center justify-between outline-none transition-[color,box-shadow]',
+        'h-9 w-full rounded-md border bg-transparent px-3 py-2 text-base flex items-center justify-between outline-none transition-[color,box-shadow]',
         // Match Input error style
         error
           ? 'border-red-500 focus:ring-red-300'

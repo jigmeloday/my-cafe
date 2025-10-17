@@ -222,3 +222,85 @@ export async function PUT(
 //     );
 //   }
 // }
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { menuId: string } }
+) {
+  const session = await getServerSession(authOptions);
+  const userId = session?.user?.id;
+  const userRole = session?.user?.role;
+  const { menuId } = params;
+
+  try {
+    if (!menuId) {
+      return NextResponse.json(
+        { success: false, message: 'Menu ID not provided.' },
+        { status: 400 }
+      );
+    }
+
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, message: 'You need to be signed in.' },
+        { status: 401 }
+      );
+    }
+
+    // Fetch the menu first
+    const existingMenu = await prisma.menu.findUnique({
+      where: { id: menuId },
+      select: {
+        id: true,
+        cafeId: true,
+        cafe: {
+          select: {
+            ownerId: true,
+          },
+        },
+      },
+    });
+
+    if (!existingMenu) {
+      return NextResponse.json(
+        { success: false, message: 'Menu not found.' },
+        { status: 404 }
+      );
+    }
+
+    const cafeOwnerId = existingMenu.cafe?.ownerId;
+
+    // Permission check: allow if user is super_admin OR the cafe owner
+    if (userRole !== 'super_admin' && cafeOwnerId !== userId) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'You do not have permission to delete this menu.',
+        },
+        { status: 403 }
+      );
+    }
+
+    // Perform the delete
+    await prisma.menu.delete({
+      where: { id: menuId },
+    });
+
+    return NextResponse.json(
+      { success: true, message: 'Menu deleted successfully.' },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('Menu deletion error:', error);
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Something went wrong while deleting the menu.',
+        details: String(error),
+      },
+      { status: 500 }
+    );
+  } finally {
+    await prisma.$disconnect();
+  }
+}

@@ -25,7 +25,7 @@ function Input({
           type={type}
           data-slot="input"
           className={cn(
-            "h-12 w-full focus-visible:ring-[0.5px] focus-visible:ring-primary-50 rounded-md border bg-transparent px-3 text-base outline-none",
+            "h-9 w-full focus-visible:ring-[0.5px] focus-visible:ring-primary-50 rounded-md border bg-transparent px-3 text-base outline-none",
             error ? "border-red-500" : "border-gray-300",
             className
           )}

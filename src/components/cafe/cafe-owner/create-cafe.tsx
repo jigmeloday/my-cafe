@@ -16,6 +16,7 @@ import CreateCard from '@/components/shared/create-card';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { getCafeByCafeOwner } from '@/lib/action/cafe.action';
+import Loading from '@/app/loading';
 
 function CreateCafe({ roles }: { roles: Role[] }) {
   const [cafes, setCafes] = useState<CafeType[]>([]);
@@ -99,14 +100,12 @@ function CreateCafe({ roles }: { roles: Role[] }) {
     <div>
       {
         !session?.user.cafeCreation && <div className="w-full bg-primary-500 py-2 px-[112px] text-[14px] text-white sticky top-[88px]">
-        Congrats! Your café is pending admin approval. Please wait 1–24 hours or
+        Congrats! Your account for cafe opening is pending admin approval. Please wait 1–24 hours or
         contact admin if delayed <Link className="font-bold underline ml-2" href="/contact">CONTACT US</Link>.
       </div>
       }
       {fetching ? (
-        <div className="h-screen flex items-center justify-center">
-          Please wait
-        </div>
+        <Loading />
       ) : (
         <div>
           {cafes.length ? (
@@ -138,6 +137,7 @@ function CreateCafe({ roles }: { roles: Role[] }) {
             </div>
           ) : (
             <NoData
+            className='h-screen'
               title="No Cafe"
               description="No cafes here… yet! 😢 But don’t worry, you can brew your first one by hitting the ‘Create’ button!"
               buttonText="Create Cafe"

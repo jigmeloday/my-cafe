@@ -44,6 +44,42 @@ export const getCafeByCafeOwner = async () => {
   }
 };
 
+export const topRatedDiscount = async () => {
+  const prisma = new PrismaClient();
+
+  try {
+    const cafes = await prisma.menu.findMany({
+      where: {
+        discount: {
+          not: null,
+          gt: 0, // Only include menus that actually have a discount
+        },
+      },
+      orderBy: {
+        discount: 'desc', // Sort by highest discount first
+      },
+      take: 4, // Limit to top 4 discounted items
+      include: {
+        Images: true,
+        cafe: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    return converToPlanObject(cafes);
+  } catch (error) {
+    console.error('Failed to fetch top discounted menus:', error);
+    return [];
+  } finally {
+    await prisma.$disconnect();
+  }
+};
+
+
 
 
 // export const menuList = async ({ limit }: { limit?: number }) => {

@@ -86,23 +86,27 @@ export default function MenuForm({
               placeholder={'Menu name'}
               error={errors.name?.message as string | undefined}
             />
-            <Select 
-            value={menu?.categoryId || ''}
-            onValueChange={(val) => setValue('categoryId', val)}>
-                <SelectTrigger
-                  className="border rounded-md w-full"
-                  error={errors.categoryId?.message}
-                >
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((c) => (
-                    <SelectItem key={c.id} value={c.id}>
-                      {c.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <Controller
+      name="categoryId"
+      control={control}
+      render={({ field }) => (
+        <Select
+          value={field.value}
+          onValueChange={field.onChange} // <-- connects to form
+        >
+          <SelectTrigger className="border rounded-md w-full" error={errors.categoryId?.message}>
+            <SelectValue placeholder="Select category" />
+          </SelectTrigger>
+          <SelectContent>
+            {categories.map((c) => (
+              <SelectItem key={c.id} value={c.id}>
+                {c.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
+    />
             {['price', 'discount', 'spicyRate', 'prepTime'].map((f) =>
               renderNumberInput(
                 f as keyof MenuType,

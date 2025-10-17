@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
   const userId = session?.user?.id;
 
   const url = new URL(req.url);
-  const { active, closed, feature, openTime, closeTime, search, sort } =
+  const { active, closed, feature, openTime, closeTime, search, sort, discount } =
     getQueryParams(url, [
       'active',
       'closed',
@@ -20,6 +20,7 @@ export async function GET(req: NextRequest) {
       'openTime',
       'closeTime',
       'search',
+      'discount',
       'sort',
     ]);
 
@@ -31,34 +32,44 @@ export async function GET(req: NextRequest) {
   const sortOrder: Prisma.SortOrder = sort === 'asc' ? 'asc' : 'desc';
 
   // ------------------ WHERE CLAUSE ------------------
-  const where: Prisma.CafeWhereInput = {
-    ...(userRole === 'super_admin'
-      ? active !== undefined
-        ? { isActive: parseBoolean(active) }
-        : {}
-      : userRole === 'owner'
-      ? {
-          ownerId: userId,
-          ...(active !== undefined && { isActive: parseBoolean(active) }),
-        }
-      : { isActive: true }),
+ // ------------------ WHERE CLAUSE ------------------
+const where: Prisma.CafeWhereInput = {
+  ...(userRole === 'super_admin'
+    ? active !== undefined
+      ? { isActive: parseBoolean(active) }
+      : {}
+    : userRole === 'owner'
+    ? {
+        ownerId: userId,
+        ...(active !== undefined && { isActive: parseBoolean(active) }),
+      }
+    : { isActive: true }),
 
-    closed: parseBoolean(closed),
-    isFeature: parseBoolean(feature),
+  closed: parseBoolean(closed),
+  isFeature: parseBoolean(feature),
 
-    ...(openTimeFilter && {
-      openTime: { contains: openTimeFilter, mode: 'insensitive' },
-    }),
-    ...(closeTimeFilter && {
-      closeTime: { contains: closeTimeFilter, mode: 'insensitive' },
-    }),
-    ...(search && {
-      OR: [
-        { name: { contains: search, mode: 'insensitive' } },
-        { subTitle: { contains: search, mode: 'insensitive' } },
-      ],
-    }),
-  };
+  ...(openTimeFilter && {
+    openTime: { contains: openTimeFilter, mode: 'insensitive' },
+  }),
+  ...(closeTimeFilter && {
+    closeTime: { contains: closeTimeFilter, mode: 'insensitive' },
+  }),
+  ...(search && {
+    OR: [
+      { name: { contains: search, mode: 'insensitive' } },
+      { subTitle: { contains: search, mode: 'insensitive' } },
+    ],
+  }),
+
+  // 🟢 Include discount filter
+  ...(discount === 'true' && {
+    menus: {
+      some: {
+        discount: { not: null },
+      },
+    },
+  }),
+};
 
   try {
     const [cafes, totalCount] = await Promise.all([

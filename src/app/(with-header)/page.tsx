@@ -7,15 +7,17 @@ import MenuCard from '@/components/shared/menu-card';
 import Newsletter from '@/components/shared/newsletter';
 import TitleComponent from '@/components/shared/title-component';
 // import { getBanners } from '@/lib/action/banner.action';
-import { topRatedCafeList } from '@/lib/action/cafe.action';
-import { CafeType } from '../../../types';
+import { topRatedCafeList, topRatedDiscount } from '@/lib/action/cafe.action';
+import { CafeType, MenuType } from '../../../types';
 import Link from 'next/link';
+import { fetchMenu } from '@/lib/services/menu/menu.service';
 
 export default async function Home() {
   const cafe = await topRatedCafeList();
   // const banners = await getBanners();
   // const feature = await getFeature();
-  // const menu = await menuList({ limit: 4 });
+  const menu = await fetchMenu({ limit: 4, page:1 });
+  const menuDiscount = await topRatedDiscount();
 
   return (
     <main>
@@ -43,17 +45,37 @@ export default async function Home() {
           ))}
         </div>
       </section>
-      {/* <section className="my-[120px] px-[16px] lg:px-[112px]">
+      <section className="my-[120px] px-[16px] lg:px-[112px]">
         <TitleComponent
           title="Top Rated"
           subtitle="See which cafés are winning hearts in our community."
         />
         <div className="grid grid-cols-4 gap-4 my-[24px]">
-          {menu.map((item) => (
+          {menu?.data?.map((item) => (
             <MenuCard key={item.id} menu={item} />
           ))}
         </div>
-      </section> */}
+      </section>
+        <section className="my-[120px] px-[16px] lg:px-[112px]">
+          <div className="flex items-center justify-between">
+          <TitleComponent
+          title="Top discount"
+          subtitle="See which cafés are winning hearts in our community."
+        />
+          <Link
+            className="text-primary-500 hover:text-primary-700 transition duration-300 ease-in-out border border-primary-500 hover:border-primary-700 py-2 px-4 rounded-md"
+            href={'/menu-list'}
+          >
+            View all
+          </Link>
+        </div>
+       
+        <div className="grid grid-cols-4 gap-4 my-[24px]">
+          {menuDiscount?.map((item) => (
+            <MenuCard key={item.id} menu={item as MenuType} />
+          ))}
+        </div>
+      </section>
       {/* <section className="my-[120px] px-[16px] lg:px-[112px]">
         <TitleComponent
           title="Featured Cafe"

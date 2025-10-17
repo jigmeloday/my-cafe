@@ -222,3 +222,6 @@ export const getInitials = (name?: string) => {
   return initials.slice(0, 2).join("");
 }
 
+
+export const cloudinaryLoader = ({ src, width, quality }: { src: string; width?: number; quality?: number }) =>
+  `${src}?w=${width || 500}&q=${quality || 75}`;

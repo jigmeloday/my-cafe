@@ -61,7 +61,8 @@ export type NodataPropsType = {
   title: string;
   description: string;
   buttonText?: string;
-  action: (value: boolean) => void;
+  className?: string;
+  action?: (value: boolean) => void;
 };
 
 export interface ImageUploaderProps {

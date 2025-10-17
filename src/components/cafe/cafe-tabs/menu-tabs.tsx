@@ -7,11 +7,17 @@ import { Button } from '@/components/ui/button';
 import { useSession } from 'next-auth/react';
 import { Sheet } from '@/components/ui/sheet';
 import MenuCreation from '@/components/menu/menu-creation';
-import { fetchMenu, updateMenuApi } from '@/lib/services/menu/menu.service';
+import {
+  deleteMenuApi,
+  fetchMenu,
+  updateMenuApi,
+} from '@/lib/services/menu/menu.service';
 import { useParams } from 'next/navigation';
 import { useCategories } from '@/context/category-context';
 import { Dialog } from '@/components/ui/dialog';
 import DialogComponent from '@/components/ui/dialog-component';
+import NoData from '@/components/shared/no-data';
+import Loader from '@/components/shared/loader';
 
 function MenuTab() {
   const { data: session } = useSession();
@@ -78,32 +84,38 @@ function MenuTab() {
   };
 
   const handleAction = async () => {
-    if (!selectedMenu || (session?.user.role !== 'owner' && session?.user.role !=='super_admin')) return;
+    if (
+      !selectedMenu ||
+      (session?.user.role !== 'owner' && session?.user.role !== 'super_admin')
+    )
+      return;
     setLoading(true);
 
     try {
       let response;
 
       if (actionType === 'delete' && selectedMenu?.id) {
-        // response = await deleteCafeApi(selectedMenu.id);
+        response = await deleteMenuApi(selectedMenu.id);
       } else if (actionType === 'close' && selectedMenu?.id) {
         const payload = {
           ...selectedMenu,
-           imageUrls: selectedMenu.Images?.map(img => img.url),
-           isAvailable: !selectedMenu.isAvailable,
-        }
+          imageUrls: selectedMenu.Images?.map((img) => img.url),
+          isAvailable: !selectedMenu.isAvailable,
+        };
         response = await updateMenuApi(selectedMenu?.id, payload);
       } else {
         throw new Error('Invalid action');
       }
 
-      if (response?.success) {        
+      if (response?.success) {
         setMenus((prev) => {
           if (actionType === 'delete') {
-            return prev.filter((c:MenuType) => c.id !== selectedMenu?.id);
+            return prev.filter((c: MenuType) => c.id !== selectedMenu?.id);
           } else {
             return prev.map((c: MenuType) =>
-              c.id === selectedMenu?.id ? { ...c, isAvailable: !c.isAvailable } : c
+              c.id === selectedMenu?.id
+                ? { ...c, isAvailable: !c.isAvailable }
+                : c
             );
           }
         });
@@ -173,7 +185,10 @@ function MenuTab() {
           </div>
         )}
         {loading && page === 1 ? (
-          <div className="text-center py-8 text-gray-500">Loading menus...</div>
+          <Loader
+            className="h-screen flex items-center justify-center"
+            title="Please wait while searching for menu..."
+          />
         ) : menus.length ? (
           <div>
             <div className="grid grid-cols-2 gap-4">
@@ -204,8 +219,12 @@ function MenuTab() {
             )}
           </div>
         ) : (
-          <div className="text-center py-8 text-gray-500">
-            No menus available
+          <div className="flex items-center justify-center h-full text-center py-8 text-gray-500">
+            <NoData
+              className="h-full"
+              title="No Menus Available"
+              description="It looks like there are no menus added yet."
+            />
           </div>
         )}
       </div>

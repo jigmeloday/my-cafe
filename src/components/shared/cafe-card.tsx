@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { CafeType, Role } from '../../../types';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import { permissionChecker, timeFormatter } from '@/lib/utils';
+import { cloudinaryLoader, permissionChecker, timeFormatter } from '@/lib/utils';
 import ActionMenu from '../ui/menu-action';
 import Stars from './stars';
 
@@ -67,6 +67,7 @@ export default function CafeCard(props: {
         </div>
         <div className="relative w-[160px] h-[160px] rounded-full overflow-hidden shadow-md">
           <Image
+            loader={cloudinaryLoader}
             src={(cafe?.logo as string) || ''}
             alt="cafe-logo"
             fill

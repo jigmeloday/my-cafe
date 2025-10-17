@@ -72,8 +72,7 @@ function SheetOpener({
     let response;
     if (cafe?.id) {
       response = await updateCafeApi(cafe.id, {
-        ...payload,
-        logo: cafe.logo,
+        ...payload
       });
     } else {
       response = await createCafeApi(payload);
@@ -81,12 +80,13 @@ function SheetOpener({
 
     if (response?.success) {
       updatedCafe = response.data as CafeType;
-      reset()
+      reset();
     }
     if (updatedCafe) {
       onSave?.(updatedCafe);
       setOpen(false);
       setCafe(null);
+      reset();
     }
   };
 
@@ -100,6 +100,7 @@ function SheetOpener({
             onClick={() => {
               setOpen(false);
               setCafe(null);
+              reset();
             }}
             className="group cursor-pointer w-[40px] h-[40px] border flex items-center justify-center rounded-md border-primary-500"
           >

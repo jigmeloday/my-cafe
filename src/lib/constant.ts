@@ -23,31 +23,17 @@ export const HEADER_MENU = [
 ];
 
 export const HEADER_MENU_OWNER = [
-  {
-    id: 1,
-    label: 'Home',
-    link: '/'
-  },
+  ...HEADER_MENU.filter((item) => item.link !== '/cafe-list'),
+  
     {
-    id: 2,
+    id: 5,
     label: 'Dashboard',
     link: '/dashboard'
   },
   {
-    id: 3,
+    id: 6,
     label: 'My Cafes',
     link: '/my-cafe'
-  },
-  {
-    id: 4,
-    label: 'Events',
-    link: '/events'
-  },
-  
-  {
-    id: 5,
-    label: 'Contact',
-    link: '/contact'
   },
 ];
 

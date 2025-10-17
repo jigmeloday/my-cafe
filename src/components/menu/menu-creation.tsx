@@ -13,7 +13,7 @@ export default function MenuCreation({
   setOpen,
   menu,
   onMenuCreated,
-  setMenu
+  setMenu,
 }: {
   setOpen: Dispatch<SetStateAction<boolean>>;
   menu?: MenuType | null;
@@ -26,14 +26,27 @@ export default function MenuCreation({
   const [imageUrls, setImageUrls] = useState<File[]>([]);
 
   const handleSubmit = async (data: MenuType) => {
-    const urls: string[] = [];
-    if (imageUrls) {
-      for (const file of imageUrls.slice(0, 3)) {
-        const res = await imageUpload(file);
-        if (res) urls.push(res);
-      }
-    }
+const urls: string[] = [];
 
+if (imageUrls) {
+  // Map each file to a promise that never rejects
+  const uploadPromises = imageUrls.slice(0, 3).map(async (file) => {
+    try {
+      const res = await imageUpload(file);
+      return res || null; // return null if upload fails
+    } catch (err) {
+      console.error('Upload failed for file:', file, err);
+      return null; // don't throw, just skip
+    }
+  });
+
+  const results = await Promise.all(uploadPromises);
+
+  // Push only valid URLs
+  results.forEach((res) => {
+    if (res) urls.push(res);
+  });
+}
     const payload = {
       ...data,
       cafeId,
@@ -47,9 +60,11 @@ export default function MenuCreation({
       if (onMenuCreated && response.data) {
         onMenuCreated(response?.data as MenuType);
       }
-      if(menu) {
-        setMenu(null)
+      if (menu) {
+        setImageUrls([])
+        setMenu(null);
       }
+       setImageUrls([])
       setOpen(false);
     }
   };
@@ -63,7 +78,10 @@ export default function MenuCreation({
             <Button
               variant="outline"
               size="icon"
-              onClick={() => {setOpen(false); setMenu(null)}}
+              onClick={() => {
+                setOpen(false);
+                setMenu(null);
+              }}
               className="border-primary-500"
             >
               <X className="text-primary-500" />
