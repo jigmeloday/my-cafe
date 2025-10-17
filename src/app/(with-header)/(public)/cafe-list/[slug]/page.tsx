@@ -47,7 +47,7 @@ async function Page(props: { params: Promise<{ slug: string }> }) {
                   >
                     {cafeDtails?.name}
                   </h3>
-                  {session?.user.role === 'owner' && (
+                  {(session?.user.role === 'owner' && session.user.id === cafeDtails.ownerId) && (
                     <Link
                       href="#"
                       className="mt-2 inline-block py-2 px-4 text-sm uppercase bg-primary-500 text-white rounded-md shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300 w-fit"

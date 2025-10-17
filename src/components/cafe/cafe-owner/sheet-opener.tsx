@@ -72,7 +72,8 @@ function SheetOpener({
     let response;
     if (cafe?.id) {
       response = await updateCafeApi(cafe.id, {
-        ...payload
+        ...payload,
+        logo: payload.logo || cafe?.logo
       });
     } else {
       response = await createCafeApi(payload);
