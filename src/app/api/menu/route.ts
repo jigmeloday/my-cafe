@@ -138,44 +138,66 @@ export async function GET(req: NextRequest) {
 
     let menuList;
 
-    if (role === 'owner' || role === 'super_admin') {
+    if (role === 'owner') {
       const cafes = await prisma.cafe.findMany({
-        where: { ownerId: userId }
+        where: { ownerId: userId },
       });
 
-      const verifiedCafe = cafes.find(c => c.id === cafeId);
+      const verifiedCafe = cafes.find((c) => c.id === cafeId);
 
-      menuList = await prisma.menu.findMany({
+      if (verifiedCafe) {
+        menuList = await prisma.menu.findMany({
+          where: {
+            categoryId: category || undefined,
+            cafeId: verifiedCafe?.id || undefined,
+          },
+          skip,
+          take: limit,
+          include: {
+            Images: true,
+            cafe: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        });
+      } else{
+        menuList = await prisma.menu.findMany({
         where: {
+          archived: false,
           categoryId: category || undefined,
-          cafeId: verifiedCafe?.id || undefined
+          cafeId: cafeId || undefined,
         },
         skip,
         take: limit,
-        include: { Images: true, cafe: {
-          select: {
-            name: true
-          }
-        } }
+        include: { Images: true },
       });
+      }
     } else {
       menuList = await prisma.menu.findMany({
         where: {
           archived: false,
           categoryId: category || undefined,
-          cafeId: cafeId || undefined
+          cafeId: cafeId || undefined,
         },
         skip,
         take: limit,
-        include: { Images: true }
+        include: { Images: true },
       });
     }
 
-    return NextResponse.json({ success: true, data: menuList }, { status: 200 });
+    return NextResponse.json(
+      { success: true, data: menuList },
+      { status: 200 }
+    );
   } catch (error) {
     console.error('Error fetching menu list:', error);
     return NextResponse.json(
-      { success: false, message: 'Something went wrong. Please try again later.' },
+      {
+        success: false,
+        message: 'Something went wrong. Please try again later.',
+      },
       { status: 500 }
     );
   }

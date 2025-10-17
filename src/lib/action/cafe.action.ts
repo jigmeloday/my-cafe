@@ -13,8 +13,26 @@ export const topRatedCafeList = async () => {
   try {
     const cafes = await prisma.cafe.findMany({
       take: 4,
-      where: { isActive: true },
-      orderBy: { createdAt: 'asc' },
+      where: { isActive: true, totalStars: { not:0} },
+      orderBy: { totalStars: 'desc' },
+    });
+
+    return converToPlanObject(cafes);
+  } catch (error) {
+    console.error('Failed to fetch cafes:', error);
+    return [];
+  } finally {
+    await prisma.$disconnect();
+  }
+};
+
+export const featuredCafeList = async () => {
+  const prisma = new PrismaClient();
+  try {
+    const cafes = await prisma.cafe.findMany({
+      take: 4,
+      where: { isActive: true, isFeature: true },
+      orderBy: { createdAt: 'desc' },
     });
 
     return converToPlanObject(cafes);

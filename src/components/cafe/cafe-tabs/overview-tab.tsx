@@ -56,7 +56,7 @@ function OverviewTab({ cafe }: { cafe: CafeType }) {
   if (!reviewsData) return null;
 
   return (
-    <div className="flex space-x-[120px] py-[20px] px-[8px]">
+    <div className="flex space-x-[120px] p-[24px]">
       <div className="w-full">
         <h6>About us</h6>
         <p className="mt-4 text-[14px] text-justify">{cafe.description}</p>

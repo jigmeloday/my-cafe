@@ -11,6 +11,7 @@ import { CAFE_TABS } from '@/lib/constant';
 import { CafeType } from '../../../../types';
 import { timeFormatter } from '@/lib/utils';
 import Image from 'next/image';
+import Stars from '@/components/shared/stars';
 
 function CafeTab({ cafe }: { cafe: CafeType }) {
   const [active, setActive] = useState(2);
@@ -36,7 +37,7 @@ function CafeTab({ cafe }: { cafe: CafeType }) {
       </div>
       <div className="flex space-x-6 min-h-[80%]">
         {cafe.isActive ? (
-          <div className="w-[80%] mt-[32px] border rounded-md p-[20px]">
+          <div className="w-[80%] mt-[32px] border rounded-md">
             {active === 1 ? (
               <MenuTab />
             ) : active === 2 ? (
@@ -116,7 +117,10 @@ function CafeTab({ cafe }: { cafe: CafeType }) {
               )}
             </div>
           </div>
+          <div className='mt-[20px]'>
+            <Stars rate={cafe?.totalStars || 0} />
 
+          </div>
           <div className="mt-[28px]">
             <h6>Follow Us</h6>
             <div className="flex mt-[20px] space-x-[8px]">

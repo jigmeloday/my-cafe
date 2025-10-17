@@ -8,18 +8,22 @@ import Link from 'next/link';
 import { CafeType } from '../../../../../../types';
 import { redirect } from 'next/navigation';
 import { getCafeDetails } from '@/lib/services/cafe/cafe-service';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '../../../../../../auth';
 
 async function Page(props: { params: Promise<{ slug: string }> }) {
   const { params } = props;
+  const session = await getServerSession(authOptions);
+
   const banners = await getBanners((await params)?.slug as string);
-  const { data:cafeDtails } = await getCafeDetails(
+  const { data: cafeDtails } = await getCafeDetails(
     (
       await params
     )?.slug as string
   );
-  
-  if(!cafeDtails) {
-    redirect('/not-found')
+
+  if (!cafeDtails) {
+    redirect('/not-found');
   }
 
   return (
@@ -43,12 +47,14 @@ async function Page(props: { params: Promise<{ slug: string }> }) {
                   >
                     {cafeDtails?.name}
                   </h3>
-                  <Link
-                    href="#"
-                    className="mt-2 inline-block py-2 px-4 text-sm uppercase bg-primary-500 text-white rounded-md shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300 w-fit"
-                  >
-                    Create Banner
-                  </Link>
+                  {session?.user.role === 'owner' && (
+                    <Link
+                      href="#"
+                      className="mt-2 inline-block py-2 px-4 text-sm uppercase bg-primary-500 text-white rounded-md shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300 w-fit"
+                    >
+                      Create Banner
+                    </Link>
+                  )}
                 </div>
               </div>
             )}
@@ -93,6 +99,9 @@ async function Page(props: { params: Promise<{ slug: string }> }) {
         </div>
         <div className="mt-2 px-2 ml-[140px]">
           <h6>{cafeDtails?.name}</h6>
+          <p className="my-[4px] text-[14px] text-primary-500/70">
+            {cafeDtails?.subTitle}
+          </p>
           <div className="flex items-center space-x-2 mt-2">
             <Timer size={16} />
             <p className="text-[12px] text-black/60">

@@ -79,8 +79,8 @@ export default function CafeCard(props: {
           <h5 className="text-primary-800">{cafe?.name}</h5>
           <p className="text-sm text-gray-400 mt-1">
             {cafe?.subTitle
-              ? `${cafe.subTitle.slice(0, 40)}${
-                  cafe.subTitle.length >= 40 ? '...' : ''
+              ? `${cafe.subTitle.slice(0, 30)}${
+                  cafe.subTitle.length >= 30 ? '...' : ''
                 }`
               : ''}
           </p>

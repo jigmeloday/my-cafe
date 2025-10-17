@@ -4,7 +4,7 @@ import { useState } from 'react';
 function EventTabs() {
   const [active, setActive] = useState(1);
   return (
-    <div className="flex px-[4px] py-[20px] space-x-7">
+    <div className="flex px-[20px] pt-[28px] space-x-7">
       <div className="space-y-[24px] w-[70%]">
         <div className="flex space-x-[20px]">
           <div className="flex items-center">

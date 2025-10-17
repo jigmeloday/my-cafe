@@ -7,16 +7,17 @@ import MenuCard from '@/components/shared/menu-card';
 import Newsletter from '@/components/shared/newsletter';
 import TitleComponent from '@/components/shared/title-component';
 // import { getBanners } from '@/lib/action/banner.action';
-import { topRatedCafeList, topRatedDiscount } from '@/lib/action/cafe.action';
+import { featuredCafeList, topRatedCafeList, topRatedDiscount } from '@/lib/action/cafe.action';
 import { CafeType, MenuType } from '../../../types';
 import Link from 'next/link';
 import { fetchMenu } from '@/lib/services/menu/menu.service';
 
 export default async function Home() {
   const cafe = await topRatedCafeList();
+  const feature = await featuredCafeList();
   // const banners = await getBanners();
   // const feature = await getFeature();
-  const menu = await fetchMenu({ limit: 4, page:1 });
+  const menu = await fetchMenu({ limit: 4, page: 1 });
   const menuDiscount = await topRatedDiscount();
 
   return (
@@ -27,8 +28,49 @@ export default async function Home() {
       <section className="my-[120px] px-[16px] lg:px-[112px]">
         <div className="flex items-center justify-between">
           <TitleComponent
-            title="Top Rated Cafe"
-            subtitle="Explore cafés that our users rated the highest."
+            title="Featured Cafés"
+            subtitle="Discover the cafés our community loves most for their unique charm and experience."
+          />
+          <Link
+            className="text-primary-500 hover:text-primary-700 transition duration-300 ease-in-out border border-primary-500 hover:border-primary-700 py-2 px-4 rounded-md"
+            href={'/cafe-list'}
+          >
+            View all
+          </Link>
+        </div>
+        <div className="flex justify-between my-[24px] space-x-10">
+          {feature.map((item) => (
+            <div key={item.id} className="w-full my-[24px]">
+              <CafeCard cafe={item as CafeType} />
+            </div>
+          ))}
+        </div>
+      </section>
+      <section className="my-[120px] px-[16px] lg:px-[112px]">
+        <div className="flex items-center justify-between">
+          <TitleComponent
+            title="Top-Rated Menus"
+            subtitle="Indulge in our users’ favorite dishes and drinks that have earned glowing reviews."
+          />
+          <Link
+            className="text-primary-500 hover:text-primary-700 transition duration-300 ease-in-out border border-primary-500 hover:border-primary-700 py-2 px-4 rounded-md"
+            href={'/menu-list'}
+          >
+            View all
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-4 gap-4 my-[24px]">
+          {menu?.data?.map((item) => (
+            <MenuCard key={item.id} menu={item} />
+          ))}
+        </div>
+      </section>
+         <section className="my-[120px] px-[16px] lg:px-[112px]">
+        <div className="flex items-center justify-between">
+          <TitleComponent
+            title="Highest-Rated Cafés"
+            subtitle="Explore the top cafés that continue to delight customers with quality and ambiance."
           />
           <Link
             className="text-primary-500 hover:text-primary-700 transition duration-300 ease-in-out border border-primary-500 hover:border-primary-700 py-2 px-4 rounded-md"
@@ -46,22 +88,11 @@ export default async function Home() {
         </div>
       </section>
       <section className="my-[120px] px-[16px] lg:px-[112px]">
-        <TitleComponent
-          title="Top Rated"
-          subtitle="See which cafés are winning hearts in our community."
-        />
-        <div className="grid grid-cols-4 gap-4 my-[24px]">
-          {menu?.data?.map((item) => (
-            <MenuCard key={item.id} menu={item} />
-          ))}
-        </div>
-      </section>
-        <section className="my-[120px] px-[16px] lg:px-[112px]">
-          <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between">
           <TitleComponent
-          title="Top discount"
-          subtitle="See which cafés are winning hearts in our community."
-        />
+            title="Best Café Discounts"
+            subtitle="Enjoy exclusive offers and deals at some of the most beloved cafés around."
+          />
           <Link
             className="text-primary-500 hover:text-primary-700 transition duration-300 ease-in-out border border-primary-500 hover:border-primary-700 py-2 px-4 rounded-md"
             href={'/menu-list'}
@@ -69,7 +100,7 @@ export default async function Home() {
             View all
           </Link>
         </div>
-       
+
         <div className="grid grid-cols-4 gap-4 my-[24px]">
           {menuDiscount?.map((item) => (
             <MenuCard key={item.id} menu={item as MenuType} />
@@ -111,8 +142,8 @@ export default async function Home() {
           <EventCard />
         </div>
       </section> */}
-      {/* <section className="py-[120px] bg-primary-50/20 px-[16px] lg:px-[112px]">
-        <div className=" py-[96px]">
+      <section className="py-[120px] bg-gray-100 px-[16px] lg:px-[112px]">
+        <div className=" py-[50px]">
           <div className="mx-auto max-w-2xl text-center">
             <h4>
               Your café journey starts here — stay inspired with the latest
@@ -128,7 +159,7 @@ export default async function Home() {
             </p>
           </div>
         </div>
-      </section> */}
+      </section>
     </main>
   );
 }
