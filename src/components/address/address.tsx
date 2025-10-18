@@ -8,7 +8,7 @@ import { Button } from '../ui/button';
 
 function Address() {
   const [open, setOpen] = useState(false);
-  const { setCafeAddresses, addresses } = useAddress();
+  const { addresses } = useAddress();
   const [selectedAddress, setSelectedAddress] = useState<AddressType | null>(
     null
   );
@@ -50,9 +50,6 @@ function Address() {
           setOpen={setOpen}
           setAddress={setSelectedAddress}
           address={selectedAddress ?? undefined}
-          // onSave={(updatedCafe: AddressType) => {
-          //   handleSubmit(updatedCafe);
-          // }}
         />
       </Sheet>
     </div>
