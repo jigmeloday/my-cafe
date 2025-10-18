@@ -198,6 +198,9 @@ export async function GET(
 
     const cafe = await prisma.cafe.findUnique({
       where: { id: cafeId },
+      include: {
+        addresses: true
+      }
     });
 
     if (!cafe) {

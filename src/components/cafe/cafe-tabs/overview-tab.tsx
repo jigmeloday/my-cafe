@@ -14,6 +14,7 @@ import ReviewList from '@/components/reviews/review-list';
 import ReviewForm from '@/components/reviews/review-form';
 import { useSession } from 'next-auth/react';
 import Loader from '@/components/shared/loader';
+import Address from '@/components/address/address';
 
 function OverviewTab({ cafe }: { cafe: CafeType }) {
   const { slug } = useParams();
@@ -21,7 +22,6 @@ function OverviewTab({ cafe }: { cafe: CafeType }) {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const { data: session } = useSession();
-
   // Fetch reviews
   const loadReviews = async () => {
     if (!slug) return;
@@ -31,7 +31,7 @@ function OverviewTab({ cafe }: { cafe: CafeType }) {
       limit: 10,
       page: 1,
       cafeId: slug as string,
-      type: 'Cafe'
+      type: 'Cafe',
     });
     if (res.success && res.data) {
       setLoading(false);
@@ -48,10 +48,13 @@ function OverviewTab({ cafe }: { cafe: CafeType }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
-  if (loading) return <Loader
-            className="h-screen flex items-center justify-center"
-            title="Please wait while searching for menu..."
-          /> ;
+  if (loading)
+    return (
+      <Loader
+        className="h-screen flex items-center justify-center"
+        title="Please wait while searching for menu..."
+      />
+    );
   if (error) return <p className="text-red-500">{error}</p>;
   if (!reviewsData) return null;
 
@@ -60,14 +63,20 @@ function OverviewTab({ cafe }: { cafe: CafeType }) {
       <div className="w-full">
         <h6>About us</h6>
         <p className="mt-4 text-[14px] text-justify">{cafe.description}</p>
+        {cafe.ownerId === session?.user.id && (
+          <div className="my-[32px] border-t border-b py-[32px]">
+            <h6>Our address</h6>
+            <Address />
+          </div>
+        )}
         <ReviewsSummary ratings={reviewsData.ratings as Ratings} />
 
-       {
-        reviewsData.reviews.length ?  <ReviewList
-          reviews={reviewsData.reviews}
-          pagination={reviewsData.pagination as Pagination}
-        /> : null
-       }
+        {reviewsData.reviews.length ? (
+          <ReviewList
+            reviews={reviewsData.reviews}
+            pagination={reviewsData.pagination as Pagination}
+          />
+        ) : null}
 
         {session?.user.id && session.user.role !== 'owner' && (
           <ReviewForm slug={slug as string} onReviewSubmit={loadReviews} />

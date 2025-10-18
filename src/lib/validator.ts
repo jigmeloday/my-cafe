@@ -148,3 +148,25 @@ export const RESET_PASSWORD_SCHEMA = z
     message: 'Passwords do not match',
     path: ['confirmPassword'], // attaches the error to confirmPassword field
   });
+
+export const INSERT_ADDRESS_SCHEMA = z.object({
+  street: z.string().min(2, 'Street must be at least 2 characters long'),
+  city: z.string().min(2, 'City must be at least 2 characters long'),
+  state: z.string().optional(),
+  zip: z.string().optional(),
+  country: z.string().min(2, 'Country name must be at least 2 characters long'),
+  // map: z.string().url('Map link must be a valid URL').optional(),
+  // isDefault: z.coerce.boolean().default(false),
+});
+
+export const INSERT_ADDRESS_BE_SCHEMA = z.object({
+  
+  street: z.string().min(2, 'Street must be at least 2 characters long'),
+  city: z.string().min(2, 'City must be at least 2 characters long'),
+  state: z.string().optional(),
+  zip: z.string().optional(),
+  country: z.string().min(2, 'Country name must be at least 2 characters long'),
+  cafeId: z.string().optional()
+  // map: z.string().url('Map link must be a valid URL').optional(),
+  // isDefault: z.coerce.boolean().default(false),
+});

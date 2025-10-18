@@ -62,8 +62,8 @@ async function Page(props: { params: Promise<{ slug: string }> }) {
               <div className="flex flex-wrap justify-end items-center gap-6 border px-4 py-2 bg-white text-sm">
                 <div className="flex items-center gap-2">
                   <MapPin size={16} className="text-primary-300" />
-                  {cafeDtails?.address ? (
-                    <span>Babesa, Thimphu</span>
+                  {cafeDtails?.addresses?.length ? (
+                    <span>{`${cafeDtails.addresses[0].street} ${cafeDtails.addresses[0].city} ${cafeDtails.addresses[0].country.charAt(0).toUpperCase()}${cafeDtails.addresses[0].country.slice(1)}`}</span>
                   ) : (
                     <span>Address not found</span>
                   )}

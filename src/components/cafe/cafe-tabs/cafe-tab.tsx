@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import MenuTab from './menu-tabs';
 import OverviewTab from './overview-tab';
 import EventTabs from './event-tab';
@@ -8,13 +8,21 @@ import { FaFacebook, FaInstagram, FaLink, FaTiktok } from 'react-icons/fa';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { CAFE_TABS } from '@/lib/constant';
-import { CafeType } from '../../../../types';
+import { AddressType, CafeType } from '../../../../types';
 import { timeFormatter } from '@/lib/utils';
 import Image from 'next/image';
 import Stars from '@/components/shared/stars';
+import { useAddress } from '@/context/address-context';
 
 function CafeTab({ cafe }: { cafe: CafeType }) {
   const [active, setActive] = useState(2);
+  const { setCafeAddresses, addresses, currentCafeId } = useAddress();
+  
+ useEffect(() => {
+    if (cafe.id !== currentCafeId) {
+    setCafeAddresses(cafe?.addresses as AddressType[], cafe.id as string);
+  }
+}, [addresses.length, cafe?.addresses, cafe.id, currentCafeId, setCafeAddresses]);
 
   return (
     <div className="py-4 w-full">
@@ -83,8 +91,10 @@ function CafeTab({ cafe }: { cafe: CafeType }) {
             </div>
             <div className="flex items-center space-x-2">
               <MapPin size={16} />
-              {cafe?.address ? (
-                <span className="text-[14px]">Babesa, Thimphu</span>
+              {addresses?.length ? (
+                <span className="text-[14px]">
+                  {`${addresses[0]?.street}, ${addresses[0]?.city}, ${addresses[0]?.country.charAt(0).toUpperCase()}${addresses[0]?.country.slice(1)}`}
+                </span>
               ) : (
                 <span className="text-[14px]">Address not found</span>
               )}

@@ -153,9 +153,9 @@ model Address {
   map       String?
   isDefault Boolean  @default(false)
   cafeId    String   @db.Uuid
-  cafe      Cafe     @relation(fields: [cafeId], references: [id], onDelete: Cascade)
+  cafe      Cafe?    @relation(fields: [cafeId], references: [id], onDelete: Cascade)
   userId    String   @db.Uuid
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now()) @db.Timestamp(6)
 }
 

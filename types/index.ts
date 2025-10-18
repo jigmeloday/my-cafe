@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import {
   FORGOT_PASSWORD_SCHEMA,
+  INSERT_ADDRESS_SCHEMA,
   INSERT_BANNER_SCHEMA,
   INSERT_CAFE_SCHEMA,
   INSERT_MENU_SCHEMA,
@@ -13,7 +14,7 @@ import { Address } from '@/generated/prisma';
 export type CafeType = z.infer<typeof INSERT_CAFE_SCHEMA> & {
   id?: string;
   logo?: string
-  address?: Address;
+  addresses?: Address[];
   createdAt?: Date | string;
   totalStars?: number;
 };
@@ -185,3 +186,9 @@ export interface CategoryType {
   id: string;
   name: string
 }
+
+export type AddressType = z.infer<typeof INSERT_ADDRESS_SCHEMA> & {
+  cafeId?: string
+  userId?: string
+  id?: string
+};
