@@ -1,0 +1,7 @@
+-- AlterTable
+ALTER TABLE "Cafe" ADD COLUMN     "reviewCount" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "totalStars" INTEGER NOT NULL DEFAULT 0;
+
+-- AlterTable
+ALTER TABLE "Menu" ADD COLUMN     "reviewCount" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "totalStars" INTEGER NOT NULL DEFAULT 0;

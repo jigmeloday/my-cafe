@@ -1,7 +1,14 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  reactStrictMode: true, // helps catch potential issues
+  swcMinify: true,       // faster minification with SWC
+  images: {
+    domains: [
+      "images.unsplash.com", // allow banner images from Unsplash
+      "res.cloudinary.com",
+    ],
+  }
 };
 
 export default nextConfig;
