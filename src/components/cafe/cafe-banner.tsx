@@ -39,7 +39,7 @@ export default function CafeBanner({ banners }: { banners: BannerType[] }) {
               transition={{ duration: 1 }}
               className="space-y-3 max-w-sm text-white"
             >
-              <h6 className="text-white">{slide.cafe.name}</h6>
+              <h6 className="text-white">{slide.cafe?.name}</h6>
               <h3 className="text-black/70">{slide.title}</h3>
               <p className="text-[12px] font-light">{slide.subtitle}</p>
             </motion.div>

@@ -86,15 +86,25 @@ export const INSERT_IMAGE_SCHEMA = z.object({
 
 export const INSERT_BANNER_SCHEMA = z.object({
   cafeId: z.string(),
-  title: z.string().nullable(), // allows string or null
-  subtitle: z.string().nullable(), // allows string or null
-  imageUrl: z.string().url(),
+  title: z.string().min(2, 'Banner titile is required'),
+  subtitle: z.string().min(2, 'Banner subtitle is required'), // allows string or null
   buttonText: z.string().optional(), // optional
   link: z.string().url(), // optional
-  active: z.boolean().default(false),
+  active: z.boolean(),
   startDate: z.date().nullable().optional(), // allow null or undefined
   endDate: z.date().nullable().optional(), // allow null or undefined
-  createdAt: z.date().default(() => new Date()),
+});
+
+export const INSERT_BANNER_BE_SCHEMA = INSERT_BANNER_SCHEMA.extend({
+  imageUrl: z.string().url(),
+  startDate: z
+    .string()
+    .optional()
+    .transform((val) => (val ? new Date(val) : undefined)),
+  endDate: z
+    .string()
+    .optional()
+    .transform((val) => (val ? new Date(val) : undefined)),
 });
 
 export const SIGN_IN_SCHEMA = z.object({

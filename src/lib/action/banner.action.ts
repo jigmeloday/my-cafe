@@ -7,7 +7,8 @@ export const getBanners = async (cafeId?: string): Promise<BannerType[]> => {
   try {
     const data = await prisma.banner.findMany({
       where: {
-        active: true
+        active: true,
+        cafeId: cafeId ?? undefined
       },
       include: {
         cafe: {

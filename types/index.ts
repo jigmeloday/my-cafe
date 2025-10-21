@@ -13,7 +13,7 @@ import { Address } from '@/generated/prisma';
 
 export type CafeType = z.infer<typeof INSERT_CAFE_SCHEMA> & {
   id?: string;
-  logo?: string
+  logo?: string;
   addresses?: Address[];
   createdAt?: Date | string;
   totalStars?: number;
@@ -22,7 +22,7 @@ export type CafeType = z.infer<typeof INSERT_CAFE_SCHEMA> & {
 export type MenuType = z.infer<typeof INSERT_MENU_SCHEMA> & {
   id?: string;
   createdAt?: Date | string;
-  Images?: Images[], 
+  Images?: Images[];
   totalStars?: number;
   cafe?: {
     name: string;
@@ -30,12 +30,15 @@ export type MenuType = z.infer<typeof INSERT_MENU_SCHEMA> & {
 };
 
 export interface Images {
-  url: string
+  url: string;
 }
 
 export type BannerType = z.infer<typeof INSERT_BANNER_SCHEMA> & {
-  id: string;
-  cafe: {
+  id?: string;
+  imageUrl?: string;
+  createdAt?: string;
+
+  cafe?: {
     name: string;
   };
 };
@@ -184,11 +187,11 @@ export interface ApiResponse<T = unknown> {
 }
 export interface CategoryType {
   id: string;
-  name: string
+  name: string;
 }
 
 export type AddressType = z.infer<typeof INSERT_ADDRESS_SCHEMA> & {
-  cafeId?: string
-  userId?: string
-  id?: string
+  cafeId?: string;
+  userId?: string;
+  id?: string;
 };

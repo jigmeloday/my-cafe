@@ -8,13 +8,12 @@ function NoData({ title, description, buttonText, action, className }: NodataPro
 
   return (
     <div className={`flex items-center justify-center ${className}`}>
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center text-center">
         <Image
           src="/svg/empty.svg"
           alt="no data"
           height={300}
           width={300}
-          className=""
         />
         <h3>{title}</h3>
         <div className="my-[14px] w-[60%] text-center">

@@ -6,25 +6,29 @@ import EventCard from '@/components/shared/event-cards';
 import MenuCard from '@/components/shared/menu-card';
 import Newsletter from '@/components/shared/newsletter';
 import TitleComponent from '@/components/shared/title-component';
-// import { getBanners } from '@/lib/action/banner.action';
-import { featuredCafeList, topRatedCafeList, topRatedDiscount } from '@/lib/action/cafe.action';
+import {
+  featuredCafeList,
+  topRatedCafeList,
+  topRatedDiscount,
+} from '@/lib/action/cafe.action';
 import { CafeType, MenuType } from '../../../types';
 import Link from 'next/link';
 import { fetchMenu } from '@/lib/services/menu/menu.service';
+import { getBanners } from '@/lib/action/banner.action';
 
 export default async function Home() {
   const cafe = await topRatedCafeList();
   const feature = await featuredCafeList();
-  // const banners = await getBanners();
+  const banners = await getBanners();
   // const feature = await getFeature();
   const menu = await fetchMenu({ limit: 4, page: 1 });
   const menuDiscount = await topRatedDiscount();
 
   return (
     <main>
-      {/* <section className="flex lg:h-[80vh] mt-[12px]">
+      <section className="flex lg:h-[80vh] mt-[12px]">
         <LandingBanner banners={banners} />
-      </section> */}
+      </section>
       <section className="my-[120px] px-[16px] lg:px-[112px]">
         <div className="flex items-center justify-between">
           <TitleComponent
@@ -39,11 +43,9 @@ export default async function Home() {
           </Link>
         </div>
         <div className="flex justify-between my-[24px] space-x-10">
-          {feature.map((item) => (
-            <div key={item.id} className="w-full my-[24px]">
-              <CafeCard cafe={item as CafeType} />
-            </div>
-          ))}
+          <div className="w-full my-[24px]">
+            <FeatureList feature={feature as CafeType[]} />
+          </div>
         </div>
       </section>
       <section className="my-[120px] px-[16px] lg:px-[112px]">
@@ -66,7 +68,7 @@ export default async function Home() {
           ))}
         </div>
       </section>
-         <section className="my-[120px] px-[16px] lg:px-[112px]">
+      <section className="my-[120px] px-[16px] lg:px-[112px]">
         <div className="flex items-center justify-between">
           <TitleComponent
             title="Highest-Rated Cafés"

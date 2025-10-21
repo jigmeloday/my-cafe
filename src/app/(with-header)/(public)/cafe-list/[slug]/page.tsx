@@ -42,28 +42,33 @@ async function Page(props: { params: Promise<{ slug: string }> }) {
               >
                 <div className="flex flex-col items-center justify-end pb-3">
                   <h3
-                    className="drop-shadow-[0_0_10px_rgba(100,255,218,0.8)]
-          transition-transform duration-500 ease-in-out hover:scale-105"
-                  >
+                    className="drop-shadow-[0_0_10px_rgba(100,255,218,0.8)]">
                     {cafeDtails?.name}
                   </h3>
-                  {(session?.user.role === 'owner' && session.user.id === cafeDtails.ownerId) && (
-                    <Link
-                      href="#"
-                      className="mt-2 inline-block py-2 px-4 text-sm uppercase bg-primary-500 text-white rounded-md shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300 w-fit"
-                    >
-                      Create Banner
-                    </Link>
-                  )}
+                  {session?.user.role === 'owner' &&
+                    session.user.id === cafeDtails.ownerId && (
+                      <Link
+                        href="/banner-list"
+                        className="mt-2 inline-block py-2 px-4 text-sm uppercase bg-primary-500 text-white rounded-md shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300 w-fit"
+                      >
+                        Create Banner
+                      </Link>
+                    )}
                 </div>
               </div>
             )}
-            <div className="absolute bottom-0 left-0 right-0">
+            <div className="absolute bottom-0 left-0 right-0 z-10">
               <div className="flex flex-wrap justify-end items-center gap-6 border px-4 py-2 bg-white text-sm">
                 <div className="flex items-center gap-2">
                   <MapPin size={16} className="text-primary-300" />
                   {cafeDtails?.addresses?.length ? (
-                    <span>{`${cafeDtails.addresses[0].street} ${cafeDtails.addresses[0].city} ${cafeDtails.addresses[0].country.charAt(0).toUpperCase()}${cafeDtails.addresses[0].country.slice(1)}`}</span>
+                    <span>{`${cafeDtails.addresses[0].street} ${
+                      cafeDtails.addresses[0].city
+                    } ${cafeDtails.addresses[0].country
+                      .charAt(0)
+                      .toUpperCase()}${cafeDtails.addresses[0].country.slice(
+                      1
+                    )}`}</span>
                   ) : (
                     <span>Address not found</span>
                   )}
@@ -88,7 +93,7 @@ async function Page(props: { params: Promise<{ slug: string }> }) {
           </div>
         </div>
 
-        <div className="absolute bottom-8 left-4 size-[120px] rounded-md shadow-lg overflow-hidden bg-white p-2">
+        <div className="absolute bottom-8 left-4 size-[120px] rounded-md shadow-lg overflow-hidden bg-white p-2 z-10">
           <Image
             src={(cafeDtails?.logo as string) || '/banner/logo1.png'}
             alt="profile image"

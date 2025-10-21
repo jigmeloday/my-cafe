@@ -30,7 +30,7 @@ export const featuredCafeList = async () => {
   const prisma = new PrismaClient();
   try {
     const cafes = await prisma.cafe.findMany({
-      take: 4,
+      take: 10,
       where: { isActive: true, isFeature: true },
       orderBy: { createdAt: 'desc' },
     });
