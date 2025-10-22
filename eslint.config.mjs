@@ -18,7 +18,12 @@ const eslintConfig = [
       "out/**",
       "build/**",
       "next-env.d.ts",
-      "db"
+      "db",
+      "prisma",
+      "db/**",
+      "prisma/**",
+      "src/generated/prisma/**",
+      "node_modules/.prisma/**",
     ],
   },
 ];
