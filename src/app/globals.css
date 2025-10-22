@@ -60,16 +60,16 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary-50:  #FFF2F2;
-  --primary-100: #FFD9D9;
-  --primary-200: #FFBFBF;
-  --primary-300: #FFA4A4;
-  --primary-400: #FF7E7E;
-  --primary-500: #FF5A5A;
-  --primary-600: #E64545;
-  --primary-700: #C53030;
-  --primary-800: #991B1B;
-  --primary-900: #7F1D1D;
+  --primary-50:  #FF92D4;  /* Very light */
+  --primary-100: #FF8DCE;  /* Lighter */
+  --primary-200: #FF87C9;  /* Light */
+  --primary-300: #FF78BB;  /* Slightly light */
+  --primary-400: #F45298;  /* Light-medium */
+  --primary-500: #D32F7D;  /* Main / Base */
+  --primary-600: #A20054;  /* Medium */
+  --primary-700: #8B0042;  /* Darker */
+  --primary-800: #640026;  /* Dark */
+  --primary-900: #3F0000;  /* Very dark */
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -163,4 +163,34 @@
   h6 {
     @apply font-sans text-lg md:text-xl font-medium tracking-normal text-foreground leading-snug uppercase;  font-family: 'Playfair Display', serif;
   }
+}
+
+/* global.css or a component-specific CSS file */
+.scrollbar-x {
+  overflow-x: auto;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #FFBFBF #FFF2F2; /* thumb color / track color for Firefox */
+  margin-top: 10px;
+}
+
+/* Chrome, Edge, Safari */
+.scrollbar-x::-webkit-scrollbar {
+  height: 8px; /* horizontal scrollbar height */
+}
+
+.scrollbar-x::-webkit-scrollbar-track {
+  background: #e5e7eb; /* track color */
+  border-radius: 4px;
+}
+
+.scrollbar-x::-webkit-scrollbar-thumb {
+  background-color: #65cdb0; /* thumb color */
+  border-radius: 4px;
+  border: 2px solid #e5e7eb; /* optional: gives a little padding around thumb */
+}
+
+.scrollbar-none {
+  overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
 }

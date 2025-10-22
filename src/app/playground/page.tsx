@@ -4,13 +4,14 @@ import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import TimePicker from '@/components/ui/time-picker';
 
 function Page(){
   return(
     <div>
       <div className='flex space-x-2'>
         {
-          [{className: 'bg-primary-50'}, {className: 'bg-primary-100'},{className: 'bg-primary-200'},{className: 'bg-primary-300'},{className: 'bg-primary-400'},{className: 'bg-primary-500'},{className: 'bg-primary-600'},{className: 'bg-primary-700'},{className: 'bg-primary-800'},{className: 'bg-primary-900'}].map((item) => (
+          [{className: 'bg-primary-50'}, {className: 'bg-primary-100'},{className: 'bg-primary-200'},{className: 'bg-primary-300'},{className: 'bg-primary-500'},{className: 'bg-primary-500'},{className: 'bg-primary-600'},{className: 'bg-primary-700'},{className: 'bg-primary-800'},{className: 'bg-primary-900'}].map((item) => (
             <div className={`size-[150px] ${item.className}`} key={item.className}>
               hello
             </div>
@@ -46,6 +47,7 @@ function Page(){
          <Checkbox checked={true} />
          <Slider />
          <Switch />
+         <TimePicker />
        </div>
       </div>
     </div>

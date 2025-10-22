@@ -1,0 +1,209 @@
+'use client';
+
+import { Dispatch, SetStateAction } from 'react';
+import { useForm, useFieldArray, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Plus, Trash2 } from 'lucide-react';
+import { INSERT_MENU_SCHEMA } from '@/lib/validator';
+import MultiImageUploader from '../ui/multi-image-uploader';
+import { Input } from '../ui/input';
+import { Textarea } from '../ui/textarea';
+import { Button } from '../ui/button';
+import { ScrollArea } from '../ui/scroll-area';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select';
+import { Checkbox } from '../ui/checkbox';
+import { MenuType } from '../../../types';
+import { useCategories } from '@/context/category-context';
+
+type Props = {
+  menu?: MenuType | null;
+  imageUrls: File[];
+  setImageUrls: Dispatch<SetStateAction<File[]>>;
+  onSubmit: (data: MenuType) => void;
+};
+
+export default function MenuForm({
+  menu,
+  imageUrls,
+  setImageUrls,
+  onSubmit,
+}: Props) {
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm<MenuType>({
+    resolver: zodResolver(INSERT_MENU_SCHEMA),
+    defaultValues: menu ?? {
+      name: '',
+      price: null,
+      discount: null,
+      spicyRate: null,
+      prepTime: undefined,
+      description: '',
+      categoryId: '',
+      ingredients: [''],
+      calories: undefined,
+      protein: undefined,
+      fat: undefined,
+      carbs: undefined,
+      isAvailable: false,
+      archived: false,
+    },
+  });
+  const { categories } = useCategories();
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'ingredients' as never,
+  });
+
+  const renderNumberInput = (name: keyof MenuType, placeholder: string) => (
+    <Input
+      key={name}
+      {...register(name, { valueAsNumber: true })}
+      type="number"
+      placeholder={placeholder}
+      error={errors[name]?.message as string | undefined}
+    />
+  );
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <div className="flex flex-col justify-between h-full">
+        <ScrollArea className="h-[80vh] px-[112px] py-6 space-y-8">
+          {/* Basic Info */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+            <Input
+              {...register('name')}
+              placeholder={'Menu name'}
+              error={errors.name?.message as string | undefined}
+            />
+            <Controller
+      name="categoryId"
+      control={control}
+      render={({ field }) => (
+        <Select
+          value={field.value}
+          onValueChange={field.onChange} // <-- connects to form
+        >
+          <SelectTrigger className="border rounded-md w-full" error={errors.categoryId?.message}>
+            <SelectValue placeholder="Select category" />
+          </SelectTrigger>
+          <SelectContent>
+            {categories.map((c) => (
+              <SelectItem key={c.id} value={c.id}>
+                {c.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
+    />
+            {['price', 'discount', 'spicyRate', 'prepTime'].map((f) =>
+              renderNumberInput(
+                f as keyof MenuType,
+                f[0].toUpperCase() + f.slice(1)
+              )
+            )}
+          </div>
+
+          <Textarea
+            {...register('description')}
+            placeholder="Describe this menu..."
+            error={errors.description?.message}
+          />
+          {/* Nutrition */}
+          <div className="my-8">
+            <h6>Nutrition</h6>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 my-4">
+              {['calories', 'protein', 'fat', 'carbs'].map((f) =>
+                renderNumberInput(
+                  f as keyof MenuType,
+                  f[0].toUpperCase() + f.slice(1)
+                )
+              )}
+            </div>
+          </div>
+          {/* Ingredients */}
+
+          <div className="space-y-3 py-6 border-y my-8">
+            <h6>Ingredients</h6>
+            {fields.map((f, i) => (
+              <div key={f.id} className="flex gap-2">
+                <Input
+                  {...register(`ingredients.${i}` as const)}
+                  placeholder="e.g., Tomato"
+                  className="flex-1"
+                  error={errors.ingredients?.[i]?.message}
+                />
+                {fields.length > 1 && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={() => remove(i)}
+                    className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            ))}
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => append('')}
+              className="w-fit"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add Ingredient
+            </Button>
+          </div>
+
+          {
+            !menu?.id ? <MultiImageUploader value={imageUrls} onChange={setImageUrls} /> : null
+          }
+
+          {/* Toggles */}
+          <div className="flex gap-6 items-center my-4">
+            {['isAvailable', 'archived'].map((f) => (
+              <Controller
+                key={f}
+                name={f as keyof MenuType}
+                control={control}
+                render={({ field }) => (
+                  <label className="flex items-center gap-2">
+                    <span className="text-black/60">
+                      {f === 'isAvailable' ? 'Available' : 'Archived'}
+                    </span>
+                    <Checkbox
+                      checked={!!field.value} // normalize to boolean
+                      onCheckedChange={(checked: boolean) =>
+                        field.onChange(checked)
+                      }
+                    />
+                  </label>
+                )}
+              />
+            ))}
+          </div>
+        </ScrollArea>
+
+        {/* Footer */}
+        <div className="sticky bottom-0 bg-white border-t shadow-2xl py-4 px-[112px] flex justify-end">
+          <Button className="w-fit" type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'Saving...' : menu ? 'Update Menu' : 'Create Menu'}
+          </Button>
+        </div>
+      </div>
+    </form>
+  );
+}
