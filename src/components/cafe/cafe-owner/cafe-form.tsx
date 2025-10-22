@@ -28,7 +28,6 @@ function CafeForm(
 
   return (
     <div className="px-[112px] mt-[42px] space-y-6">
-      {/* Cafe Name & Theme Color */}
       <div className="grid grid-cols-2 gap-4">
         <Input
           placeholder="Cafe name"
