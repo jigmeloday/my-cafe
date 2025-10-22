@@ -36,8 +36,7 @@ export interface Images {
 export type BannerType = z.infer<typeof INSERT_BANNER_SCHEMA> & {
   id?: string;
   imageUrl?: string;
-  createdAt?: string;
-
+  createdAt?: Date;
   cafe?: {
     name: string;
   };

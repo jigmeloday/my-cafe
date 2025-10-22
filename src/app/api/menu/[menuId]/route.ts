@@ -6,13 +6,13 @@ import { authOptions } from '../../../../../auth';
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { menuId: string } }
+  context: { params: Promise<{ menuId: string }> },
 ) {
   try {
     const body = await req.json();
     const session = await getServerSession(authOptions);
     const userId = session?.user?.id;
-    const { menuId } = await params;
+    const { menuId } = await context.params;
 
     if (!userId) {
       return NextResponse.json(
@@ -225,12 +225,12 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { menuId: string } }
+  context: { params: Promise<{ menuId: string }> },
 ) {
   const session = await getServerSession(authOptions);
   const userId = session?.user?.id;
   const userRole = session?.user?.role;
-  const { menuId } = params;
+  const { menuId } = await context.params;
 
   try {
     if (!menuId) {

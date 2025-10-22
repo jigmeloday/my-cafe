@@ -3,10 +3,10 @@ import { validateToken } from '@/lib/action/password';
 import Image from 'next/image';
 import Link from 'next/link';
 interface PageProps {
-  searchParams: { token?: string };
+  searchParams: Promise<{ token?: string }>;
 }
 async function Page({ searchParams }: PageProps) {
-  const token = searchParams?.token;
+  const token = (await searchParams)?.token;
   let tokenRes;
 
   if (token) {

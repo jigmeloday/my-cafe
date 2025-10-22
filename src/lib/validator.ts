@@ -78,16 +78,10 @@ export const INSERT_MENU_BE_SCHEMA = INSERT_MENU_SCHEMA.extend({
   cafeId: z.string(),
 });
 
-export const INSERT_IMAGE_SCHEMA = z.object({
-  image: z.instanceof(File),
-});
-
-
-
 export const INSERT_BANNER_SCHEMA = z.object({
   cafeId: z.string(),
-  title: z.string().min(2, 'Banner titile is required'),
-  subtitle: z.string().min(2, 'Banner subtitle is required'), // allows string or null
+  title: z.string().min(2, 'Banner titile is required').nullable(),
+  subtitle: z.string().min(2, 'Banner subtitle is required').nullable(), // allows string or null
   buttonText: z.string().optional(), // optional
   link: z.string().url(), // optional
   active: z.boolean(),
@@ -179,4 +173,8 @@ export const INSERT_ADDRESS_BE_SCHEMA = z.object({
   cafeId: z.string().optional()
   // map: z.string().url('Map link must be a valid URL').optional(),
   // isDefault: z.coerce.boolean().default(false),
+});
+
+export const INSERT_IMAGE_SCHEMA = z.object({
+  image: z.instanceof(File),
 });

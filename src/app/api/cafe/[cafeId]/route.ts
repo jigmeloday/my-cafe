@@ -109,12 +109,12 @@ export async function PUT(req: NextRequest) {
 }
 
 export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { cafeId: string } }
+  request: NextRequest,
+  context: { params: Promise<{ cafeId: string }> }
 ) {
   const session = await getServerSession(authOptions);
   const userRole = session?.user?.role;
-  const { cafeId } = params;
+  const { cafeId } = await context.params;
 
   try {
     const userId = session?.user?.id;
@@ -188,19 +188,17 @@ export async function DELETE(
   }
 }
 
-
 export async function GET(
-  req: NextRequest,
-  { params }: { params: { cafeId: string } }
+  request: NextRequest,
+  context: { params: Promise<{ cafeId: string }> }
 ) {
   try {
-    const { cafeId } = await params;
-
+    const { cafeId } = await context.params;
     const cafe = await prisma.cafe.findUnique({
       where: { id: cafeId },
       include: {
-        addresses: true
-      }
+        addresses: true,
+      },
     });
 
     if (!cafe) {
@@ -219,12 +217,14 @@ export async function GET(
       message: 'Cafe found',
       data: cafe,
     });
-
   } catch (error) {
     return NextResponse.json(
       {
         success: false,
-        message: error instanceof Error ? error.message : 'Something went wrong. Please try again later',
+        message:
+          error instanceof Error
+            ? error.message
+            : 'Something went wrong. Please try again later',
       },
       { status: 500 }
     );

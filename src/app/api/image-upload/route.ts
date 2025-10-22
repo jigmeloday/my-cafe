@@ -3,10 +3,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../../../../auth';
 import { uploadImage } from '@/lib/services/image-upload-api';
+import { INSERT_IMAGE_SCHEMA } from '@/lib/validator';
 
-export const INSERT_IMAGE_SCHEMA = z.object({
-  image: z.instanceof(File),
-});
 
 export async function POST(req: NextRequest) {
   try {

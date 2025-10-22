@@ -39,9 +39,9 @@ export default function LandingBanner({ banners }: { banners: BannerType[] }) {
               transition={{ duration: 1 }}
               className="space-y-4 max-w-lg text-white"
             >
-              <h4 className="text-white">{slide.cafe.name}</h4>
-              <h1 className="text-black/70">{slide.title}</h1>
-              <p className="text-sm font-light">{slide.subtitle}</p>
+              <h4 className="text-white">{slide?.cafe?.name}</h4>
+              <h1 className="text-black/70">{slide?.title}</h1>
+              <p className="text-sm font-light">{slide?.subtitle}</p>
               <div className="mt-6">
                 <Link
                   href={slide.link}
