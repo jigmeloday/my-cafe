@@ -18,7 +18,7 @@ export const HERO_SLIDES: HeroSlideData[] = [
     title: "Dress up for the festival",
     description: "[Textile house] — 20% off hand-woven kira until 20 October.",
     cta: "Shop the sale",
-    href: "/promotions/tshechu-sale",
+    href: "/promotions/kira",
     sponsored: true,
     imageLabel: "Banner photo: festival wear",
   },

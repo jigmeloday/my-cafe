@@ -25,7 +25,15 @@ export function DetailHeader({ detail }: { detail: DetailData }) {
             </span>
           )}
           <h1>{detail.title}</h1>
-          <p className="text-muted-foreground">{detail.subtitle}</p>
+          <p className="text-muted-foreground">
+            <Link
+              href={detail.shop.href}
+              className="font-medium text-foreground hover:underline"
+            >
+              {detail.shop.name}
+            </Link>{" "}
+            · {detail.shop.area}
+          </p>
         </div>
         <FavoriteButton className="shrink-0 border" />
       </div>

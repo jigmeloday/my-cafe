@@ -43,6 +43,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Tooltip,
@@ -90,6 +91,7 @@ const nav = [
   ["menus", "Menus"],
   ["dialogs", "Dialogs"],
   ["pickers", "Pickers"],
+  ["tabs", "Tabs"],
 ] as const;
 
 const sizes = ["xs", "sm", "default", "lg"] as const;
@@ -391,6 +393,21 @@ export default function PlaygroundPage() {
 
         <Section id="pickers" index="11" title="Calendar & pagination">
           <PickersDemo />
+        </Section>
+
+        <Section id="tabs" index="12" title="Tabs">
+          <Tabs defaultValue="current">
+            <TabsList>
+              <TabsTrigger value="current">Current</TabsTrigger>
+              <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
+              <TabsTrigger value="past">Past</TabsTrigger>
+            </TabsList>
+            <TabsContent value="current">
+              Offers and events on right now.
+            </TabsContent>
+            <TabsContent value="upcoming">Starting soon.</TabsContent>
+            <TabsContent value="past">Ended offers and events.</TabsContent>
+          </Tabs>
         </Section>
       </main>
     </>

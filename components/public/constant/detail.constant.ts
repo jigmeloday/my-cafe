@@ -36,18 +36,6 @@ export const DETAIL_KINDS: Record<DetailKind, DetailKindConfig> = {
       "[Add practical details: arrival time, what to bring, accessibility.]",
     ],
   },
-  business: {
-    backLabel: "New places",
-    backHref: "/discover",
-    asideLabel: "Opening offer",
-    asideNote: "Drop by to see what's new.",
-    factLabels: ["Category", "Area", "Opened", "Opening offer"],
-    relatedTitle: "More new places",
-    description: [
-      "[Tell people what this place is, what it is known for and what to try first.]",
-      "[Add opening hours, contact details and how to find it.]",
-    ],
-  },
 };
 
 export const META_SEPARATOR = " · ";

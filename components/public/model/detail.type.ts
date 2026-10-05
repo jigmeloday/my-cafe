@@ -1,6 +1,6 @@
 import type { PromotionCardData } from "./promotion.type";
 
-export type DetailKind = "promotion" | "event" | "business";
+export type DetailKind = "promotion" | "event";
 
 export interface DetailFact {
   label: string;
@@ -20,7 +20,7 @@ export interface DetailKindConfig {
 export interface DetailShop {
   name: string;
   area: string;
-  category?: string;
+  href: string;
 }
 
 export interface DetailData {
@@ -28,7 +28,6 @@ export interface DetailData {
   slug: string;
   title: string;
   badge?: string;
-  subtitle: string;
   highlight: string;
   facts: DetailFact[];
   description: string[];

@@ -9,7 +9,8 @@
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
   --shadow-card: 0 1px 2px rgb(0 0 0 / 0.06), 0 4px 12px rgb(0 0 0 / 0.05);
-  --shadow-card-hover: 0 2px 4px rgb(0 0 0 / 0.08), 0 8px 24px rgb(0 0 0 / 0.12);
+  --shadow-card-hover:
+    0 2px 4px rgb(0 0 0 / 0.08), 0 8px 24px rgb(0 0 0 / 0.12);
   --shadow-float: 0 8px 28px rgb(0 0 0 / 0.14);
   --color-maroon: var(--maroon);
   --color-maroon-dark: var(--maroon-dark);
@@ -120,16 +121,16 @@
     @apply font-semibold tracking-tight text-balance text-foreground;
   }
   h1 {
-    @apply text-3xl leading-tight font-bold sm:text-4xl lg:text-5xl;
+    @apply text-2xl leading-tight font-bold sm:text-3xl lg:text-4xl;
   }
   h2 {
-    @apply text-2xl leading-tight sm:text-3xl;
+    @apply text-xl leading-tight sm:text-2xl;
   }
   h3 {
-    @apply text-xl leading-snug sm:text-2xl;
+    @apply text-lg leading-snug sm:text-xl;
   }
   h4 {
-    @apply text-lg leading-snug sm:text-xl;
+    @apply text-base leading-snug sm:text-lg;
   }
   h5 {
     @apply text-base leading-snug sm:text-lg;

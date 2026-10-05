@@ -8,10 +8,14 @@ import { Button } from "@/components/ui/button";
 type FollowButtonProps = Pick<
   React.ComponentProps<typeof Button>,
   "size" | "className"
->;
+> & { initialFollowing?: boolean };
 
-export function FollowButton({ size, className }: FollowButtonProps) {
-  const [following, setFollowing] = useState(false);
+export function FollowButton({
+  size,
+  className,
+  initialFollowing = false,
+}: FollowButtonProps) {
+  const [following, setFollowing] = useState(initialFollowing);
 
   return (
     <Button

@@ -1,11 +1,11 @@
+import Link from "next/link";
+
 import { ImagePlaceholder } from "@/components/shared/image-placeholder";
 
 import { SHOP_DETAILS } from "../constant/detail.constant";
 import type { DetailShop } from "../model/detail.type";
 
 export function ShopDetails({ shop }: { shop: DetailShop }) {
-  const subtitle = [shop.category, shop.area].filter(Boolean).join(" · ");
-
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3">
@@ -14,8 +14,12 @@ export function ShopDetails({ shop }: { shop: DetailShop }) {
           className="size-12 shrink-0 rounded-full"
         />
         <div className="min-w-0">
-          <h6 className="truncate">{shop.name}</h6>
-          <p className="truncate text-sm text-muted-foreground">{subtitle}</p>
+          <h6 className="truncate">
+            <Link href={shop.href} className="hover:underline">
+              {shop.name}
+            </Link>
+          </h6>
+          <p className="truncate text-sm text-muted-foreground">{shop.area}</p>
         </div>
       </div>
       <ul className="space-y-3 text-sm">
