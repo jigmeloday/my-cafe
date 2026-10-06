@@ -52,7 +52,13 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Reveal } from "@/components/shared/reveal";
-import { DialogsDemo, MenusDemo, PickersDemo, SearchDemo } from "./extras";
+import {
+  DialogsDemo,
+  MenusDemo,
+  PhoneDemo,
+  PickersDemo,
+  SearchDemo,
+} from "./extras";
 
 const colors = [
   { name: "background", className: "bg-background" },
@@ -92,6 +98,7 @@ const nav = [
   ["dialogs", "Dialogs"],
   ["pickers", "Pickers"],
   ["tabs", "Tabs"],
+  ["phone", "Phone"],
 ] as const;
 
 const sizes = ["xs", "sm", "default", "lg"] as const;
@@ -408,6 +415,10 @@ export default function PlaygroundPage() {
             <TabsContent value="upcoming">Starting soon.</TabsContent>
             <TabsContent value="past">Ended offers and events.</TabsContent>
           </Tabs>
+        </Section>
+
+        <Section id="phone" index="13" title="Phone field">
+          <PhoneDemo />
         </Section>
       </main>
     </>

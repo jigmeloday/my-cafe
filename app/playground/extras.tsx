@@ -67,6 +67,8 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Toaster, toast } from "@/components/ui/toast";
+import { PhoneInput } from "@/components/shared/phone-input";
+import { isValidPhone } from "@/lib/phone";
 
 const places = ["Thimphu", "Paro", "Punakha", "Bumthang", "Phuentsholing"];
 
@@ -229,6 +231,20 @@ export function PickersDemo() {
           </PaginationItem>
         </PaginationContent>
       </Pagination>
+    </div>
+  );
+}
+
+export function PhoneDemo() {
+  const [phone, setPhone] = React.useState("");
+  const valid = isValidPhone(phone);
+
+  return (
+    <div className="max-w-md space-y-2">
+      <PhoneInput value={phone} onChange={setPhone} invalid={!valid} />
+      <p className="text-sm text-muted-foreground">
+        Value: <code>{phone || "(empty)"}</code> · {valid ? "valid" : "invalid"}
+      </p>
     </div>
   );
 }

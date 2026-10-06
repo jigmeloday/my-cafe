@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { CONTACT_METHODS, DZONGKHAGS, GENDERS } from "@/lib/constants";
+import { isValidPhone } from "@/lib/phone";
 
 const optionalEnum = <T extends readonly [string, ...string[]]>(values: T) =>
   z.union([z.enum(values), z.literal("")]);
@@ -8,7 +9,7 @@ const optionalEnum = <T extends readonly [string, ...string[]]>(values: T) =>
 const phone = z
   .string()
   .trim()
-  .regex(/^[+\d\s-]{0,20}$/, "Enter a valid phone number");
+  .refine(isValidPhone, "Enter a valid Bhutan phone number");
 
 export const personalInfoSchema = z.object({
   name: z.string().trim().min(2, "Enter your name"),
