@@ -4,15 +4,15 @@ import { ActionForm } from "@/components/shared/action-form";
 import { AddressFields } from "@/components/shared/address-fields";
 import { useActionForm } from "@/hooks/use-action-form";
 import { addressSchema } from "@/lib/validations/profile.schema";
-import { updateAddressAction } from "@/server/actions/account.actions";
+import { updateBusinessLocationAction } from "@/server/actions/business.actions";
 
-import type { ProfileUser } from "../model/profile.type";
+import { BUSINESS_PROFILE } from "../constant/profile.data";
 
-export function AddressForm({ user }: { user: ProfileUser }) {
+export function LocationForm() {
   const { form, submit, result, pending } = useActionForm(
     addressSchema,
-    updateAddressAction,
-    user.address,
+    updateBusinessLocationAction,
+    BUSINESS_PROFILE.location,
   );
 
   return (
@@ -20,7 +20,7 @@ export function AddressForm({ user }: { user: ProfileUser }) {
       onSubmit={submit}
       result={result}
       pending={pending}
-      submitLabel="Save address"
+      submitLabel="Save location"
     >
       <AddressFields form={form} />
     </ActionForm>

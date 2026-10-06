@@ -31,3 +31,14 @@ export const DZONGKHAGS = [
   "Wangdue Phodrang",
   "Zhemgang",
 ] as const;
+
+export const DEFAULT_CURRENCY = "USD";
+
+export const CAMPAIGN_STATUSES = [
+  "DRAFT",
+  "SCHEDULED",
+  "ACTIVE",
+  "PAUSED",
+  "COMPLETED",
+  "CANCELLED",
+] as const;
