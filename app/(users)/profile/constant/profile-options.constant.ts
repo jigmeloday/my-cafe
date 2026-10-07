@@ -1,4 +1,4 @@
-import { CONTACT_METHODS, DZONGKHAGS, GENDERS } from "@/lib/constants";
+import { CONTACT_METHODS, GENDERS } from "@/lib/constants";
 
 import type { OptionItem, SwitchOption } from "../model/profile.type";
 
@@ -23,11 +23,6 @@ export const GENDER_OPTIONS: OptionItem[] = GENDERS.map((value) => ({
 export const CONTACT_OPTIONS: OptionItem[] = CONTACT_METHODS.map((value) => ({
   value,
   label: CONTACT_LABELS[value],
-}));
-
-export const DZONGKHAG_OPTIONS: OptionItem[] = DZONGKHAGS.map((value) => ({
-  value,
-  label: value,
 }));
 
 export const INTERESTS = [
