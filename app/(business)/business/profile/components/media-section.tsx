@@ -4,12 +4,12 @@ import { GalleryUpload } from "@/components/shared/gallery-upload";
 import { ImageUpload } from "@/components/shared/image-upload";
 
 import { CARD_COPY, PROFILE_COPY } from "../constant/profile.constant";
-import { ProfileCard } from "./profile-card";
+import { SectionCard } from "@/components/business/section-card";
 
 export function MediaSection() {
   return (
     <div className="space-y-4">
-      <ProfileCard
+      <SectionCard
         title={CARD_COPY.brand.title}
         description={CARD_COPY.brand.description}
       >
@@ -25,13 +25,13 @@ export function MediaSection() {
             previewClassName="aspect-[16/5] w-full max-w-md rounded-xl"
           />
         </div>
-      </ProfileCard>
-      <ProfileCard
+      </SectionCard>
+      <SectionCard
         title={CARD_COPY.gallery.title}
         description={CARD_COPY.gallery.description}
       >
         <GalleryUpload label="Photos" />
-      </ProfileCard>
+      </SectionCard>
       <p className="text-sm text-muted-foreground">{PROFILE_COPY.mediaNote}</p>
     </div>
   );

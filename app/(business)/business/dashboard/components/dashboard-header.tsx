@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Megaphone, Plus } from "lucide-react";
+import { Mail, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -22,7 +22,7 @@ export function DashboardHeader() {
           <Plus /> {DASHBOARD_COPY.createPromotion}
         </Button>
         <Button render={<Link href="/business/campaigns/new" />}>
-          <Megaphone /> {DASHBOARD_COPY.createCampaign}
+          <Mail /> {DASHBOARD_COPY.createCampaign}
         </Button>
       </div>
     </header>

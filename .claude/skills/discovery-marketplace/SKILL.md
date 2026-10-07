@@ -11,6 +11,14 @@ description: Product spec and architecture rules for the advertising & discovery
 
 Before writing Next.js code, read the relevant guide in `node_modules/next/dist/docs/` (see AGENTS.md) — this Next.js version has breaking changes.
 
+## Release scope (decided)
+- **Release 1 (now):** discovery, business profiles, promotions, accounts, **email campaigns**, and a **coin wallet**. No pay-per-click ads.
+- **Coin wallet (R1):** businesses buy **coins** (whole numbers, never fractions) in packs and spend them on visibility: emailing followers about a promotion (per follower), a homepage banner (per day) and ranking at the top (per day). Prices are sample values in `lib/coins.ts`. Coins can be bought in packs or as a **custom amount** (50 to 100,000); both use the same per-coin price tiers (`coinPriceMinor`), and the price must never go down as the amount goes up. Pages: `/business/wallet`, `/business/transactions`. Costs show on the promotion form and the email campaign form. Buying and spending are UI-only until payments/billing exist; coin purchases must be credited from the payment webhook and every change recorded as a wallet transaction.
+- **Release 2:** paid **CPC ad campaigns** (money per click), `/go/{campaignId}` click tracking, Boost on promotions, spend analytics. Parked, unrouted, in `app/(business)/business/_r2-ad-campaigns/` (see its README). The "Campaign / CPC" sections below describe Release 2.
+- "Campaign" in the Release 1 dashboard means an **email campaign**. Only people who allowed emails (email channel + "places I follow" topic + promotional consent) may be emailed.
+- **Analytics (R1):** `/business/analytics` has a date range (7/14/30 days) and tabs: **Overview** (views, clicks, click-through rate, saves, chart, clicks by source, funnel, coins spent), **Posts** (clicks per post bar chart, per-post trend, clicks by type, table), **Banners** (impressions, clicks, CTR, coins per click, runs), **Emails** (open/click rate per campaign, funnel, table) and **Audience** (followers by place, interests, who can be emailed). Sample data is built from one daily series and split with exact whole-number maths (`apportion`), so every tab adds up; banner clicks only exist on days a banner ran. Real numbers need view/click events recorded when people open and click a promotion (a tracked redirect). Shared charts (line, bar, funnel, breakdown list) live in `components/business/charts/`.
+- Not built yet: the banner creator (image + headline for the homepage banner) and the real top-rank ordering.
+
 ## Core rule
 Before building anything ask: **does this improve discovery, advertising, or engagement?** If not, it is not MVP. Don't let future features (CPL/CPM/CPA, retargeting, reviews, fraud ML) complicate the MVP.
 

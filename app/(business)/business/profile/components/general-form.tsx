@@ -1,6 +1,7 @@
 "use client";
 
 import { ActionForm } from "@/components/shared/action-form";
+import { ChipMultiField } from "@/components/shared/chip-multi-field";
 import { Field } from "@/components/shared/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -8,9 +9,12 @@ import { useActionForm } from "@/hooks/use-action-form";
 import { businessGeneralSchema } from "@/lib/validations/business.schema";
 import { updateBusinessGeneralAction } from "@/server/actions/business.actions";
 
-import { DESCRIPTION_MAX } from "../constant/profile.constant";
+import {
+  CATEGORY_OPTIONS,
+  DESCRIPTION_MAX,
+  MAX_CATEGORIES,
+} from "../constant/profile.constant";
 import { BUSINESS_PROFILE } from "../constant/profile.data";
-import { CategoryField } from "./category-field";
 
 export function GeneralForm() {
   const { form, submit, result, pending } = useActionForm(
@@ -62,7 +66,14 @@ export function GeneralForm() {
           {...register("description")}
         />
       </Field>
-      <CategoryField control={control} error={errors.categories?.message} />
+      <ChipMultiField
+        control={control}
+        name="categories"
+        label="Categories"
+        options={CATEGORY_OPTIONS}
+        hint={`Pick up to ${MAX_CATEGORIES}.`}
+        error={errors.categories?.message}
+      />
     </ActionForm>
   );
 }

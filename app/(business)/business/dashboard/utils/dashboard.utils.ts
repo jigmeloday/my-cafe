@@ -1,106 +1,70 @@
+import type { ChartPoint } from "@/components/business/charts/model/chart.type";
+import { formatNumber, formatPercent } from "@/lib/formatters/number";
+
 import {
-  formatCompact,
-  formatNumber,
-  formatPercent,
-} from "@/lib/formatters/number";
-import { formatMoney } from "@/lib/formatters/currency";
+  buildSampleDays,
+  splitRange,
+} from "../../analytics/utils/analytics.utils";
+import { toPoints } from "../../analytics/utils/dataset.utils";
+import { FOLLOWERS_TOTAL } from "../../campaigns/constant/email-campaign.constant";
+import { EMAIL_CAMPAIGNS } from "../../campaigns/constant/email-campaigns.data";
+import { PROMOTION_ITEMS } from "../../promotions/constant/promotions.data";
+import {
+  FOLLOWER_DAYS,
+  PERFORMANCE_DAYS,
+} from "../constant/dashboard.constant";
+import type { SummaryStat } from "../model/dashboard.type";
 
-import type {
-  CampaignRow,
-  DailyPoint,
-  MetricId,
-  SummaryStat,
-} from "../model/dashboard.type";
+const SAMPLE_DAYS = buildSampleDays();
 
-const sum = (
-  points: DailyPoint[],
-  key: "impressions" | "clicks" | "spendMinor",
-) => points.reduce((total, p) => total + p[key], 0);
+/** Views, clicks and saves for the last N days, in the shape the shared chart expects. */
+export const performancePoints = (days = PERFORMANCE_DAYS): ChartPoint[] =>
+  toPoints(splitRange(SAMPLE_DAYS, days as 7 | 14 | 30).current);
 
-export const pointValue = (point: DailyPoint, metric: MetricId) =>
-  metric === "spend" ? point.spendMinor : point[metric];
-
-export const formatMetric = (value: number, metric: MetricId) =>
-  metric === "spend" ? formatMoney(value) : formatNumber(value);
-
-/** Rounds up to a "nice" axis maximum: 37 -> 40, 1337 -> 1400. */
-export function niceMax(value: number): number {
-  if (value <= 0) return 1;
-  const step = 10 ** Math.floor(Math.log10(value)) / 2;
-  return Math.ceil(value / step) * step;
+/**
+ * Follower count per day, ending at today's total. Sample data: new followers per day are 0 to 2
+ * (integer maths only, so the server and browser agree), counted backwards from FOLLOWERS_TOTAL.
+ */
+export function followerPoints(days = FOLLOWER_DAYS): ChartPoint[] {
+  const labels = SAMPLE_DAYS.slice(-days).map((d) => d.label);
+  let total = FOLLOWERS_TOTAL;
+  const counts: number[] = [];
+  for (let i = labels.length - 1; i >= 0; i--) {
+    counts[i] = total;
+    total -= (i * 7 + 3) % 3;
+  }
+  return labels.map((label, i) => ({
+    label,
+    values: { followers: counts[i] },
+  }));
 }
 
-export const budgetUsed = (
-  c: Pick<CampaignRow, "budgetMinor" | "spentMinor">,
-) => (c.budgetMinor === 0 ? 0 : Math.min(1, c.spentMinor / c.budgetMinor));
-
-export const campaignCtr = (c: Pick<CampaignRow, "impressions" | "clicks">) =>
-  c.impressions === 0 ? 0 : c.clicks / c.impressions;
-
-export function getSummary(points: DailyPoint[]): SummaryStat[] {
-  const impressions = sum(points, "impressions");
-  const clicks = sum(points, "clicks");
-  const spend = sum(points, "spendMinor");
+export function getSummary(): SummaryStat[] {
+  const sent = EMAIL_CAMPAIGNS.filter((c) => c.status === "SENT");
+  const emails = sent.reduce((total, c) => total + c.recipients, 0);
+  const opened = sent.reduce((total, c) => total + c.opened, 0);
+  const live = PROMOTION_ITEMS.filter((p) => p.status === "PUBLISHED").length;
+  const followers = followerPoints();
+  const first = followers[0].values.followers;
+  const last = followers[followers.length - 1].values.followers;
 
   return [
     {
-      label: "Impressions",
-      value: formatCompact(impressions),
-      delta: 0.124,
-      hint: "vs previous 14 days",
+      label: "Followers",
+      value: formatNumber(last),
+      delta: first === 0 ? undefined : (last - first) / first,
+      hint: `vs ${FOLLOWER_DAYS} days ago`,
     },
     {
-      label: "Clicks",
-      value: formatNumber(clicks),
-      delta: 0.082,
-      hint: "vs previous 14 days",
+      label: "Live promotions",
+      value: String(live),
+      hint: `${PROMOTION_ITEMS.length} in total`,
     },
+    { label: "Emails sent", value: formatNumber(emails), hint: "all time" },
     {
-      label: "Click-through rate",
-      value: formatPercent(impressions ? clicks / impressions : 0),
-      delta: -0.031,
-      hint: "vs previous 14 days",
-    },
-    {
-      label: "Spend",
-      value: formatMoney(spend),
-      delta: 0.082,
-      hint: `${formatMoney(clicks ? Math.round(spend / clicks) : 0)} avg. per click`,
+      label: "Average open rate",
+      value: formatPercent(emails ? opened / emails : 0, 1),
+      hint: "across sent campaigns",
     },
   ];
-}
-
-/** Horizontal padding (in % of the plot) so the first/last points aren't clipped. */
-export const PLOT_PAD = 3;
-
-export const xPercent = (index: number, count: number) =>
-  count <= 1 ? 50 : PLOT_PAD + (index / (count - 1)) * (100 - PLOT_PAD * 2);
-
-export const yPercent = (value: number, max: number) =>
-  100 - (value / max) * 100;
-
-/** SVG path data in a 0-100 box for the line, and the closed area beneath it. */
-export function linePaths(values: number[], max: number) {
-  const coords = values.map(
-    (v, i) => [xPercent(i, values.length), yPercent(v, max)] as const,
-  );
-  const line = coords
-    .map(([x, y], i) => `${i === 0 ? "M" : "L"}${x.toFixed(2)} ${y.toFixed(2)}`)
-    .join(" ");
-  const [firstX] = coords[0];
-  const [lastX] = coords[coords.length - 1];
-  return {
-    line,
-    area: `${line} L${lastX.toFixed(2)} 100 L${firstX.toFixed(2)} 100 Z`,
-  };
-}
-
-/** Keeps tooltips inside the plot: left-aligned near the start, right-aligned near the end. */
-export function tooltipAlign(
-  index: number,
-  count: number,
-): "start" | "center" | "end" {
-  if (index <= 1) return "start";
-  if (index >= count - 2) return "end";
-  return "center";
 }

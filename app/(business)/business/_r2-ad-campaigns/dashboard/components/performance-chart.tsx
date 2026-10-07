@@ -7,12 +7,11 @@ import { FilterChips } from "@/components/shared/filter-chips";
 import { Button } from "@/components/ui/button";
 
 import { DASHBOARD_COPY, METRIC_OPTIONS } from "../constant/dashboard.constant";
-import { DAILY_POINTS } from "../constant/dashboard.data";
-import type { MetricId } from "../model/dashboard.type";
+import type { DailyPoint, MetricId } from "../model/dashboard.type";
 import { ChartLine } from "./chart-line";
 import { ChartTable } from "./chart-table";
 
-export function PerformanceChart() {
+export function PerformanceChart({ points }: { points: DailyPoint[] }) {
   const [metric, setMetric] = useState<MetricId>("clicks");
   const [asTable, setAsTable] = useState(false);
 
@@ -29,7 +28,7 @@ export function PerformanceChart() {
         </Button>
       </div>
       {asTable ? (
-        <ChartTable points={DAILY_POINTS} />
+        <ChartTable points={points} />
       ) : (
         <>
           <FilterChips
@@ -37,7 +36,7 @@ export function PerformanceChart() {
             active={metric}
             onChange={setMetric}
           />
-          <ChartLine points={DAILY_POINTS} metric={metric} />
+          <ChartLine points={points} metric={metric} />
         </>
       )}
     </section>

@@ -1,14 +1,14 @@
-interface ProfileCardProps {
+interface SectionCardProps {
   title: string;
   description?: string;
   children: React.ReactNode;
 }
 
-export function ProfileCard({
+export function SectionCard({
   title,
   description,
   children,
-}: ProfileCardProps) {
+}: SectionCardProps) {
   return (
     <section
       aria-label={title}

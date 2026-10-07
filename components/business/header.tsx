@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { Wallet } from "lucide-react";
+import { Coins } from "lucide-react";
 
-import { formatMoney } from "@/lib/formatters/currency";
+import { formatNumber } from "@/lib/formatters/number";
 
 import { BusinessUserMenu } from "./business-user-menu";
 import { BUSINESS_SHELL } from "./constant/business-nav.constant";
@@ -16,10 +16,11 @@ export function BusinessHeader() {
       </p>
       <Link
         href={BUSINESS_SHELL.walletHref}
-        className="flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-medium transition-colors hover:border-foreground"
+        aria-label="Wallet balance"
+        className="flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-medium tabular-nums transition-colors hover:border-foreground"
       >
-        <Wallet className="size-4 text-primary" />
-        {formatMoney(BUSINESS_SHELL.walletBalanceMinor)}
+        <Coins className="size-4 text-gold" />
+        {formatNumber(BUSINESS_SHELL.walletCoins)}
       </Link>
       <BusinessUserMenu />
     </header>

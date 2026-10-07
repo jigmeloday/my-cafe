@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 
-import { CampaignsTable } from "./components/campaigns-table";
+import { DashboardCharts } from "./components/dashboard-charts";
 import { DashboardHeader } from "./components/dashboard-header";
-import { PerformanceChart } from "./components/performance-chart";
 import { PromotionsList } from "./components/promotions-list";
+import { RecentCampaigns } from "./components/recent-campaigns";
 import { StatsGrid } from "./components/stats-grid";
-import { WalletCard } from "./components/wallet-card";
 
 export const metadata: Metadata = { title: "Overview — kuzu business" };
 
@@ -14,12 +13,11 @@ export default function DashboardPage() {
     <div className="space-y-6">
       <DashboardHeader />
       <StatsGrid />
-      <div className="grid gap-4 lg:grid-cols-[1fr_18rem]">
-        <PerformanceChart />
-        <WalletCard />
+      <DashboardCharts />
+      <div className="grid gap-4 lg:grid-cols-2">
+        <RecentCampaigns />
+        <PromotionsList />
       </div>
-      <CampaignsTable />
-      <PromotionsList />
     </div>
   );
 }

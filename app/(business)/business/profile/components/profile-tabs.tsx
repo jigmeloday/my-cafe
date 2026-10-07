@@ -9,7 +9,7 @@ import { HoursForm } from "./hours-form";
 import { LocationForm } from "./location-form";
 import { MediaSection } from "./media-section";
 import { OfferingsForm } from "./offerings-form";
-import { ProfileCard } from "./profile-card";
+import { SectionCard } from "@/components/business/section-card";
 import { SocialForm } from "./social-form";
 
 export function ProfileTabs() {
@@ -23,33 +23,33 @@ export function ProfileTabs() {
         ))}
       </TabsList>
       <TabsContent value="general">
-        <ProfileCard {...CARD_COPY.basics}>
+        <SectionCard {...CARD_COPY.basics}>
           <GeneralForm />
-        </ProfileCard>
+        </SectionCard>
       </TabsContent>
       <TabsContent value="contact" className="space-y-4">
-        <ProfileCard {...CARD_COPY.contact}>
+        <SectionCard {...CARD_COPY.contact}>
           <ContactForm />
-        </ProfileCard>
-        <ProfileCard {...CARD_COPY.location}>
+        </SectionCard>
+        <SectionCard {...CARD_COPY.location}>
           <LocationForm />
-        </ProfileCard>
-        <ProfileCard {...CARD_COPY.social}>
+        </SectionCard>
+        <SectionCard {...CARD_COPY.social}>
           <SocialForm />
-        </ProfileCard>
+        </SectionCard>
       </TabsContent>
       <TabsContent value="hours">
-        <ProfileCard {...CARD_COPY.hours}>
+        <SectionCard {...CARD_COPY.hours}>
           <HoursForm />
-        </ProfileCard>
+        </SectionCard>
       </TabsContent>
       <TabsContent value="photos">
         <MediaSection />
       </TabsContent>
       <TabsContent value="offerings">
-        <ProfileCard {...CARD_COPY.offerings}>
+        <SectionCard {...CARD_COPY.offerings}>
           <OfferingsForm />
-        </ProfileCard>
+        </SectionCard>
       </TabsContent>
     </Tabs>
   );

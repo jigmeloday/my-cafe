@@ -25,5 +25,6 @@ export const BUSINESS_SHELL = {
   publicHref: "/businesses/restaurant",
   viewPublic: "View public page",
   walletHref: "/business/wallet",
-  walletBalanceMinor: 12850,
+  /** Sample balance, in coins. */
+  walletCoins: 1250,
 };
