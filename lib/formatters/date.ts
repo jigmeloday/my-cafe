@@ -27,3 +27,10 @@ export function formatDateTime(local: string): string {
   const [hour, minute] = time.split(":").map(Number);
   return `${label}, ${hour % 12 || 12}:${String(minute).padStart(2, "0")} ${hour >= 12 ? "pm" : "am"}`;
 }
+
+/** "2026-09-12" -> "12 Sep 2026". Built by hand for the same reason as formatDateTime. */
+export function formatDate(isoDate: string): string {
+  if (!isoDate) return "—";
+  const [year, month, day] = isoDate.split("T")[0].split("-").map(Number);
+  return `${day} ${MONTHS[month - 1]} ${year}`;
+}

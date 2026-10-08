@@ -5,14 +5,22 @@ import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 
-import { BUSINESS_NAV } from "./constant/business-nav.constant";
+import { NAV_ICONS } from "./icons";
+import type { DashboardNavItem } from "./model/nav.type";
 
-export function BusinessNav({ onNavigate }: { onNavigate?: () => void }) {
+interface DashboardNavProps {
+  items: DashboardNavItem[];
+  label: string;
+  onNavigate?: () => void;
+}
+
+export function DashboardNav({ items, label, onNavigate }: DashboardNavProps) {
   const pathname = usePathname();
 
   return (
-    <nav aria-label="Business dashboard" className="space-y-1">
-      {BUSINESS_NAV.map(({ label, href, icon: Icon }) => {
+    <nav aria-label={label} className="space-y-1">
+      {items.map(({ label: text, href, icon }) => {
+        const Icon = NAV_ICONS[icon];
         const active = pathname === href || pathname.startsWith(`${href}/`);
         return (
           <Link
@@ -27,7 +35,7 @@ export function BusinessNav({ onNavigate }: { onNavigate?: () => void }) {
             )}
           >
             <Icon className="size-4" />
-            {label}
+            {text}
           </Link>
         );
       })}

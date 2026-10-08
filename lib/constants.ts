@@ -79,3 +79,9 @@ export const EMAIL_CAMPAIGN_STATUSES = [
   "CANCELLED",
 ] as const;
 export const SEND_MODES = ["NOW", "LATER"] as const;
+
+export const USER_ROLES = ["USER", "BUSINESS_OWNER", "ADMIN"] as const;
+export const USER_STATUSES = ["ACTIVE", "SUSPENDED"] as const;
+export const BUSINESS_STATUSES = ["PENDING", "VERIFIED", "SUSPENDED"] as const;
+export const REPORT_STATUSES = ["OPEN", "RESOLVED"] as const;
+export const REPORT_DECISIONS = ["DISMISSED", "REMOVED", "WARNED"] as const;

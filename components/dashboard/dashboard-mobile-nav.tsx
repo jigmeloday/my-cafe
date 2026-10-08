@@ -13,9 +13,15 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-import { BusinessNav } from "./business-nav";
+import { DashboardNav } from "./dashboard-nav";
+import type { DashboardNavItem } from "./model/nav.type";
 
-export function MobileNav() {
+interface DashboardMobileNavProps {
+  items: DashboardNavItem[];
+  label: string;
+}
+
+export function DashboardMobileNav({ items, label }: DashboardMobileNavProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -34,10 +40,14 @@ export function MobileNav() {
       </SheetTrigger>
       <SheetContent side="left" className="gap-6 p-4">
         <SheetHeader className="p-0">
-          <SheetTitle className="sr-only">Dashboard menu</SheetTitle>
+          <SheetTitle className="sr-only">{label} menu</SheetTitle>
           <Brand />
         </SheetHeader>
-        <BusinessNav onNavigate={() => setOpen(false)} />
+        <DashboardNav
+          items={items}
+          label={label}
+          onNavigate={() => setOpen(false)}
+        />
       </SheetContent>
     </Sheet>
   );
