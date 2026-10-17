@@ -1,7 +1,6 @@
 "use client";
 
 import { FormMessage } from "@/components/shared/form-message";
-import { Field } from "@/components/shared/field";
 import { PasswordInput } from "@/components/shared/password-input";
 import { Button } from "@/components/ui/button";
 import { useActionForm } from "@/hooks/use-action-form";
@@ -26,31 +25,8 @@ export function ResetPasswordForm() {
       {result && !result.ok && (
         <FormMessage tone="error">{result.error}</FormMessage>
       )}
-      <Field
-        label="New password"
-        htmlFor="password"
-        hint="At least 8 characters."
-        error={errors.password?.message}
-      >
-        <PasswordInput
-          id="password"
-          autoComplete="new-password"
-          aria-invalid={!!errors.password}
-          {...register("password")}
-        />
-      </Field>
-      <Field
-        label="Confirm password"
-        htmlFor="confirmPassword"
-        error={errors.confirmPassword?.message}
-      >
-        <PasswordInput
-          id="confirmPassword"
-          autoComplete="new-password"
-          aria-invalid={!!errors.confirmPassword}
-          {...register("confirmPassword")}
-        />
-      </Field>
+      <PasswordInput label="New password" hint="At least 8 characters." error={errors.password?.message} autoComplete="new-password" {...register("password")} />
+      <PasswordInput label="Confirm password" error={errors.confirmPassword?.message} autoComplete="new-password" {...register("confirmPassword")} />
       <Button type="submit" size="lg" className="w-full" disabled={pending}>
         {pending ? "Updating…" : RESET_COPY.submit}
       </Button>

@@ -1,6 +1,5 @@
 "use client";
 
-import { Field } from "@/components/shared/field";
 import { FormMessage } from "@/components/shared/form-message";
 import { PasswordInput } from "@/components/shared/password-input";
 import { Button } from "@/components/ui/button";
@@ -30,43 +29,9 @@ export function ChangePasswordForm() {
       {result?.ok && (
         <FormMessage tone="success">{result.message ?? "Saved."}</FormMessage>
       )}
-      <Field
-        label="Current password"
-        htmlFor="currentPassword"
-        error={errors.currentPassword?.message}
-      >
-        <PasswordInput
-          id="currentPassword"
-          autoComplete="current-password"
-          aria-invalid={!!errors.currentPassword}
-          {...register("currentPassword")}
-        />
-      </Field>
-      <Field
-        label="New password"
-        htmlFor="newPassword"
-        hint="At least 8 characters."
-        error={errors.password?.message}
-      >
-        <PasswordInput
-          id="newPassword"
-          autoComplete="new-password"
-          aria-invalid={!!errors.password}
-          {...register("password")}
-        />
-      </Field>
-      <Field
-        label="Confirm new password"
-        htmlFor="confirmNewPassword"
-        error={errors.confirmPassword?.message}
-      >
-        <PasswordInput
-          id="confirmNewPassword"
-          autoComplete="new-password"
-          aria-invalid={!!errors.confirmPassword}
-          {...register("confirmPassword")}
-        />
-      </Field>
+      <PasswordInput label="Current password" error={errors.currentPassword?.message} autoComplete="current-password" {...register("currentPassword")} />
+      <PasswordInput label="New password" hint="At least 8 characters." error={errors.password?.message} autoComplete="new-password" {...register("password")} />
+      <PasswordInput label="Confirm new password" error={errors.confirmPassword?.message} autoComplete="new-password" {...register("confirmPassword")} />
       <Button type="submit" disabled={pending || !dirty}>
         {pending ? "Updating…" : PROFILE_COPY.passwordSubmit}
       </Button>

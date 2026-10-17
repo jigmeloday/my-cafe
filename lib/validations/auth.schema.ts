@@ -27,6 +27,8 @@ export const googleAuthSchema = z.object({
   accountType: z.enum(ACCOUNT_TYPES).optional(),
 });
 
+export const resendVerificationSchema = z.object({ email });
+
 export const forgotPasswordSchema = z.object({ email });
 
 export const resetPasswordSchema = z
@@ -40,6 +42,7 @@ export const resetPasswordSchema = z
   });
 
 export type GoogleAuthInput = z.infer<typeof googleAuthSchema>;
+export type ResendVerificationInput = z.infer<typeof resendVerificationSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;

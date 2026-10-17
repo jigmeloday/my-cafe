@@ -3,7 +3,6 @@
 import type { UseFormReturn } from "react-hook-form";
 
 import { DateField } from "@/components/shared/date-field";
-import { Field } from "@/components/shared/field";
 import { SelectField } from "@/components/shared/select-field";
 import { Input } from "@/components/ui/input";
 import type { PromotionInput } from "@/lib/validations/promotion.schema";
@@ -42,18 +41,7 @@ export function ScheduleFields({
         />
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field
-          label="Location"
-          htmlFor="location"
-          error={errors.location?.message}
-        >
-          <Input
-            id="location"
-            placeholder="e.g. Norzin Lam, Thimphu"
-            aria-invalid={!!errors.location}
-            {...register("location")}
-          />
-        </Field>
+        <Input label="Location" error={errors.location?.message} placeholder="e.g. Norzin Lam, Thimphu" {...register("location")} />
         <SelectField
           control={control}
           name="category"

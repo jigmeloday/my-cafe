@@ -1,7 +1,10 @@
 import * as React from "react";
 import { cn } from "cn";
 
-function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
+import { Field } from "@/components/shared/field";
+import type { FieldText } from "@/components/ui/input";
+
+function TextareaControl({ className, ...props }: React.ComponentProps<"textarea">) {
   return (
     <textarea
       data-slot="textarea"
@@ -14,4 +17,16 @@ function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
   );
 }
 
-export { Textarea };
+function Textarea({ label, error, hint, id, ...props }: React.ComponentProps<"textarea"> & FieldText) {
+  const autoId = React.useId();
+  const textareaId = id ?? autoId;
+  const control = <TextareaControl id={textareaId} aria-invalid={!!error || props["aria-invalid"]} {...props} />;
+  if (!label) return control;
+  return (
+    <Field label={label} htmlFor={textareaId} error={error} hint={hint}>
+      {control}
+    </Field>
+  );
+}
+
+export { Textarea, TextareaControl };

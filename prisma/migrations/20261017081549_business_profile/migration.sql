@@ -1,0 +1,16 @@
+-- AlterTable
+ALTER TABLE "Business" ADD COLUMN     "addressLine1" TEXT NOT NULL DEFAULT '',
+ADD COLUMN     "addressLine2" TEXT NOT NULL DEFAULT '',
+ADD COLUMN     "categories" TEXT[],
+ADD COLUMN     "email" TEXT NOT NULL DEFAULT '',
+ADD COLUMN     "facebook" TEXT NOT NULL DEFAULT '',
+ADD COLUMN     "hours" JSONB,
+ADD COLUMN     "instagram" TEXT NOT NULL DEFAULT '',
+ADD COLUMN     "phone" TEXT NOT NULL DEFAULT '',
+ADD COLUMN     "postalCode" TEXT NOT NULL DEFAULT '',
+ADD COLUMN     "products" TEXT[],
+ADD COLUMN     "services" TEXT[],
+ADD COLUMN     "tagline" TEXT NOT NULL DEFAULT '',
+ADD COLUMN     "tiktok" TEXT NOT NULL DEFAULT '',
+ADD COLUMN     "town" TEXT NOT NULL DEFAULT '',
+ADD COLUMN     "website" TEXT NOT NULL DEFAULT '';

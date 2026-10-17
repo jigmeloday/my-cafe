@@ -2,7 +2,17 @@ import * as React from "react";
 import { Input as InputPrimitive } from "@base-ui/react/input";
 import { cn } from "cn";
 
-function Input({ className, type, ...props }: React.ComponentProps<"input">) {
+import { Field } from "@/components/shared/field";
+
+/** The text the field shows around the box. Pass `label` and the field is wrapped for you. */
+export interface FieldText {
+  label?: string;
+  error?: string;
+  hint?: string;
+}
+
+/** The bare box, with no label around it. */
+function InputControl({ className, type, ...props }: React.ComponentProps<"input">) {
   return (
     <InputPrimitive
       type={type}
@@ -16,4 +26,16 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   );
 }
 
-export { Input };
+function Input({ label, error, hint, id, ...props }: React.ComponentProps<"input"> & FieldText) {
+  const autoId = React.useId();
+  const inputId = id ?? autoId;
+  const control = <InputControl id={inputId} aria-invalid={!!error || props["aria-invalid"]} {...props} />;
+  if (!label) return control;
+  return (
+    <Field label={label} htmlFor={inputId} error={error} hint={hint}>
+      {control}
+    </Field>
+  );
+}
+
+export { Input, InputControl };

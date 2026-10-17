@@ -5,7 +5,6 @@ import Link from "next/link";
 import { GoogleAuthButton } from "@/components/auth/google-auth-button";
 import { OrDivider } from "@/components/auth/or-divider";
 import { FormMessage } from "@/components/shared/form-message";
-import { Field } from "@/components/shared/field";
 import { PasswordInput } from "@/components/shared/password-input";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,27 +35,8 @@ export function LoginForm({ next }: { next?: string }) {
         {result && !result.ok && (
           <FormMessage tone="error">{result.error}</FormMessage>
         )}
-        <Field label="Email" htmlFor="email" error={errors.email?.message}>
-          <Input
-            id="email"
-            type="email"
-            autoComplete="email"
-            aria-invalid={!!errors.email}
-            {...register("email")}
-          />
-        </Field>
-        <Field
-          label="Password"
-          htmlFor="password"
-          error={errors.password?.message}
-        >
-          <PasswordInput
-            id="password"
-            autoComplete="current-password"
-            aria-invalid={!!errors.password}
-            {...register("password")}
-          />
-        </Field>
+        <Input label="Email" error={errors.email?.message} type="email" autoComplete="email" {...register("email")} />
+        <PasswordInput label="Password" error={errors.password?.message} autoComplete="current-password" {...register("password")} />
         <div className="text-right">
           <Link
             href="/forgot-password"

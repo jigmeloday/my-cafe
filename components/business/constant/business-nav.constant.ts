@@ -12,7 +12,6 @@ export const BUSINESS_NAV: DashboardNavItem[] = [
 
 export const BUSINESS_SHELL = {
   businessName: "[Business name]",
-  publicHref: "/businesses/restaurant",
   viewPublic: "View public page",
   walletHref: "/business/wallet",
   /** Sample balance, in coins. */

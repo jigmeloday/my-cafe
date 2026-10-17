@@ -43,3 +43,10 @@ export function formatNational(digits: string) {
   const rest = digits.slice(split).match(/.{1,3}/g) ?? [];
   return [head, ...rest].filter(Boolean).join(" ");
 }
+
+/** "+97517123456" -> "+975 17 123 456". Unknown formats are shown as saved. */
+export function formatPhone(value: string): string {
+  if (!value) return "";
+  const { country, national } = parsePhone(value);
+  return value.startsWith(country.dial) ? `${country.dial} ${formatNational(national)}` : value;
+}

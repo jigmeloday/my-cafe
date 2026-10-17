@@ -1,7 +1,7 @@
 import type { AdminUser } from "../model/user.type";
 
 // Sample data: replaced by real accounts once the database exists.
-export const ADMIN_USERS: AdminUser[] = [
+export const ADMIN_USERS: Omit<AdminUser, "phone" | "emailVerified">[] = [
   {
     id: "u1",
     name: "Pema Wangmo",

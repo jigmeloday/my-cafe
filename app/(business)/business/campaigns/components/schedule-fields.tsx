@@ -3,7 +3,6 @@
 import type { UseFormReturn } from "react-hook-form";
 
 import { DateField } from "@/components/shared/date-field";
-import { Field } from "@/components/shared/field";
 import { SelectField } from "@/components/shared/select-field";
 import { Input } from "@/components/ui/input";
 import { todayIso } from "@/lib/formatters/date";
@@ -41,18 +40,7 @@ export function ScheduleFields({
             min={todayIso()}
             error={errors.sendDate?.message}
           />
-          <Field
-            label="Time"
-            htmlFor="sendTime"
-            error={errors.sendTime?.message}
-          >
-            <Input
-              id="sendTime"
-              type="time"
-              aria-invalid={!!errors.sendTime}
-              {...register("sendTime")}
-            />
-          </Field>
+          <Input label="Time" error={errors.sendTime?.message} type="time" {...register("sendTime")} />
         </>
       )}
     </div>

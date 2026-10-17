@@ -2,7 +2,6 @@ import type { StatusTone } from "@/components/shared/status-badge";
 
 import type {
   UserFilter,
-  UserFilters,
   UserRole,
   UserStatus,
 } from "../model/user.type";
@@ -18,6 +17,12 @@ export const ROLE_TONES: Record<UserRole, StatusTone> = {
   BUSINESS_OWNER: "info",
   ADMIN: "warning",
 };
+
+/** Whether the person has confirmed their email address. */
+export const EMAIL_STATUS = {
+  verified: { label: "Verified", tone: "success" },
+  unverified: { label: "Not verified", tone: "warning" },
+} as const satisfies Record<string, { label: string; tone: StatusTone }>;
 
 export const USER_STATUS: Record<
   UserStatus,
@@ -35,14 +40,16 @@ export const FILTERS: { id: UserFilter; label: string }[] = [
   { id: "SUSPENDED", label: "Suspended" },
 ];
 
-export const DEFAULT_FILTERS: UserFilters = { query: "", filter: "ALL" };
+/** How long to wait after the last keystroke before searching. */
+export const SEARCH_DELAY_MS = 400;
 
 export const USERS_COPY = {
   title: "Users",
   subtitle: "Everyone with a kuzu account.",
-  sampleNote: "Sample data.",
-  searchPlaceholder: "Search by name or email",
+  searchPlaceholder: "Search by name, email or phone",
+  searchHint: "Try several words, e.g. \"wangmo pema\", or a phone number.",
   emptyTitle: "No users match",
   emptyDescription: "Try a different search or filter.",
-  adminNote: "Admins can't be suspended here.",
+  adminNote: "Admins can't be changed here.",
+  selfNote: "You",
 };

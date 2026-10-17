@@ -1,7 +1,6 @@
 "use client";
 
 import { ActionForm } from "@/components/shared/action-form";
-import { Field } from "@/components/shared/field";
 import { PhoneField } from "@/components/shared/phone-field";
 import { SelectField } from "@/components/shared/select-field";
 import { Input } from "@/components/ui/input";
@@ -31,13 +30,7 @@ export function ContactForm({ user }: { user: ProfileUser }) {
       dirty={dirty}
       submitLabel="Save changes"
     >
-      <Field
-        label="Email"
-        htmlFor="email"
-        hint="Used to sign in. Can't be changed here."
-      >
-        <Input id="email" value={user.email} disabled readOnly />
-      </Field>
+      <Input label="Email" hint="Used to sign in. Can't be changed here." value={user.email} disabled readOnly />
       <div className="grid gap-4 sm:grid-cols-2">
         <PhoneField
           control={control}

@@ -2,7 +2,6 @@
 
 import { ActionForm } from "@/components/shared/action-form";
 import { DateField } from "@/components/shared/date-field";
-import { Field } from "@/components/shared/field";
 import { SelectField } from "@/components/shared/select-field";
 import { Input } from "@/components/ui/input";
 import { todayIso } from "@/lib/formatters/date";
@@ -33,14 +32,7 @@ export function PersonalInfoForm({ user }: { user: ProfileUser }) {
       dirty={dirty}
       submitLabel="Save changes"
     >
-      <Field label="Full name" htmlFor="name" error={errors.name?.message}>
-        <Input
-          id="name"
-          autoComplete="name"
-          aria-invalid={!!errors.name}
-          {...register("name")}
-        />
-      </Field>
+      <Input label="Full name" error={errors.name?.message} autoComplete="name" {...register("name")} />
       <div className="grid gap-4 sm:grid-cols-2">
         <DateField
           control={control}

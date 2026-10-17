@@ -14,7 +14,8 @@ export const HOME_BY_ROLE: Record<Role, string> = {
 export async function getCurrentUser() {
   const session = await auth.api.getSession({ headers: await headers() });
   const user = session?.user;
-  if (!user || (user as { status?: string }).status === "SUSPENDED") return null;
+  // Suspended or not-yet-verified accounts count as signed out, even if an older session cookie is still around.
+  if (!user || !user.emailVerified || (user as { status?: string }).status === "SUSPENDED") return null;
   return { ...user, role: (user as { role?: Role }).role ?? "USER" } as typeof user & { role: Role };
 }
 

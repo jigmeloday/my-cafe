@@ -1,9 +1,16 @@
+"use client";
+
+import { useState } from "react";
+
+import { FormMessage } from "@/components/shared/form-message";
 import { StatusBadge } from "@/components/shared/status-badge";
-import { formatDate, formatDateTime } from "@/lib/formatters/date";
+import { formatDate } from "@/lib/formatters/date";
+import { formatPhone } from "@/lib/phone";
 import type { ActionResult } from "@/server/actions/action.type";
 
 import {
   ROLE_LABELS,
+  EMAIL_STATUS,
   ROLE_TONES,
   USER_STATUS,
 } from "../constant/user.constant";
@@ -11,17 +18,26 @@ import type { AdminUser } from "../model/user.type";
 import { initials } from "../utils/user.utils";
 import { UserRowActions } from "./user-row-actions";
 
-const HEADERS = ["User", "Role", "Status", "Joined", "Last active", ""];
+const HEADERS = ["User", "Role", "Email", "Status", "Joined", "Last active", ""];
 
 interface UsersTableProps {
   items: AdminUser[];
-  onResult: (result: ActionResult) => void;
+  /** The signed-in admin, so their own row can't be acted on. */
+  currentUserId: string;
 }
 
-export function UsersTable({ items, onResult }: UsersTableProps) {
+export function UsersTable({ items, currentUserId }: UsersTableProps) {
+  const [notice, setNotice] = useState<ActionResult | null>(null);
+
   return (
-    <div className="overflow-x-auto rounded-xl border bg-surface">
-      <table className="w-full min-w-[46rem] text-sm">
+    <div className="space-y-3">
+      {notice && (
+        <FormMessage tone={notice.ok ? "success" : "error"}>
+          {notice.ok ? (notice.message ?? "Done.") : notice.error}
+        </FormMessage>
+      )}
+      <div className="overflow-x-auto rounded-xl border bg-surface">
+      <table className="w-full min-w-[52rem] text-sm">
         <thead className="text-left text-xs text-muted-foreground">
           <tr className="border-b">
             {HEADERS.map((h, i) => (
@@ -49,6 +65,11 @@ export function UsersTable({ items, onResult }: UsersTableProps) {
                       <p className="truncate text-xs text-muted-foreground">
                         {u.email}
                       </p>
+                      {u.phone && (
+                        <p className="truncate text-xs text-muted-foreground tabular-nums">
+                          {formatPhone(u.phone)}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </td>
@@ -58,22 +79,28 @@ export function UsersTable({ items, onResult }: UsersTableProps) {
                   </StatusBadge>
                 </td>
                 <td className="px-4 py-3">
+                  <StatusBadge tone={EMAIL_STATUS[u.emailVerified ? "verified" : "unverified"].tone}>
+                    {EMAIL_STATUS[u.emailVerified ? "verified" : "unverified"].label}
+                  </StatusBadge>
+                </td>
+                <td className="px-4 py-3">
                   <StatusBadge tone={status.tone}>{status.label}</StatusBadge>
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap text-muted-foreground">
                   {formatDate(u.joined)}
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap text-muted-foreground">
-                  {formatDateTime(u.lastActive)}
+                  {formatDate(u.lastActive)}
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <UserRowActions item={u} onResult={onResult} />
+                  <UserRowActions item={u} isSelf={u.id === currentUserId} onResult={setNotice} />
                 </td>
               </tr>
             );
           })}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }

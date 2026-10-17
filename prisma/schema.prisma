@@ -49,22 +49,24 @@ enum CoinTransactionType {
 }
 
 model User {
-  id            String        @id @default(cuid())
-  email         String        @unique
-  name          String
-  emailVerified Boolean       @default(false)
-  image         String?
-  role          Role          @default(USER)
-  status        AccountStatus @default(ACTIVE)
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  businesses    Business[]
-  sessions      Session[]
-  accounts      Account[]
-  profile       Profile?
-  favorites     Favorite[]
-  follows       Follow[]
-  notifications Notification[]
+  id                 String         @id @default(cuid())
+  email              String         @unique
+  name               String
+  emailVerified      Boolean        @default(false)
+  image              String?
+  /// When a verification email was last sent, so people can't be spammed with them.
+  verificationSentAt DateTime?
+  role               Role           @default(USER)
+  status             AccountStatus  @default(ACTIVE)
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  businesses         Business[]
+  sessions           Session[]
+  accounts           Account[]
+  profile            Profile?
+  favorites          Favorite[]
+  follows            Follow[]
+  notifications      Notification[]
 }
 
 // The next three models are the tables Better Auth needs.
@@ -121,18 +123,32 @@ model Category {
 }
 
 model Business {
-  id          String         @id @default(cuid())
-  ownerId     String
-  owner       User           @relation(fields: [ownerId], references: [id])
-  name        String
-  slug        String         @unique
-  description String         @default("")
-  dzongkhag   String         @default("")
-  status      BusinessStatus @default(PENDING)
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
-  promotions  Promotion[]
-  wallet      Wallet?
+  id           String         @id @default(cuid())
+  ownerId      String
+  owner        User           @relation(fields: [ownerId], references: [id])
+  name         String
+  slug         String         @unique
+  tagline      String         @default("")
+  description  String         @default("")
+  phone        String         @default("")
+  email        String         @default("")
+  website      String         @default("")
+  addressLine1 String         @default("")
+  addressLine2 String         @default("")
+  town         String         @default("")
+  dzongkhag    String         @default("")
+  postalCode   String         @default("")
+  facebook     String         @default("")
+  instagram    String         @default("")
+  tiktok       String         @default("")
+  hours        Json?
+  services     String[]
+  products     String[]
+  status       BusinessStatus @default(PENDING)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  promotions   Promotion[]
+  wallet       Wallet?
 
   @@index([ownerId])
 }
@@ -184,30 +200,30 @@ model CoinTransaction {
 
 // Extra details a customer chooses to share. Created the first time they save something.
 model Profile {
-  userId           String   @id
-  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId           String    @id
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   birthday         DateTime? @db.Date
-  gender           String   @default("")
-  phone            String   @default("")
-  preferredContact String   @default("email")
-  addressLine1     String   @default("")
-  addressLine2     String   @default("")
-  town             String   @default("")
-  dzongkhag        String   @default("")
-  postalCode       String   @default("")
+  gender           String    @default("")
+  phone            String    @default("")
+  preferredContact String    @default("email")
+  addressLine1     String    @default("")
+  addressLine2     String    @default("")
+  town             String    @default("")
+  dzongkhag        String    @default("")
+  postalCode       String    @default("")
   interests        String[]
 
   // How we may reach them (the app only emails or texts people who switched these on).
-  notifyEmail          Boolean @default(true)
-  notifySms            Boolean @default(false)
-  notifyPush           Boolean @default(true)
-  topicFollowed        Boolean @default(true)
-  topicWeekend         Boolean @default(true)
-  topicNewPlaces       Boolean @default(false)
-  topicEnding          Boolean @default(true)
-  topicBirthday        Boolean @default(true)
-  allowPersonalisation Boolean @default(true)
-  marketingConsent     Boolean @default(false)
+  notifyEmail          Boolean   @default(true)
+  notifySms            Boolean   @default(false)
+  notifyPush           Boolean   @default(true)
+  topicFollowed        Boolean   @default(true)
+  topicWeekend         Boolean   @default(true)
+  topicNewPlaces       Boolean   @default(false)
+  topicEnding          Boolean   @default(true)
+  topicBirthday        Boolean   @default(true)
+  allowPersonalisation Boolean   @default(true)
+  marketingConsent     Boolean   @default(false)
   /// When promotional consent was last given. Null while it is off.
   marketingConsentAt   DateTime?
 
@@ -248,4 +264,20 @@ model Notification {
   createdAt   DateTime  @default(now())
 
   @@index([userId, createdAt])
+}
+
+// A record of what admins did. It has no links to other tables on purpose: the entry must survive
+// after the person it is about (or the admin who did it) is deleted, so names are copied in.
+model AuditLog {
+  id          String   @id @default(cuid())
+  actorId     String
+  actorEmail  String
+  /// e.g. "user.suspend", "user.unsuspend", "user.delete"
+  action      String
+  targetId    String
+  targetLabel String
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([targetId])
 }

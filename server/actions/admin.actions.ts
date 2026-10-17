@@ -26,14 +26,6 @@ export async function reinstateBusinessAction(id: string) {
   return needsId(id);
 }
 
-export async function suspendUserAction(id: string) {
-  return needsId(id);
-}
-
-export async function reinstateUserAction(id: string) {
-  return needsId(id);
-}
-
 export async function resolveReportAction(input: {
   id: string;
   decision: string;

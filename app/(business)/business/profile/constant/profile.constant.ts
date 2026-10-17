@@ -1,5 +1,3 @@
-import { CATEGORIES } from "@/components/public/constant/site.constant";
-
 import type { ProfileTab } from "../model/profile.type";
 
 export const PROFILE_COPY = {
@@ -18,8 +16,6 @@ export const PROFILE_TABS: ProfileTab[] = [
   { id: "offerings", label: "Services & products" },
 ];
 
-export const CATEGORY_OPTIONS = CATEGORIES.map(({ label }) => label);
-export const MAX_CATEGORIES = 3;
 export const DESCRIPTION_MAX = 500;
 
 export const CARD_COPY = {

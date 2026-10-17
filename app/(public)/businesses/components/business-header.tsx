@@ -33,6 +33,7 @@ export function BusinessHeader({ business }: { business: BusinessProfile }) {
         </div>
         <FollowButton href={`/businesses/${business.slug}`} />
       </div>
+      {business.tagline && <p className="text-muted-foreground">{business.tagline}</p>}
       {business.openingOffer && (
         <p className="inline-flex items-center gap-2 rounded-full bg-maroon-soft px-3 py-1.5 text-sm">
           <span className="font-semibold text-primary">

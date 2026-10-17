@@ -11,8 +11,9 @@ import { MediaSection } from "./media-section";
 import { OfferingsForm } from "./offerings-form";
 import { SectionCard } from "@/components/business/section-card";
 import { SocialForm } from "./social-form";
+import type { BusinessProfileData } from "@/types/business-profile";
 
-export function ProfileTabs() {
+export function ProfileTabs({ data }: { data: BusinessProfileData }) {
   return (
     <Tabs defaultValue={PROFILE_TABS[0].id}>
       <TabsList>
@@ -24,23 +25,23 @@ export function ProfileTabs() {
       </TabsList>
       <TabsContent value="general">
         <SectionCard {...CARD_COPY.basics}>
-          <GeneralForm />
+          <GeneralForm data={data.general} />
         </SectionCard>
       </TabsContent>
       <TabsContent value="contact" className="space-y-4">
         <SectionCard {...CARD_COPY.contact}>
-          <ContactForm />
+          <ContactForm data={data.contact} />
         </SectionCard>
         <SectionCard {...CARD_COPY.location}>
-          <LocationForm />
+          <LocationForm data={data.location} />
         </SectionCard>
         <SectionCard {...CARD_COPY.social}>
-          <SocialForm />
+          <SocialForm data={data.social} />
         </SectionCard>
       </TabsContent>
       <TabsContent value="hours">
         <SectionCard {...CARD_COPY.hours}>
-          <HoursForm />
+          <HoursForm data={data.hours} />
         </SectionCard>
       </TabsContent>
       <TabsContent value="photos">
@@ -48,7 +49,7 @@ export function ProfileTabs() {
       </TabsContent>
       <TabsContent value="offerings">
         <SectionCard {...CARD_COPY.offerings}>
-          <OfferingsForm />
+          <OfferingsForm data={data.offerings} />
         </SectionCard>
       </TabsContent>
     </Tabs>
