@@ -3,10 +3,10 @@ import { Bell } from "lucide-react";
 import { EmptyState } from "@/components/shared/empty-state";
 
 import { PROFILE_COPY } from "../constant/profile.constant";
-import { NOTIFICATIONS } from "../constant/profile.data";
+import type { NotificationItem } from "../model/profile.type";
 
-export function NotificationList({ limit }: { limit?: number }) {
-  const items = NOTIFICATIONS.slice(0, limit);
+export function NotificationList({ items: all, limit }: { items: NotificationItem[]; limit?: number }) {
+  const items = all.slice(0, limit);
   if (items.length === 0) {
     return (
       <EmptyState

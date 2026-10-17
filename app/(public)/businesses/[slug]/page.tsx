@@ -2,16 +2,16 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { BusinessProfileView } from "../components/business-profile-view";
-import { allBusinessSlugs, getBusinessProfile } from "../utils/business.utils";
+import { getBusinessProfile } from "../utils/business.server";
 
-export const generateStaticParams = () =>
-  allBusinessSlugs().map((slug) => ({ slug }));
+// Real businesses are added at any time, so every page is read when asked for.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
 }: PageProps<"/businesses/[slug]">): Promise<Metadata> {
   const { slug } = await params;
-  const business = getBusinessProfile(slug);
+  const business = await getBusinessProfile(slug);
   return {
     title: business ? `${business.name} — kuzu` : "Place not found — kuzu",
   };
@@ -21,7 +21,7 @@ export default async function BusinessPage({
   params,
 }: PageProps<"/businesses/[slug]">) {
   const { slug } = await params;
-  const business = getBusinessProfile(slug);
+  const business = await getBusinessProfile(slug);
   if (!business) notFound();
   return <BusinessProfileView business={business} />;
 }

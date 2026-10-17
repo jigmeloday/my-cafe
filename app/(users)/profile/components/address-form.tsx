@@ -9,7 +9,7 @@ import { updateAddressAction } from "@/server/actions/account.actions";
 import type { ProfileUser } from "../model/profile.type";
 
 export function AddressForm({ user }: { user: ProfileUser }) {
-  const { form, submit, result, pending } = useActionForm(
+  const { form, submit, result, pending, dirty } = useActionForm(
     addressSchema,
     updateAddressAction,
     user.address,
@@ -20,6 +20,7 @@ export function AddressForm({ user }: { user: ProfileUser }) {
       onSubmit={submit}
       result={result}
       pending={pending}
+      dirty={dirty}
       submitLabel="Save address"
     >
       <AddressFields form={form} />

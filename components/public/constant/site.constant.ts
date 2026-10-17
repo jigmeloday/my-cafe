@@ -24,6 +24,15 @@ export const MAIN_NAV: NavLink[] = [
   { label: "New places", href: "/discover" },
 ];
 
+export const SIGNED_IN_MENU = {
+  account: { label: "My account", href: "/profile" },
+  dashboards: {
+    BUSINESS_OWNER: { label: "Business dashboard", href: "/business/dashboard" },
+    ADMIN: { label: "Admin", href: "/admin/dashboard" },
+  } as Record<string, NavLink>,
+  logout: "Log out",
+};
+
 export const USER_MENU: NavLink[] = [
   { label: "Log in", href: "/login" },
   { label: "Sign up", href: "/register" },

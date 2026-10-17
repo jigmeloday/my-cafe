@@ -25,20 +25,7 @@ export const CONTACT_OPTIONS: OptionItem[] = CONTACT_METHODS.map((value) => ({
   label: CONTACT_LABELS[value],
 }));
 
-export const INTERESTS = [
-  "Food & drink",
-  "Cafés",
-  "Fashion",
-  "Electronics",
-  "Wellness",
-  "Stays",
-  "Music",
-  "Culture",
-  "Kids",
-  "Sports",
-  "Books",
-  "Crafts",
-] as const;
+export { INTERESTS } from "@/lib/constants";
 
 export const CHANNEL_OPTIONS: SwitchOption[] = [
   {

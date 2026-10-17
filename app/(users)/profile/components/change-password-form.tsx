@@ -1,6 +1,5 @@
 "use client";
 
-import { Field } from "@/components/shared/field";
 import { FormMessage } from "@/components/shared/form-message";
 import { PasswordInput } from "@/components/shared/password-input";
 import { Button } from "@/components/ui/button";
@@ -11,10 +10,11 @@ import { changePasswordAction } from "@/server/actions/account.actions";
 import { PROFILE_COPY } from "../constant/profile.constant";
 
 export function ChangePasswordForm() {
-  const { form, submit, result, pending } = useActionForm(
+  const { form, submit, result, pending, dirty } = useActionForm(
     changePasswordSchema,
     changePasswordAction,
     { currentPassword: "", password: "", confirmPassword: "" },
+    { clearOnSuccess: true },
   );
   const {
     register,
@@ -26,44 +26,13 @@ export function ChangePasswordForm() {
       {result && !result.ok && (
         <FormMessage tone="error">{result.error}</FormMessage>
       )}
-      <Field
-        label="Current password"
-        htmlFor="currentPassword"
-        error={errors.currentPassword?.message}
-      >
-        <PasswordInput
-          id="currentPassword"
-          autoComplete="current-password"
-          aria-invalid={!!errors.currentPassword}
-          {...register("currentPassword")}
-        />
-      </Field>
-      <Field
-        label="New password"
-        htmlFor="newPassword"
-        hint="At least 8 characters."
-        error={errors.password?.message}
-      >
-        <PasswordInput
-          id="newPassword"
-          autoComplete="new-password"
-          aria-invalid={!!errors.password}
-          {...register("password")}
-        />
-      </Field>
-      <Field
-        label="Confirm new password"
-        htmlFor="confirmNewPassword"
-        error={errors.confirmPassword?.message}
-      >
-        <PasswordInput
-          id="confirmNewPassword"
-          autoComplete="new-password"
-          aria-invalid={!!errors.confirmPassword}
-          {...register("confirmPassword")}
-        />
-      </Field>
-      <Button type="submit" disabled={pending}>
+      {result?.ok && (
+        <FormMessage tone="success">{result.message ?? "Saved."}</FormMessage>
+      )}
+      <PasswordInput label="Current password" error={errors.currentPassword?.message} autoComplete="current-password" {...register("currentPassword")} />
+      <PasswordInput label="New password" hint="At least 8 characters." error={errors.password?.message} autoComplete="new-password" {...register("password")} />
+      <PasswordInput label="Confirm new password" error={errors.confirmPassword?.message} autoComplete="new-password" {...register("confirmPassword")} />
+      <Button type="submit" disabled={pending || !dirty}>
         {pending ? "Updating…" : PROFILE_COPY.passwordSubmit}
       </Button>
     </form>

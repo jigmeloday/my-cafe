@@ -36,7 +36,7 @@ const GROUPS = [
 ] satisfies { title: string; description: string; options: SwitchOption[] }[];
 
 export function PreferencesForm({ user }: { user: ProfileUser }) {
-  const { form, submit, result, pending } = useActionForm(
+  const { form, submit, result, pending, dirty } = useActionForm(
     preferencesSchema,
     updatePreferencesAction,
     user.preferences,
@@ -48,6 +48,7 @@ export function PreferencesForm({ user }: { user: ProfileUser }) {
       onSubmit={submit}
       result={result}
       pending={pending}
+      dirty={dirty}
       submitLabel="Save preferences"
       className="max-w-2xl space-y-8"
     >

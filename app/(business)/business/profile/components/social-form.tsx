@@ -1,13 +1,12 @@
 "use client";
 
 import { ActionForm } from "@/components/shared/action-form";
-import { Field } from "@/components/shared/field";
 import { Input } from "@/components/ui/input";
 import { useActionForm } from "@/hooks/use-action-form";
 import { businessSocialSchema } from "@/lib/validations/business.schema";
 import { updateBusinessSocialAction } from "@/server/actions/business.actions";
 
-import { BUSINESS_PROFILE } from "../constant/profile.data";
+import type { BusinessProfileData } from "@/types/business-profile";
 
 const FIELDS = [
   {
@@ -27,11 +26,11 @@ const FIELDS = [
   },
 ] as const;
 
-export function SocialForm() {
-  const { form, submit, result, pending } = useActionForm(
+export function SocialForm({ data }: { data: BusinessProfileData["social"] }) {
+  const { form, submit, result, pending, dirty } = useActionForm(
     businessSocialSchema,
     updateBusinessSocialAction,
-    BUSINESS_PROFILE.social,
+    data,
   );
   const {
     register,
@@ -43,24 +42,11 @@ export function SocialForm() {
       onSubmit={submit}
       result={result}
       pending={pending}
+      dirty={dirty}
       submitLabel="Save links"
     >
       {FIELDS.map(({ name, label, placeholder }) => (
-        <Field
-          key={name}
-          label={label}
-          htmlFor={name}
-          error={errors[name]?.message}
-        >
-          <Input
-            id={name}
-            type="url"
-            inputMode="url"
-            placeholder={placeholder}
-            aria-invalid={!!errors[name]}
-            {...register(name)}
-          />
-        </Field>
+        <Input key={name} label={label} error={errors[name]?.message} type="url" inputMode="url" placeholder={placeholder} {...register(name)} />
       ))}
     </ActionForm>
   );

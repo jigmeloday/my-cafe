@@ -8,6 +8,8 @@ interface ActionFormProps {
   onSubmit: React.FormEventHandler<HTMLFormElement>;
   result: ActionResult | null;
   pending: boolean;
+  /** False when nothing has changed, which turns the button off. Leave out to always allow saving. */
+  dirty?: boolean;
   submitLabel: string;
   className?: string;
   children: React.ReactNode;
@@ -17,6 +19,7 @@ export function ActionForm({
   onSubmit,
   result,
   pending,
+  dirty = true,
   submitLabel,
   className,
   children,
@@ -34,7 +37,7 @@ export function ActionForm({
         <FormMessage tone="success">{result.message ?? "Saved."}</FormMessage>
       )}
       {children}
-      <Button type="submit" disabled={pending}>
+      <Button type="submit" disabled={pending || !dirty}>
         {pending ? "Saving…" : submitLabel}
       </Button>
     </form>

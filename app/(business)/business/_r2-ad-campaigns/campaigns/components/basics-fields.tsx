@@ -2,7 +2,6 @@
 
 import type { UseFormReturn } from "react-hook-form";
 
-import { Field } from "@/components/shared/field";
 import { SelectField } from "@/components/shared/select-field";
 import { Input } from "@/components/ui/input";
 import type { CampaignInput } from "@/lib/validations/campaign.schema";
@@ -20,19 +19,7 @@ export function BasicsFields({ form }: { form: UseFormReturn<CampaignInput> }) {
 
   return (
     <>
-      <Field
-        label="Campaign name"
-        htmlFor="name"
-        hint="Only you see this. e.g. Tshechu weekend push"
-        error={errors.name?.message}
-      >
-        <Input
-          id="name"
-          maxLength={60}
-          aria-invalid={!!errors.name}
-          {...register("name")}
-        />
-      </Field>
+      <Input label="Campaign name" hint="Only you see this. e.g. Tshechu weekend push" error={errors.name?.message} maxLength={60} {...register("name")} />
       <SelectField
         control={control}
         name="promotionId"

@@ -6,9 +6,11 @@ import { PromotionCard } from "./promotion-card";
 interface PromotionGridProps {
   items: PromotionCardData[];
   className?: string;
+  /** Pass true on lists of things the person already saved. */
+  defaultSaved?: boolean;
 }
 
-export function PromotionGrid({ items, className }: PromotionGridProps) {
+export function PromotionGrid({ items, className, defaultSaved }: PromotionGridProps) {
   return (
     <ul
       className={cn(
@@ -18,7 +20,7 @@ export function PromotionGrid({ items, className }: PromotionGridProps) {
     >
       {items.map((item) => (
         <li key={item.id}>
-          <PromotionCard item={item} />
+          <PromotionCard item={item} defaultSaved={defaultSaved} />
         </li>
       ))}
     </ul>

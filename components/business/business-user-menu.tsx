@@ -4,6 +4,7 @@ import Link from "next/link";
 import { CircleUserRound, ExternalLink, LogOut } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { logoutAction } from "@/server/actions/auth.actions";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,7 +15,7 @@ import {
 
 import { BUSINESS_SHELL } from "./constant/business-nav.constant";
 
-export function BusinessUserMenu() {
+export function BusinessUserMenu({ publicHref }: { publicHref: string | null }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -25,14 +26,16 @@ export function BusinessUserMenu() {
         <CircleUserRound className="size-6" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuItem render={<Link href={BUSINESS_SHELL.publicHref} />}>
-          <ExternalLink /> {BUSINESS_SHELL.viewPublic}
-        </DropdownMenuItem>
+        {publicHref && (
+          <DropdownMenuItem render={<Link href={publicHref} />}>
+            <ExternalLink /> {BUSINESS_SHELL.viewPublic}
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem render={<Link href="/profile" />}>
           My account
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem variant="destructive">
+        <DropdownMenuItem variant="destructive" onClick={() => logoutAction()}>
           <LogOut /> Log out
         </DropdownMenuItem>
       </DropdownMenuContent>

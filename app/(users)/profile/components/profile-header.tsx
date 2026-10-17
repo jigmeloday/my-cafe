@@ -1,6 +1,6 @@
 import { ACCOUNT_TYPE_LABELS } from "../constant/profile.constant";
 import type { ProfileStat, ProfileUser } from "../model/profile.type";
-import { getInitials } from "../utils/profile.utils";
+import { formatJoined, getInitials } from "../utils/profile.utils";
 
 interface ProfileHeaderProps {
   user: ProfileUser;
@@ -19,7 +19,7 @@ export function ProfileHeader({ user, stats }: ProfileHeaderProps) {
       <div className="min-w-0 flex-1">
         <h1 className="truncate">{user.personal.name}</h1>
         <p className="truncate text-sm text-muted-foreground">
-          {user.email} · {ACCOUNT_TYPE_LABELS[user.accountType]} · {user.joined}
+          {user.email} · {ACCOUNT_TYPE_LABELS[user.role]} · {formatJoined(user.joined)}
         </p>
       </div>
       <dl className="hidden gap-6 text-center sm:flex">

@@ -1,7 +1,6 @@
 "use client";
 
 import { ActionForm } from "@/components/shared/action-form";
-import { Field } from "@/components/shared/field";
 import { PhoneField } from "@/components/shared/phone-field";
 import { SelectField } from "@/components/shared/select-field";
 import { Input } from "@/components/ui/input";
@@ -13,7 +12,7 @@ import { CONTACT_OPTIONS } from "../constant/profile-options.constant";
 import type { ProfileUser } from "../model/profile.type";
 
 export function ContactForm({ user }: { user: ProfileUser }) {
-  const { form, submit, result, pending } = useActionForm(
+  const { form, submit, result, pending, dirty } = useActionForm(
     contactSchema,
     updateContactAction,
     user.contact,
@@ -28,15 +27,10 @@ export function ContactForm({ user }: { user: ProfileUser }) {
       onSubmit={submit}
       result={result}
       pending={pending}
+      dirty={dirty}
       submitLabel="Save changes"
     >
-      <Field
-        label="Email"
-        htmlFor="email"
-        hint="Used to sign in. Can't be changed here."
-      >
-        <Input id="email" value={user.email} disabled readOnly />
-      </Field>
+      <Input label="Email" hint="Used to sign in. Can't be changed here." value={user.email} disabled readOnly />
       <div className="grid gap-4 sm:grid-cols-2">
         <PhoneField
           control={control}

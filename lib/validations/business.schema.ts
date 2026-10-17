@@ -24,10 +24,6 @@ export const businessGeneralSchema = z.object({
     .max(60, "Keep it under 60 characters"),
   tagline: z.string().trim().max(80, "Keep it under 80 characters"),
   description: z.string().trim().max(500, "Keep it under 500 characters"),
-  categories: z
-    .array(z.string())
-    .min(1, "Pick at least one category")
-    .max(3, "Pick up to 3 categories"),
 });
 
 export const businessContactSchema = z.object({

@@ -6,7 +6,6 @@ import { DZONGKHAGS } from "@/lib/constants";
 import type { AddressInput } from "@/lib/validations/profile.schema";
 import { Input } from "@/components/ui/input";
 
-import { Field } from "./field";
 import { SelectField } from "./select-field";
 
 const DZONGKHAG_OPTIONS = DZONGKHAGS.map((value) => ({ value, label: value }));
@@ -20,40 +19,10 @@ export function AddressFields({ form }: { form: UseFormReturn<AddressInput> }) {
 
   return (
     <>
-      <Field
-        label="Address line 1"
-        htmlFor="line1"
-        error={errors.line1?.message}
-      >
-        <Input
-          id="line1"
-          autoComplete="address-line1"
-          aria-invalid={!!errors.line1}
-          {...register("line1")}
-        />
-      </Field>
-      <Field
-        label="Address line 2"
-        htmlFor="line2"
-        hint="Building, floor or landmark (optional)."
-        error={errors.line2?.message}
-      >
-        <Input
-          id="line2"
-          autoComplete="address-line2"
-          aria-invalid={!!errors.line2}
-          {...register("line2")}
-        />
-      </Field>
+      <Input label="Address line 1" error={errors.line1?.message} autoComplete="address-line1" {...register("line1")} />
+      <Input label="Address line 2" hint="Building, floor or landmark (optional)." error={errors.line2?.message} autoComplete="address-line2" {...register("line2")} />
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Town" htmlFor="town" error={errors.town?.message}>
-          <Input
-            id="town"
-            autoComplete="address-level2"
-            aria-invalid={!!errors.town}
-            {...register("town")}
-          />
-        </Field>
+        <Input label="Town" error={errors.town?.message} autoComplete="address-level2" {...register("town")} />
         <SelectField
           control={control}
           name="dzongkhag"
@@ -62,20 +31,15 @@ export function AddressFields({ form }: { form: UseFormReturn<AddressInput> }) {
           error={errors.dzongkhag?.message}
         />
       </div>
-      <Field
-        label="Postal code"
-        htmlFor="postalCode"
-        error={errors.postalCode?.message}
-        className="sm:max-w-[calc(50%-0.5rem)]"
-      >
+      <div className="sm:max-w-[calc(50%-0.5rem)]">
         <Input
-          id="postalCode"
+          label="Postal code"
+          error={errors.postalCode?.message}
           inputMode="numeric"
           autoComplete="postal-code"
-          aria-invalid={!!errors.postalCode}
           {...register("postalCode")}
         />
-      </Field>
+      </div>
     </>
   );
 }

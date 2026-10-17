@@ -2,7 +2,6 @@
 
 import type { UseFormReturn } from "react-hook-form";
 
-import { Field } from "@/components/shared/field";
 import { SelectField } from "@/components/shared/select-field";
 import { Input } from "@/components/ui/input";
 import type { CampaignInput } from "@/lib/validations/campaign.schema";
@@ -23,32 +22,8 @@ export function ScheduleFields({
 
   return (
     <div className="grid gap-4 sm:grid-cols-3">
-      <Field
-        label="Starts"
-        htmlFor="startDate"
-        error={errors.startDate?.message}
-      >
-        <Input
-          id="startDate"
-          type="date"
-          aria-invalid={!!errors.startDate}
-          {...register("startDate")}
-        />
-      </Field>
-      <Field
-        label="Ends"
-        htmlFor="endDate"
-        hint="Empty = until the budget is spent."
-        error={errors.endDate?.message}
-      >
-        <Input
-          id="endDate"
-          type="date"
-          min={watch("startDate") || undefined}
-          aria-invalid={!!errors.endDate}
-          {...register("endDate")}
-        />
-      </Field>
+      <Input label="Starts" error={errors.startDate?.message} type="date" {...register("startDate")} />
+      <Input label="Ends" hint="Empty = until the budget is spent." error={errors.endDate?.message} type="date" min={watch("startDate") || undefined} {...register("endDate")} />
       <SelectField
         control={control}
         name="schedule"

@@ -13,41 +13,11 @@ import type {
   CompletionTask,
   ProfileNavGroup,
   ProfileStat,
-  ProfileUser,
 } from "../model/profile.type";
 
-import { FOLLOWING_PLACES, SAVED_OFFERS } from "./profile.data";
-
-export const PROFILE_USER: ProfileUser = {
-  email: "you@example.com",
-  accountType: "USER",
-  joined: "Joined October 2026",
-  personal: { name: "[Your name]", birthday: "", gender: "" },
-  contact: { phone: "", preferredContact: "email" },
-  address: {
-    line1: "",
-    line2: "",
-    town: "",
-    dzongkhag: "Thimphu",
-    postalCode: "",
-  },
-  preferences: {
-    channels: { email: true, sms: false, push: true },
-    topics: {
-      followed: true,
-      weekend: true,
-      newPlaces: false,
-      ending: true,
-      birthday: true,
-    },
-    allowPersonalisation: true,
-    marketingConsent: false,
-  },
-};
-
-export const PROFILE_STATS: ProfileStat[] = [
-  { label: "Favorites", value: SAVED_OFFERS.length },
-  { label: "Following", value: FOLLOWING_PLACES.length },
+export const buildProfileStats = (favorites: number, following: number): ProfileStat[] => [
+  { label: "Favorites", value: favorites },
+  { label: "Following", value: following },
 ];
 
 export const PROFILE_NAV: ProfileNavGroup[] = [
@@ -78,6 +48,7 @@ export const PROFILE_NAV: ProfileNavGroup[] = [
 export const ACCOUNT_TYPE_LABELS = {
   USER: "Customer account",
   BUSINESS_OWNER: "Business owner account",
+  ADMIN: "Admin account",
 } as const;
 
 export const COMPLETION_TASKS: CompletionTask[] = [
@@ -148,7 +119,8 @@ export const OVERVIEW_COPY = {
   favoritesTitle: "Your favorites",
   followingTitle: "Following",
   recommendedTitle: "Picked for you",
-  recommendedDescription: "Based on what you save and follow.",
+  recommendedDescription: "Based on your interests.",
+  recommendedFallback: "Popular deals. Pick your interests to see more of what you like.",
   weekendTitle: "Happening this weekend",
   viewAll: "View all",
   edit: "Edit",

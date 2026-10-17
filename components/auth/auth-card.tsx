@@ -2,7 +2,7 @@ import Link from "next/link";
 
 interface AuthCardProps {
   title: string;
-  description?: string;
+  description?: React.ReactNode;
   footerText?: string;
   footerLink?: { label: string; href: string };
   children: React.ReactNode;

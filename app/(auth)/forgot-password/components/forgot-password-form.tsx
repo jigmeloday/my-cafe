@@ -1,7 +1,6 @@
 "use client";
 
 import { FormMessage } from "@/components/shared/form-message";
-import { Field } from "@/components/shared/field";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useActionForm } from "@/hooks/use-action-form";
@@ -31,15 +30,7 @@ export function ForgotPasswordForm() {
           {result.message ?? FORGOT_COPY.success}
         </FormMessage>
       )}
-      <Field label="Email" htmlFor="email" error={errors.email?.message}>
-        <Input
-          id="email"
-          type="email"
-          autoComplete="email"
-          aria-invalid={!!errors.email}
-          {...register("email")}
-        />
-      </Field>
+      <Input label="Email" error={errors.email?.message} type="email" autoComplete="email" {...register("email")} />
       <Button type="submit" size="lg" className="w-full" disabled={pending}>
         {pending ? "Sending…" : FORGOT_COPY.submit}
       </Button>

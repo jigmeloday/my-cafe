@@ -6,13 +6,13 @@ import { useActionForm } from "@/hooks/use-action-form";
 import { businessOfferingsSchema } from "@/lib/validations/business.schema";
 import { updateBusinessOfferingsAction } from "@/server/actions/business.actions";
 
-import { BUSINESS_PROFILE } from "../constant/profile.data";
+import type { BusinessProfileData } from "@/types/business-profile";
 
-export function OfferingsForm() {
-  const { form, submit, result, pending } = useActionForm(
+export function OfferingsForm({ data }: { data: BusinessProfileData["offerings"] }) {
+  const { form, submit, result, pending, dirty } = useActionForm(
     businessOfferingsSchema,
     updateBusinessOfferingsAction,
-    BUSINESS_PROFILE.offerings,
+    data,
   );
   const {
     control,
@@ -24,6 +24,7 @@ export function OfferingsForm() {
       onSubmit={submit}
       result={result}
       pending={pending}
+      dirty={dirty}
       submitLabel="Save"
     >
       <TagField

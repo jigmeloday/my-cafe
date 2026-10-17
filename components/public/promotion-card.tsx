@@ -12,9 +12,12 @@ import type { PromotionCardData } from "./model/promotion.type";
 export function PromotionCard({
   item,
   className,
+  defaultSaved,
 }: {
   item: PromotionCardData;
   className?: string;
+  /** Show the heart as saved until the real state loads (for lists of things already saved). */
+  defaultSaved?: boolean;
 }) {
   return (
     <motion.article
@@ -29,7 +32,7 @@ export function PromotionCard({
             {item.badge}
           </span>
         )}
-        <FavoriteButton className="absolute top-2 right-2" />
+        <FavoriteButton href={item.href} defaultSaved={defaultSaved} className="absolute top-2 right-2" />
       </div>
       <Link
         href={item.href}

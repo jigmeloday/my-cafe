@@ -6,21 +6,21 @@ import { useActionForm } from "@/hooks/use-action-form";
 import { businessHoursSchema } from "@/lib/validations/business.schema";
 import { updateBusinessHoursAction } from "@/server/actions/business.actions";
 
-import { BUSINESS_PROFILE } from "../constant/profile.data";
+import type { BusinessProfileData } from "@/types/business-profile";
 import { HoursRow } from "./hours-row";
 
-export function HoursForm() {
-  const { form, submit, result, pending } = useActionForm(
+export function HoursForm({ data }: { data: BusinessProfileData["hours"] }) {
+  const { form, submit, result, pending, dirty } = useActionForm(
     businessHoursSchema,
     updateBusinessHoursAction,
-    BUSINESS_PROFILE.hours,
+    data,
   );
-  const days = BUSINESS_PROFILE.hours.hours;
+  const days = data.hours;
 
   const copyMondayToAll = () => {
     const monday = form.getValues("hours.0");
     days.forEach((_, i) => {
-      if (i > 0) form.setValue(`hours.${i}`, { ...monday, day: days[i].day });
+      if (i > 0) form.setValue(`hours.${i}`, { ...monday, day: days[i].day }, { shouldDirty: true });
     });
   };
 
@@ -29,6 +29,7 @@ export function HoursForm() {
       onSubmit={submit}
       result={result}
       pending={pending}
+      dirty={dirty}
       submitLabel="Save hours"
     >
       <ul className="divide-y border-y">

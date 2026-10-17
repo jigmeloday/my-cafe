@@ -1,4 +1,4 @@
-import { Globe, Mail, MapPin, Phone } from "lucide-react";
+import { Globe, Link2, Mail, MapPin, Phone } from "lucide-react";
 
 import type {
   ActivityTab,
@@ -28,6 +28,8 @@ export const BUSINESS_CONTACTS: BusinessContact[] = [
   { key: "website", icon: Globe, text: "[Website]" },
 ];
 
+export const CONTACT_ICONS = { phone: Phone, email: Mail, address: MapPin, website: Globe, social: Link2 } as const;
+
 export const GALLERY_ITEMS = ["Photo 1", "Photo 2", "Photo 3", "Photo 4"];
 
 export const BUSINESS_COPY = {
@@ -39,6 +41,9 @@ export const BUSINESS_COPY = {
   activity: "Offers & events",
   gallery: "Photos",
   similar: "More new places",
+  editProfile: "Edit profile",
+  services: "Services",
+  products: "Products",
   openingOffer: "Opening offer",
   closed: "Closed",
   today: "Today",

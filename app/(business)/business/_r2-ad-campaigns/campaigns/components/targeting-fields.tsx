@@ -3,7 +3,6 @@
 import type { UseFormReturn } from "react-hook-form";
 
 import { ChipMultiField } from "@/components/shared/chip-multi-field";
-import { Field } from "@/components/shared/field";
 import { SelectField } from "@/components/shared/select-field";
 import { Input } from "@/components/ui/input";
 import type { CampaignInput } from "@/lib/validations/campaign.schema";
@@ -63,20 +62,7 @@ export function DestinationFields({
         error={errors.destination?.message}
       />
       {watch("destination") === "CUSTOM" && (
-        <Field
-          label="Link"
-          htmlFor="destinationUrl"
-          error={errors.destinationUrl?.message}
-        >
-          <Input
-            id="destinationUrl"
-            type="url"
-            inputMode="url"
-            placeholder="https://"
-            aria-invalid={!!errors.destinationUrl}
-            {...register("destinationUrl")}
-          />
-        </Field>
+        <Input label="Link" error={errors.destinationUrl?.message} type="url" inputMode="url" placeholder="https://" {...register("destinationUrl")} />
       )}
     </div>
   );

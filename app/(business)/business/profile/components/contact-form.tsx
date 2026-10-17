@@ -1,20 +1,19 @@
 "use client";
 
 import { ActionForm } from "@/components/shared/action-form";
-import { Field } from "@/components/shared/field";
 import { PhoneField } from "@/components/shared/phone-field";
 import { Input } from "@/components/ui/input";
 import { useActionForm } from "@/hooks/use-action-form";
 import { businessContactSchema } from "@/lib/validations/business.schema";
 import { updateBusinessContactAction } from "@/server/actions/business.actions";
 
-import { BUSINESS_PROFILE } from "../constant/profile.data";
+import type { BusinessProfileData } from "@/types/business-profile";
 
-export function ContactForm() {
-  const { form, submit, result, pending } = useActionForm(
+export function ContactForm({ data }: { data: BusinessProfileData["contact"] }) {
+  const { form, submit, result, pending, dirty } = useActionForm(
     businessContactSchema,
     updateBusinessContactAction,
-    BUSINESS_PROFILE.contact,
+    data,
   );
   const {
     register,
@@ -27,6 +26,7 @@ export function ContactForm() {
       onSubmit={submit}
       result={result}
       pending={pending}
+      dirty={dirty}
       submitLabel="Save contact details"
     >
       <PhoneField
@@ -36,29 +36,8 @@ export function ContactForm() {
         hint="Bhutan mobiles start with 17 or 77."
         error={errors.phone?.message}
       />
-      <Field label="Email" htmlFor="email" error={errors.email?.message}>
-        <Input
-          id="email"
-          type="email"
-          autoComplete="email"
-          aria-invalid={!!errors.email}
-          {...register("email")}
-        />
-      </Field>
-      <Field
-        label="Website"
-        htmlFor="website"
-        hint="Optional, e.g. https://example.bt"
-        error={errors.website?.message}
-      >
-        <Input
-          id="website"
-          type="url"
-          inputMode="url"
-          aria-invalid={!!errors.website}
-          {...register("website")}
-        />
-      </Field>
+      <Input label="Email" error={errors.email?.message} type="email" autoComplete="email" {...register("email")} />
+      <Input label="Website" hint="Optional, e.g. https://example.bt" error={errors.website?.message} type="url" inputMode="url" {...register("website")} />
     </ActionForm>
   );
 }

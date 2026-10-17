@@ -1,8 +1,6 @@
 "use client";
 
 import { ActionForm } from "@/components/shared/action-form";
-import { ChipMultiField } from "@/components/shared/chip-multi-field";
-import { Field } from "@/components/shared/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useActionForm } from "@/hooks/use-action-form";
@@ -10,21 +8,18 @@ import { businessGeneralSchema } from "@/lib/validations/business.schema";
 import { updateBusinessGeneralAction } from "@/server/actions/business.actions";
 
 import {
-  CATEGORY_OPTIONS,
   DESCRIPTION_MAX,
-  MAX_CATEGORIES,
 } from "../constant/profile.constant";
-import { BUSINESS_PROFILE } from "../constant/profile.data";
+import type { BusinessProfileData } from "@/types/business-profile";
 
-export function GeneralForm() {
-  const { form, submit, result, pending } = useActionForm(
+export function GeneralForm({ data }: { data: BusinessProfileData["general"] }) {
+  const { form, submit, result, pending, dirty } = useActionForm(
     businessGeneralSchema,
     updateBusinessGeneralAction,
-    BUSINESS_PROFILE.general,
+    data,
   );
   const {
     register,
-    control,
     watch,
     formState: { errors },
   } = form;
@@ -35,45 +30,12 @@ export function GeneralForm() {
       onSubmit={submit}
       result={result}
       pending={pending}
+      dirty={dirty}
       submitLabel="Save changes"
     >
-      <Field label="Business name" htmlFor="name" error={errors.name?.message}>
-        <Input id="name" aria-invalid={!!errors.name} {...register("name")} />
-      </Field>
-      <Field
-        label="Tagline"
-        htmlFor="tagline"
-        hint="One line that sums you up (optional)."
-        error={errors.tagline?.message}
-      >
-        <Input
-          id="tagline"
-          maxLength={80}
-          aria-invalid={!!errors.tagline}
-          {...register("tagline")}
-        />
-      </Field>
-      <Field
-        label="Description"
-        htmlFor="description"
-        hint={`${length}/${DESCRIPTION_MAX}`}
-        error={errors.description?.message}
-      >
-        <Textarea
-          id="description"
-          rows={5}
-          aria-invalid={!!errors.description}
-          {...register("description")}
-        />
-      </Field>
-      <ChipMultiField
-        control={control}
-        name="categories"
-        label="Categories"
-        options={CATEGORY_OPTIONS}
-        hint={`Pick up to ${MAX_CATEGORIES}.`}
-        error={errors.categories?.message}
-      />
+      <Input label="Business name" error={errors.name?.message} {...register("name")} />
+      <Input label="Tagline" hint="One line that sums you up (optional)." error={errors.tagline?.message} maxLength={80} {...register("tagline")} />
+      <Textarea label="Description" hint={`${length}/${DESCRIPTION_MAX}`} error={errors.description?.message} rows={5} {...register("description")} />
     </ActionForm>
   );
 }

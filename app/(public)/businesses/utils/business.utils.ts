@@ -45,7 +45,7 @@ function findBase(slug: string): BusinessBase | null {
   };
 }
 
-export function getBusinessProfile(slug: string): BusinessProfile | null {
+export function getSampleProfile(slug: string): BusinessProfile | null {
   const base = findBase(slug);
   if (!base) return null;
 

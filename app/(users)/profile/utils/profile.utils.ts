@@ -18,6 +18,14 @@ export const getInitials = (name: string): string =>
     .map((part) => part[0]?.toUpperCase())
     .join("");
 
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+/** "2026-10-17" -> "Joined October 2026" (built by hand so the server and browser always match). */
+export function formatJoined(isoDate: string): string {
+  const [year, month] = isoDate.split("-").map(Number);
+  return `Joined ${MONTHS[month - 1]} ${year}`;
+}
+
 export function formatBirthday(value: string): string {
   if (!value) return NOT_SET;
   return new Date(value).toLocaleDateString("en-GB", {

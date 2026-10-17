@@ -1,16 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 
-import { Input } from "@/components/ui/input";
+import { Field } from "@/components/shared/field";
+import { InputControl, type FieldText } from "@/components/ui/input";
 
-export function PasswordInput(props: React.ComponentProps<"input">) {
+export function PasswordInput({
+  label,
+  error,
+  hint,
+  id,
+  ...props
+}: React.ComponentProps<"input"> & FieldText) {
   const [visible, setVisible] = useState(false);
+  const autoId = useId();
+  const inputId = id ?? autoId;
 
-  return (
+  const box = (
     <div className="relative">
-      <Input
+      <InputControl
+        id={inputId}
+        aria-invalid={!!error || props["aria-invalid"]}
         {...props}
         type={visible ? "text" : "password"}
         className="pr-12"
@@ -24,5 +35,11 @@ export function PasswordInput(props: React.ComponentProps<"input">) {
         {visible ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
       </button>
     </div>
+  );
+  if (!label) return box;
+  return (
+    <Field label={label} htmlFor={inputId} error={error} hint={hint}>
+      {box}
+    </Field>
   );
 }

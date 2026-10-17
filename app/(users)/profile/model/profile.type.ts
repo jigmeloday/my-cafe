@@ -1,22 +1,8 @@
 import type { LucideIcon } from "lucide-react";
 
-import type { ACCOUNT_TYPES } from "@/lib/constants";
-import type {
-  AddressInput,
-  ContactInput,
-  PersonalInfoInput,
-  PreferencesInput,
-} from "@/lib/validations/profile.schema";
+import type { ProfileView } from "@/types/profile";
 
-export interface ProfileUser {
-  email: string;
-  accountType: (typeof ACCOUNT_TYPES)[number];
-  joined: string;
-  personal: PersonalInfoInput;
-  contact: ContactInput;
-  address: AddressInput;
-  preferences: PreferencesInput;
-}
+export type ProfileUser = ProfileView;
 
 export interface ProfileStat {
   label: string;
@@ -65,4 +51,11 @@ export interface SwitchOption {
   name: string;
   label: string;
   description: string;
+}
+
+export interface FollowedPlace {
+  /** "/businesses/restaurant" */
+  href: string;
+  title: string;
+  subtitle: string;
 }

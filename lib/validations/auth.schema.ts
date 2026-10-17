@@ -12,6 +12,8 @@ const password = z.string().min(8, "Use at least 8 characters");
 export const loginSchema = z.object({
   email,
   password: z.string().min(1, "Enter your password"),
+  /** Where to go after logging in; checked again on the server. */
+  next: z.string().optional(),
 });
 
 export const registerSchema = z.object({
@@ -24,6 +26,8 @@ export const registerSchema = z.object({
 export const googleAuthSchema = z.object({
   accountType: z.enum(ACCOUNT_TYPES).optional(),
 });
+
+export const resendVerificationSchema = z.object({ email });
 
 export const forgotPasswordSchema = z.object({ email });
 
@@ -38,6 +42,7 @@ export const resetPasswordSchema = z
   });
 
 export type GoogleAuthInput = z.infer<typeof googleAuthSchema>;
+export type ResendVerificationInput = z.infer<typeof resendVerificationSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
