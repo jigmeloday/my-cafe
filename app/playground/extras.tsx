@@ -27,6 +27,7 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -128,9 +129,11 @@ export function MenusDemo() {
             Account
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuLabel>My account</DropdownMenuLabel>
-            <DropdownMenuItem>Saved</DropdownMenuItem>
-            <DropdownMenuItem>Following</DropdownMenuItem>
+            <DropdownMenuGroup>
+              <DropdownMenuLabel>My account</DropdownMenuLabel>
+              <DropdownMenuItem>Saved</DropdownMenuItem>
+              <DropdownMenuItem>Following</DropdownMenuItem>
+            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem variant="destructive">Log out</DropdownMenuItem>
           </DropdownMenuContent>

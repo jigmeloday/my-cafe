@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -42,13 +43,15 @@ export function UserMenu() {
       <DropdownMenuContent align="end" className="w-56">
         {user ? (
           <>
-            <DropdownMenuLabel className="truncate">{user.name}</DropdownMenuLabel>
-            <DropdownMenuItem render={<Link href={SIGNED_IN_MENU.account.href} />}>
-              {SIGNED_IN_MENU.account.label}
-            </DropdownMenuItem>
-            {dashboard && (
-              <DropdownMenuItem render={<Link href={dashboard.href} />}>{dashboard.label}</DropdownMenuItem>
-            )}
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className="truncate">{user.name}</DropdownMenuLabel>
+              <DropdownMenuItem render={<Link href={SIGNED_IN_MENU.account.href} />}>
+                {SIGNED_IN_MENU.account.label}
+              </DropdownMenuItem>
+              {dashboard && (
+                <DropdownMenuItem render={<Link href={dashboard.href} />}>{dashboard.label}</DropdownMenuItem>
+              )}
+            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem variant="destructive" onClick={logout}>
               <LogOut /> {SIGNED_IN_MENU.logout}

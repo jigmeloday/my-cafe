@@ -11,10 +11,11 @@ import { changePasswordAction } from "@/server/actions/account.actions";
 import { PROFILE_COPY } from "../constant/profile.constant";
 
 export function ChangePasswordForm() {
-  const { form, submit, result, pending } = useActionForm(
+  const { form, submit, result, pending, dirty } = useActionForm(
     changePasswordSchema,
     changePasswordAction,
     { currentPassword: "", password: "", confirmPassword: "" },
+    { clearOnSuccess: true },
   );
   const {
     register,
@@ -25,6 +26,9 @@ export function ChangePasswordForm() {
     <form onSubmit={submit} noValidate className="max-w-xl space-y-4">
       {result && !result.ok && (
         <FormMessage tone="error">{result.error}</FormMessage>
+      )}
+      {result?.ok && (
+        <FormMessage tone="success">{result.message ?? "Saved."}</FormMessage>
       )}
       <Field
         label="Current password"
@@ -63,7 +67,7 @@ export function ChangePasswordForm() {
           {...register("confirmPassword")}
         />
       </Field>
-      <Button type="submit" disabled={pending}>
+      <Button type="submit" disabled={pending || !dirty}>
         {pending ? "Updating…" : PROFILE_COPY.passwordSubmit}
       </Button>
     </form>

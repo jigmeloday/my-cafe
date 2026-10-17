@@ -31,7 +31,7 @@ export function BusinessHeader({ business }: { business: BusinessProfile }) {
               .join(" · ")}
           </p>
         </div>
-        <FollowButton />
+        <FollowButton href={`/businesses/${business.slug}`} />
       </div>
       {business.openingOffer && (
         <p className="inline-flex items-center gap-2 rounded-full bg-maroon-soft px-3 py-1.5 text-sm">

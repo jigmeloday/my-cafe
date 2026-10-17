@@ -52,3 +52,10 @@ export interface SwitchOption {
   label: string;
   description: string;
 }
+
+export interface FollowedPlace {
+  /** "/businesses/restaurant" */
+  href: string;
+  title: string;
+  subtitle: string;
+}

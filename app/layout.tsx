@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Figtree } from "next/font/google";
 import "./globals.css";
+import { EngagementProvider } from "@/components/engagement/engagement-provider";
 
 const figtree = Figtree({
   variable: "--font-figtree",
@@ -23,7 +24,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${figtree.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <EngagementProvider>{children}</EngagementProvider>
+      </body>
     </html>
   );
 }

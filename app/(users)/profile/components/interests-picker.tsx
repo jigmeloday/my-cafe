@@ -14,6 +14,9 @@ import { INTERESTS } from "../constant/profile-options.constant";
 export function InterestsPicker({ initial }: { initial: string[] }) {
   const [selected, setSelected] = useState<string[]>(initial);
   const { run, result, pending } = useAction(updateInterestsAction);
+  // What is saved right now. Updated after a successful save so the button turns off again.
+  const [saved, setSaved] = useState<string[]>(initial);
+  const changed = selected.length !== saved.length || selected.some((name) => !saved.includes(name));
 
   const toggle = (name: string) =>
     setSelected((prev) => (prev.includes(name) ? prev.filter((n) => n !== name) : [...prev, name]));
@@ -32,7 +35,13 @@ export function InterestsPicker({ initial }: { initial: string[] }) {
           </Chip>
         ))}
       </div>
-      <Button disabled={pending} onClick={() => run({ interests: selected as InterestsInput["interests"] })}>
+      <Button
+        disabled={pending || !changed}
+        onClick={() => {
+          const submitted = selected;
+          run({ interests: submitted as InterestsInput["interests"] }, () => setSaved(submitted));
+        }}
+      >
         {pending ? "Saving…" : "Save interests"}
       </Button>
     </div>

@@ -10,7 +10,7 @@ import { BUSINESS_PROFILE } from "../constant/profile.data";
 import { HoursRow } from "./hours-row";
 
 export function HoursForm() {
-  const { form, submit, result, pending } = useActionForm(
+  const { form, submit, result, pending, dirty } = useActionForm(
     businessHoursSchema,
     updateBusinessHoursAction,
     BUSINESS_PROFILE.hours,
@@ -20,7 +20,7 @@ export function HoursForm() {
   const copyMondayToAll = () => {
     const monday = form.getValues("hours.0");
     days.forEach((_, i) => {
-      if (i > 0) form.setValue(`hours.${i}`, { ...monday, day: days[i].day });
+      if (i > 0) form.setValue(`hours.${i}`, { ...monday, day: days[i].day }, { shouldDirty: true });
     });
   };
 
@@ -29,6 +29,7 @@ export function HoursForm() {
       onSubmit={submit}
       result={result}
       pending={pending}
+      dirty={dirty}
       submitLabel="Save hours"
     >
       <ul className="divide-y border-y">

@@ -35,7 +35,7 @@ export function DetailHeader({ detail }: { detail: DetailData }) {
             · {detail.shop.area}
           </p>
         </div>
-        <FavoriteButton className="shrink-0 border" />
+        <FavoriteButton href={`/${detail.kind === "event" ? "events" : "promotions"}/${detail.slug}`} className="shrink-0 border" />
       </div>
     </header>
   );

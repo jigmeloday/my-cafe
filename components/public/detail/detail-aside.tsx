@@ -19,7 +19,7 @@ export function DetailAside({ detail }: { detail: DetailData }) {
       <div className="space-y-4 border-t pt-5">
         <p className="text-sm font-semibold">{SHOP_LABEL}</p>
         <ShopDetails shop={detail.shop} />
-        <FollowButton size="lg" className="w-full" />
+        <FollowButton href={detail.shop.href} size="lg" className="w-full" />
       </div>
     </aside>
   );

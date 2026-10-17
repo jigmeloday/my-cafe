@@ -11,21 +11,20 @@ import { NotificationList } from "./components/notification-list";
 import { PreviewSection } from "./components/preview-section";
 import { SavedOffers } from "./components/saved-offers";
 import { OVERVIEW_COPY } from "./constant/profile.constant";
-import {
-  FOLLOWING_PLACES,
-  RECOMMENDED_OFFERS,
-  WEEKEND_EVENTS,
-} from "./constant/profile.data";
+import { WEEKEND_EVENTS } from "./constant/profile.data";
+import { getEngagement } from "./utils/engagement.server";
 import { getCompletion, getSummary } from "./utils/profile.utils";
 
 export const metadata: Metadata = { title: "Overview — kuzu" };
 
 export default async function OverviewPage() {
   const profile = await getCurrentProfile();
+  const engagement = await getEngagement();
+  if (!engagement) return null;
   const { percent } = getCompletion({
     user: profile,
     interestCount: profile.interests.length,
-    followingCount: FOLLOWING_PLACES.length,
+    followingCount: engagement.following.length,
   });
 
   return (
@@ -44,28 +43,28 @@ export default async function OverviewPage() {
         title={OVERVIEW_COPY.updatesTitle}
         href="/profile/notifications"
       >
-        <NotificationList limit={2} />
+        <NotificationList items={engagement.notifications} limit={2} />
       </PreviewSection>
       <PreviewSection
         id="favorites"
         title={OVERVIEW_COPY.favoritesTitle}
         href="/profile/favorites"
       >
-        <SavedOffers limit={4} />
+        <SavedOffers items={engagement.favorites} limit={4} />
       </PreviewSection>
       <PreviewSection
         id="following"
         title={OVERVIEW_COPY.followingTitle}
         href="/profile/following"
       >
-        <FollowingList limit={4} />
+        <FollowingList places={engagement.following} limit={4} />
       </PreviewSection>
       <PreviewSection
         id="picked"
         title={OVERVIEW_COPY.recommendedTitle}
-        description={OVERVIEW_COPY.recommendedDescription}
+        description={engagement.recommended.personal ? OVERVIEW_COPY.recommendedDescription : OVERVIEW_COPY.recommendedFallback}
       >
-        <PromotionGrid items={RECOMMENDED_OFFERS} />
+        <PromotionGrid items={engagement.recommended.items} />
       </PreviewSection>
       <PreviewSection
         id="weekend"

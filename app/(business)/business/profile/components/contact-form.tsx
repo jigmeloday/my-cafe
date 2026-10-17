@@ -11,7 +11,7 @@ import { updateBusinessContactAction } from "@/server/actions/business.actions";
 import { BUSINESS_PROFILE } from "../constant/profile.data";
 
 export function ContactForm() {
-  const { form, submit, result, pending } = useActionForm(
+  const { form, submit, result, pending, dirty } = useActionForm(
     businessContactSchema,
     updateBusinessContactAction,
     BUSINESS_PROFILE.contact,
@@ -27,6 +27,7 @@ export function ContactForm() {
       onSubmit={submit}
       result={result}
       pending={pending}
+      dirty={dirty}
       submitLabel="Save contact details"
     >
       <PhoneField

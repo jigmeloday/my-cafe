@@ -14,7 +14,7 @@ import { GENDER_OPTIONS } from "../constant/profile-options.constant";
 import type { ProfileUser } from "../model/profile.type";
 
 export function PersonalInfoForm({ user }: { user: ProfileUser }) {
-  const { form, submit, result, pending } = useActionForm(
+  const { form, submit, result, pending, dirty } = useActionForm(
     personalInfoSchema,
     updatePersonalInfoAction,
     user.personal,
@@ -30,6 +30,7 @@ export function PersonalInfoForm({ user }: { user: ProfileUser }) {
       onSubmit={submit}
       result={result}
       pending={pending}
+      dirty={dirty}
       submitLabel="Save changes"
     >
       <Field label="Full name" htmlFor="name" error={errors.name?.message}>

@@ -9,7 +9,7 @@ import { updateBusinessOfferingsAction } from "@/server/actions/business.actions
 import { BUSINESS_PROFILE } from "../constant/profile.data";
 
 export function OfferingsForm() {
-  const { form, submit, result, pending } = useActionForm(
+  const { form, submit, result, pending, dirty } = useActionForm(
     businessOfferingsSchema,
     updateBusinessOfferingsAction,
     BUSINESS_PROFILE.offerings,
@@ -24,6 +24,7 @@ export function OfferingsForm() {
       onSubmit={submit}
       result={result}
       pending={pending}
+      dirty={dirty}
       submitLabel="Save"
     >
       <TagField

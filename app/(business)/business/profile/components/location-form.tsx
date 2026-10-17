@@ -9,7 +9,7 @@ import { updateBusinessLocationAction } from "@/server/actions/business.actions"
 import { BUSINESS_PROFILE } from "../constant/profile.data";
 
 export function LocationForm() {
-  const { form, submit, result, pending } = useActionForm(
+  const { form, submit, result, pending, dirty } = useActionForm(
     addressSchema,
     updateBusinessLocationAction,
     BUSINESS_PROFILE.location,
@@ -20,6 +20,7 @@ export function LocationForm() {
       onSubmit={submit}
       result={result}
       pending={pending}
+      dirty={dirty}
       submitLabel="Save location"
     >
       <AddressFields form={form} />

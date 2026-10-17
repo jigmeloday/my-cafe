@@ -13,7 +13,7 @@ import { CONTACT_OPTIONS } from "../constant/profile-options.constant";
 import type { ProfileUser } from "../model/profile.type";
 
 export function ContactForm({ user }: { user: ProfileUser }) {
-  const { form, submit, result, pending } = useActionForm(
+  const { form, submit, result, pending, dirty } = useActionForm(
     contactSchema,
     updateContactAction,
     user.contact,
@@ -28,6 +28,7 @@ export function ContactForm({ user }: { user: ProfileUser }) {
       onSubmit={submit}
       result={result}
       pending={pending}
+      dirty={dirty}
       submitLabel="Save changes"
     >
       <Field

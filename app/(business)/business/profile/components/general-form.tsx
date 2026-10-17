@@ -17,7 +17,7 @@ import {
 import { BUSINESS_PROFILE } from "../constant/profile.data";
 
 export function GeneralForm() {
-  const { form, submit, result, pending } = useActionForm(
+  const { form, submit, result, pending, dirty } = useActionForm(
     businessGeneralSchema,
     updateBusinessGeneralAction,
     BUSINESS_PROFILE.general,
@@ -35,6 +35,7 @@ export function GeneralForm() {
       onSubmit={submit}
       result={result}
       pending={pending}
+      dirty={dirty}
       submitLabel="Save changes"
     >
       <Field label="Business name" htmlFor="name" error={errors.name?.message}>

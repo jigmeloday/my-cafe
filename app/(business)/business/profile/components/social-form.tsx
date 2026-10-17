@@ -28,7 +28,7 @@ const FIELDS = [
 ] as const;
 
 export function SocialForm() {
-  const { form, submit, result, pending } = useActionForm(
+  const { form, submit, result, pending, dirty } = useActionForm(
     businessSocialSchema,
     updateBusinessSocialAction,
     BUSINESS_PROFILE.social,
@@ -43,6 +43,7 @@ export function SocialForm() {
       onSubmit={submit}
       result={result}
       pending={pending}
+      dirty={dirty}
       submitLabel="Save links"
     >
       {FIELDS.map(({ name, label, placeholder }) => (
