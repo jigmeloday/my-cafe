@@ -1,9 +1,7 @@
-import Link from "next/link";
-
-import { Button } from "@/components/ui/button";
 import { Container } from "@/components/shared/container";
 
 import { Brand } from "./brand";
+import { CreateAccountButton } from "./create-account-button";
 import { MainNav } from "./main-nav";
 import { SearchBar } from "./search-bar";
 import { UserMenu } from "./user-menu";
@@ -18,13 +16,7 @@ export function SiteHeader() {
           <SearchBar />
         </div>
         <div className="order-2 ml-auto flex items-center gap-2 lg:order-0">
-          <Button
-            render={<Link href="/register" />}
-            size="sm"
-            className="hidden sm:inline-flex"
-          >
-            Create account
-          </Button>
+          <CreateAccountButton />
           <UserMenu />
         </div>
       </Container>

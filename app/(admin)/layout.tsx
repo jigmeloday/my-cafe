@@ -1,13 +1,15 @@
 import { ADMIN_NAV } from "@/components/admin/constant/admin-nav.constant";
 import { AdminHeader } from "@/components/admin/header";
+import { requireRole } from "@/lib/session";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 
-// TODO: only let signed-in admins (role ADMIN) see this area. Right now anyone can open it.
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  await requireRole("ADMIN");
+
   return (
     <div className="flex min-h-screen bg-muted/40">
       <DashboardSidebar items={ADMIN_NAV} label="Admin" badge="Admin" />

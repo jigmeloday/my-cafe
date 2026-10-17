@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { CONTACT_METHODS, DZONGKHAGS, GENDERS } from "@/lib/constants";
+import { CONTACT_METHODS, DZONGKHAGS, GENDERS, INTERESTS } from "@/lib/constants";
 import { isValidPhone } from "@/lib/phone";
 
 const optionalEnum = <T extends readonly [string, ...string[]]>(values: T) =>
@@ -86,6 +86,11 @@ export const changePasswordSchema = z
     message: "Choose a password you haven't used here",
   });
 
+export const interestsSchema = z.object({
+  interests: z.array(z.enum(INTERESTS)).max(INTERESTS.length, "Too many interests"),
+});
+
+export type InterestsInput = z.infer<typeof interestsSchema>;
 export type PersonalInfoInput = z.infer<typeof personalInfoSchema>;
 export type ContactInput = z.infer<typeof contactSchema>;
 export type AddressInput = z.infer<typeof addressSchema>;

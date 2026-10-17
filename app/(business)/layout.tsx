@@ -1,12 +1,15 @@
 import { BusinessHeader } from "@/components/business/header";
 import { BUSINESS_NAV } from "@/components/business/constant/business-nav.constant";
+import { requireRole } from "@/lib/session";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 
-export default function BusinessLayout({
+export default async function BusinessLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  await requireRole("BUSINESS_OWNER", "ADMIN");
+
   return (
     <div className="flex min-h-screen bg-muted/40">
       <DashboardSidebar items={BUSINESS_NAV} label="Business dashboard" />

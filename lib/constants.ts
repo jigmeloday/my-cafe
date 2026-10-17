@@ -85,3 +85,8 @@ export const USER_STATUSES = ["ACTIVE", "SUSPENDED"] as const;
 export const BUSINESS_STATUSES = ["PENDING", "VERIFIED", "SUSPENDED"] as const;
 export const REPORT_STATUSES = ["OPEN", "RESOLVED"] as const;
 export const REPORT_DECISIONS = ["DISMISSED", "REMOVED", "WARNED"] as const;
+
+export const INTERESTS = [
+  "Food & drink", "Cafés", "Fashion", "Electronics", "Wellness", "Stays",
+  "Music", "Culture", "Kids", "Sports", "Books", "Crafts",
+] as const;

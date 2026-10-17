@@ -4,6 +4,7 @@ import Link from "next/link";
 import { CircleUserRound, ExternalLink, LogOut } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { logoutAction } from "@/server/actions/auth.actions";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,7 +33,7 @@ export function BusinessUserMenu() {
           My account
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem variant="destructive">
+        <DropdownMenuItem variant="destructive" onClick={() => logoutAction()}>
           <LogOut /> Log out
         </DropdownMenuItem>
       </DropdownMenuContent>

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { getCurrentProfile } from "@/services/profile/current-profile";
+
 import { PromotionGrid } from "@/components/public/promotion-grid";
 
 import { CompletionCard } from "./components/completion-card";
@@ -8,21 +10,21 @@ import { FollowingList } from "./components/following-list";
 import { NotificationList } from "./components/notification-list";
 import { PreviewSection } from "./components/preview-section";
 import { SavedOffers } from "./components/saved-offers";
-import { OVERVIEW_COPY, PROFILE_USER } from "./constant/profile.constant";
+import { OVERVIEW_COPY } from "./constant/profile.constant";
 import {
   FOLLOWING_PLACES,
   RECOMMENDED_OFFERS,
-  SELECTED_INTERESTS,
   WEEKEND_EVENTS,
 } from "./constant/profile.data";
 import { getCompletion, getSummary } from "./utils/profile.utils";
 
 export const metadata: Metadata = { title: "Overview — kuzu" };
 
-export default function OverviewPage() {
+export default async function OverviewPage() {
+  const profile = await getCurrentProfile();
   const { percent } = getCompletion({
-    user: PROFILE_USER,
-    interestCount: SELECTED_INTERESTS.length,
+    user: profile,
+    interestCount: profile.interests.length,
     followingCount: FOLLOWING_PLACES.length,
   });
 
@@ -35,7 +37,7 @@ export default function OverviewPage() {
         href="/profile/personal"
         linkLabel={OVERVIEW_COPY.edit}
       >
-        <DetailsSummary rows={getSummary(PROFILE_USER)} />
+        <DetailsSummary rows={getSummary(profile)} />
       </PreviewSection>
       <PreviewSection
         id="updates"

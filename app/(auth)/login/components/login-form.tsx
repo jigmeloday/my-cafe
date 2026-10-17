@@ -15,13 +15,14 @@ import { loginAction } from "@/server/actions/auth.actions";
 
 import { LOGIN_COPY } from "../constant/login.constant";
 
-export function LoginForm() {
+export function LoginForm({ next }: { next?: string }) {
   const { form, submit, result, pending } = useActionForm(
     loginSchema,
     loginAction,
     {
       email: "",
       password: "",
+      next,
     },
   );
   const {

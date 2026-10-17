@@ -13,37 +13,9 @@ import type {
   CompletionTask,
   ProfileNavGroup,
   ProfileStat,
-  ProfileUser,
 } from "../model/profile.type";
 
 import { FOLLOWING_PLACES, SAVED_OFFERS } from "./profile.data";
-
-export const PROFILE_USER: ProfileUser = {
-  email: "you@example.com",
-  accountType: "USER",
-  joined: "Joined October 2026",
-  personal: { name: "[Your name]", birthday: "", gender: "" },
-  contact: { phone: "", preferredContact: "email" },
-  address: {
-    line1: "",
-    line2: "",
-    town: "",
-    dzongkhag: "Thimphu",
-    postalCode: "",
-  },
-  preferences: {
-    channels: { email: true, sms: false, push: true },
-    topics: {
-      followed: true,
-      weekend: true,
-      newPlaces: false,
-      ending: true,
-      birthday: true,
-    },
-    allowPersonalisation: true,
-    marketingConsent: false,
-  },
-};
 
 export const PROFILE_STATS: ProfileStat[] = [
   { label: "Favorites", value: SAVED_OFFERS.length },
@@ -78,6 +50,7 @@ export const PROFILE_NAV: ProfileNavGroup[] = [
 export const ACCOUNT_TYPE_LABELS = {
   USER: "Customer account",
   BUSINESS_OWNER: "Business owner account",
+  ADMIN: "Admin account",
 } as const;
 
 export const COMPLETION_TASKS: CompletionTask[] = [

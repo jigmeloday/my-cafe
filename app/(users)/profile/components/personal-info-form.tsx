@@ -1,9 +1,11 @@
 "use client";
 
 import { ActionForm } from "@/components/shared/action-form";
+import { DateField } from "@/components/shared/date-field";
 import { Field } from "@/components/shared/field";
 import { SelectField } from "@/components/shared/select-field";
 import { Input } from "@/components/ui/input";
+import { todayIso } from "@/lib/formatters/date";
 import { useActionForm } from "@/hooks/use-action-form";
 import { personalInfoSchema } from "@/lib/validations/profile.schema";
 import { updatePersonalInfoAction } from "@/server/actions/account.actions";
@@ -22,7 +24,6 @@ export function PersonalInfoForm({ user }: { user: ProfileUser }) {
     control,
     formState: { errors },
   } = form;
-  const today = new Date().toISOString().split("T")[0];
 
   return (
     <ActionForm
@@ -40,20 +41,16 @@ export function PersonalInfoForm({ user }: { user: ProfileUser }) {
         />
       </Field>
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field
+        <DateField
+          control={control}
+          name="birthday"
           label="Birthday"
-          htmlFor="birthday"
+          placeholder="Pick your birthday"
+          max={todayIso()}
+          dropdowns
+          clearable
           error={errors.birthday?.message}
-        >
-          <Input
-            id="birthday"
-            type="date"
-            max={today}
-            autoComplete="bday"
-            aria-invalid={!!errors.birthday}
-            {...register("birthday")}
-          />
-        </Field>
+        />
         <SelectField
           control={control}
           name="gender"

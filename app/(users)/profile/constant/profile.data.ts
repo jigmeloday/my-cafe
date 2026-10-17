@@ -31,4 +31,3 @@ export const RECOMMENDED_OFFERS = DEALS.slice(4, 8);
 export const WEEKEND_EVENTS = EVENTS.filter((e) =>
   e.tags.includes("weekend"),
 ).slice(0, 4);
-export const SELECTED_INTERESTS: string[] = [];

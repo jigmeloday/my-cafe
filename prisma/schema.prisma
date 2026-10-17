@@ -1,0 +1,212 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  BUSINESS_OWNER
+  ADMIN
+}
+
+enum AccountStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+enum BusinessStatus {
+  PENDING
+  VERIFIED
+  SUSPENDED
+}
+
+enum PromotionType {
+  DEAL
+  SALE
+  EVENT
+  PRODUCT
+  SERVICE
+  GIVEAWAY
+  ANNOUNCEMENT
+}
+
+enum PromotionStatus {
+  DRAFT
+  PUBLISHED
+  ENDED
+}
+
+enum CoinTransactionType {
+  PURCHASE
+  EMAIL_CAMPAIGN
+  BANNER
+  TOP_RANK
+  REFUND
+}
+
+model User {
+  id            String        @id @default(cuid())
+  email         String        @unique
+  name          String
+  emailVerified Boolean       @default(false)
+  image         String?
+  role          Role          @default(USER)
+  status        AccountStatus @default(ACTIVE)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  businesses    Business[]
+  sessions      Session[]
+  accounts      Account[]
+  profile       Profile?
+}
+
+// The next three models are the tables Better Auth needs.
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  /// Hashed password for email sign-in.
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+}
+
+model Category {
+  id         String      @id @default(cuid())
+  name       String      @unique
+  slug       String      @unique
+  promotions Promotion[]
+}
+
+model Business {
+  id          String         @id @default(cuid())
+  ownerId     String
+  owner       User           @relation(fields: [ownerId], references: [id])
+  name        String
+  slug        String         @unique
+  description String         @default("")
+  dzongkhag   String         @default("")
+  status      BusinessStatus @default(PENDING)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  promotions  Promotion[]
+  wallet      Wallet?
+
+  @@index([ownerId])
+}
+
+model Promotion {
+  id          String          @id @default(cuid())
+  businessId  String
+  business    Business        @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  categoryId  String?
+  category    Category?       @relation(fields: [categoryId], references: [id])
+  slug        String          @unique
+  title       String
+  type        PromotionType
+  status      PromotionStatus @default(DRAFT)
+  discount    String          @default("")
+  description String          @default("")
+  location    String          @default("")
+  startsAt    DateTime?
+  endsAt      DateTime?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@index([businessId])
+  @@index([status, type])
+}
+
+// Coins are whole numbers. `balance` is only ever changed together with a CoinTransaction row.
+model Wallet {
+  id           String            @id @default(cuid())
+  businessId   String            @unique
+  business     Business          @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  balance      Int               @default(0)
+  transactions CoinTransaction[]
+}
+
+model CoinTransaction {
+  id           String              @id @default(cuid())
+  walletId     String
+  wallet       Wallet              @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  type         CoinTransactionType
+  /// Signed whole coins: positive adds, negative spends.
+  amount       Int
+  balanceAfter Int
+  description  String
+  createdAt    DateTime            @default(now())
+
+  @@index([walletId, createdAt])
+}
+
+// Extra details a customer chooses to share. Created the first time they save something.
+model Profile {
+  userId           String   @id
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  birthday         DateTime? @db.Date
+  gender           String   @default("")
+  phone            String   @default("")
+  preferredContact String   @default("email")
+  addressLine1     String   @default("")
+  addressLine2     String   @default("")
+  town             String   @default("")
+  dzongkhag        String   @default("")
+  postalCode       String   @default("")
+  interests        String[]
+
+  // How we may reach them (the app only emails or texts people who switched these on).
+  notifyEmail          Boolean @default(true)
+  notifySms            Boolean @default(false)
+  notifyPush           Boolean @default(true)
+  topicFollowed        Boolean @default(true)
+  topicWeekend         Boolean @default(true)
+  topicNewPlaces       Boolean @default(false)
+  topicEnding          Boolean @default(true)
+  topicBirthday        Boolean @default(true)
+  allowPersonalisation Boolean @default(true)
+  marketingConsent     Boolean @default(false)
+  /// When promotional consent was last given. Null while it is off.
+  marketingConsentAt   DateTime?
+
+  updatedAt DateTime @updatedAt
+}
