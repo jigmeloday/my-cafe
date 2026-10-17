@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Pencil } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { FollowButton } from "@/components/shared/follow-button";
 
 import { BUSINESS_COPY } from "../constant/business.constant";
@@ -31,7 +32,13 @@ export function BusinessHeader({ business }: { business: BusinessProfile }) {
               .join(" · ")}
           </p>
         </div>
-        <FollowButton href={`/businesses/${business.slug}`} />
+        {business.isOwner ? (
+          <Button render={<Link href="/business/profile" />} variant="secondary">
+            <Pencil /> {BUSINESS_COPY.editProfile}
+          </Button>
+        ) : (
+          <FollowButton href={`/businesses/${business.slug}`} />
+        )}
       </div>
       {business.tagline && <p className="text-muted-foreground">{business.tagline}</p>}
       {business.openingOffer && (

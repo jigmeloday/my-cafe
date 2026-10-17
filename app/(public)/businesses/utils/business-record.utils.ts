@@ -1,4 +1,5 @@
 import type { Business } from "@/generated/prisma/client";
+import { mediaUrl } from "@/lib/media";
 import { readHours } from "@/services/business/business.service";
 
 import { BUSINESS_COPY, CONTACT_ICONS } from "../constant/business.constant";
@@ -49,6 +50,9 @@ export function profileFromRecord(b: Business): BusinessProfile {
     contacts: toContacts(b),
     services: b.services,
     products: b.products,
-    showGallery: false,
+    showGallery: b.gallery.length > 0,
+    logoUrl: mediaUrl(b.logoKey) || undefined,
+    coverUrl: mediaUrl(b.coverKey) || undefined,
+    photos: b.gallery.map(mediaUrl),
   };
 }

@@ -47,4 +47,10 @@ export interface BusinessProfile {
   products?: string[];
   /** Photos aren't stored yet, so real businesses don't show the placeholder gallery. */
   showGallery?: boolean;
+  /** True when the signed-in person owns this business. */
+  isOwner?: boolean;
+  /** Stored images (real businesses only). */
+  logoUrl?: string;
+  coverUrl?: string;
+  photos?: string[];
 }

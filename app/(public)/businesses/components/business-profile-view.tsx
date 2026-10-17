@@ -19,7 +19,7 @@ export function BusinessProfileView({
   return (
     <Container className="max-w-6xl space-y-8 py-6 sm:py-8">
       <div>
-        <BusinessCover name={business.name} />
+        <BusinessCover name={business.name} coverUrl={business.coverUrl} logoUrl={business.logoUrl} />
         <BusinessHeader business={business} />
       </div>
       <div className="grid gap-10 lg:grid-cols-[1fr_20rem]">
@@ -40,7 +40,7 @@ export function BusinessProfileView({
           </BusinessSection>
           {business.showGallery !== false && (
             <BusinessSection id="photos" title={BUSINESS_COPY.gallery}>
-              <BusinessGallery />
+              <BusinessGallery photos={business.photos} />
             </BusinessSection>
           )}
         </div>

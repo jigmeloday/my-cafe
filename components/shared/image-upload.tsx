@@ -12,29 +12,61 @@ interface ImageUploadProps {
   hint?: string;
   /** Tailwind classes that set the preview shape, e.g. "aspect-[16/5]" or "size-24 rounded-full". */
   previewClassName: string;
+  /** A saved image to start with. */
+  value?: string | null;
+  /** When given, the chosen file is sent here and the preview shows the saved image. Resolve with its URL; throw to show a message. */
+  onUpload?: (file: File) => Promise<string>;
+  onRemove?: () => Promise<void>;
 }
 
 export function ImageUpload({
   label,
   hint,
   previewClassName,
+  value = null,
+  onUpload,
+  onRemove,
 }: ImageUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [preview, setPreview] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string | null>(value);
+  const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(
     () => () => {
-      if (preview) URL.revokeObjectURL(preview);
+      if (preview?.startsWith("blob:")) URL.revokeObjectURL(preview);
     },
     [preview],
   );
 
-  const choose = (file?: File) => {
+  const choose = async (file?: File) => {
     if (!file) return;
     const problem = validateImage(file);
     setError(problem);
-    if (!problem) setPreview(URL.createObjectURL(file));
+    if (problem) return;
+    if (!onUpload) return setPreview(URL.createObjectURL(file));
+
+    setBusy(true);
+    try {
+      setPreview(await onUpload(file));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "The upload failed.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const clear = async () => {
+    if (!onRemove) return setPreview(null);
+    setBusy(true);
+    try {
+      await onRemove();
+      setPreview(null);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "We couldn't remove that image.");
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
@@ -48,7 +80,7 @@ export function ImageUpload({
           )}
         >
           {preview ? (
-            // Local blob preview: next/image can't optimise it.
+            // A local preview or a stored image: next/image can't optimise either.
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={preview}
@@ -66,15 +98,17 @@ export function ImageUpload({
               variant="secondary"
               size="sm"
               onClick={() => inputRef.current?.click()}
+              disabled={busy}
             >
-              {preview ? "Replace" : "Upload"}
+              {busy ? "Uploading…" : preview ? "Replace" : "Upload"}
             </Button>
             {preview && (
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
-                onClick={() => setPreview(null)}
+                onClick={clear}
+                disabled={busy}
               >
                 <X /> Remove
               </Button>

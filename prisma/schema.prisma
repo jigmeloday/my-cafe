@@ -141,6 +141,9 @@ model Business {
   facebook     String         @default("")
   instagram    String         @default("")
   tiktok       String         @default("")
+  logoKey      String         @default("")
+  coverKey     String         @default("")
+  gallery      String[]
   hours        Json?
   services     String[]
   products     String[]

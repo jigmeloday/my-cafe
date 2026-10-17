@@ -41,6 +41,7 @@ export const BUSINESS_COPY = {
   activity: "Offers & events",
   gallery: "Photos",
   similar: "More new places",
+  editProfile: "Edit profile",
   services: "Services",
   products: "Products",
   openingOffer: "Opening offer",

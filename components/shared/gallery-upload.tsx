@@ -8,33 +8,52 @@ import { validateImage } from "@/lib/files";
 interface GalleryUploadProps {
   label: string;
   max?: number;
+  /** Saved photos to start with. `id` is whatever `onRemove` needs to delete it. */
+  initial?: GalleryItem[];
+  /** When given, each chosen file is sent here. Resolve with the saved photo; throw to show a message. */
+  onUpload?: (file: File) => Promise<GalleryItem>;
+  onRemove?: (id: string) => Promise<void>;
 }
 
-interface GalleryItem {
+export interface GalleryItem {
   id: string;
   url: string;
 }
 
-export function GalleryUpload({ label, max = 8 }: GalleryUploadProps) {
+export function GalleryUpload({ label, max = 8, initial = [], onUpload, onRemove }: GalleryUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [items, setItems] = useState<GalleryItem[]>([]);
+  const [items, setItems] = useState<GalleryItem[]>(initial);
+  const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const add = (files: FileList | null) => {
+  const add = async (files: FileList | null) => {
     if (!files) return;
-    const added: GalleryItem[] = [];
     let problem: string | null = null;
+    setBusy(true);
     for (const file of Array.from(files).slice(0, max - items.length)) {
-      problem = validateImage(file) ?? problem;
-      if (!validateImage(file))
-        added.push({ id: crypto.randomUUID(), url: URL.createObjectURL(file) });
+      const invalid = validateImage(file);
+      if (invalid) {
+        problem = invalid;
+        continue;
+      }
+      try {
+        const photo = onUpload ? await onUpload(file) : { id: crypto.randomUUID(), url: URL.createObjectURL(file) };
+        setItems((prev) => [...prev, photo]);
+      } catch (e) {
+        problem = e instanceof Error ? e.message : "The upload failed.";
+      }
     }
     setError(problem);
-    setItems((prev) => [...prev, ...added]);
+    setBusy(false);
   };
 
-  const remove = (id: string) => {
-    setItems((prev) => prev.filter((i) => i.id !== id));
+  const remove = async (id: string) => {
+    try {
+      await onRemove?.(id);
+      setItems((prev) => prev.filter((i) => i.id !== id));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "We couldn't remove that photo.");
+    }
   };
 
   return (
@@ -68,10 +87,11 @@ export function GalleryUpload({ label, max = 8 }: GalleryUploadProps) {
             <button
               type="button"
               onClick={() => inputRef.current?.click()}
+              disabled={busy}
               className="grid aspect-square w-full place-items-center rounded-xl border border-dashed text-muted-foreground transition-colors hover:border-foreground hover:text-foreground"
             >
               <span className="flex flex-col items-center gap-1 text-xs font-medium">
-                <Plus className="size-5" /> Add photos
+                <Plus className="size-5" /> {busy ? "Uploading…" : "Add photos"}
               </span>
             </button>
           </li>

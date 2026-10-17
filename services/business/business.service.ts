@@ -8,10 +8,17 @@ import type {
   BusinessSocialInput,
 } from "@/lib/validations/business.schema";
 import type { AddressInput } from "@/lib/validations/profile.schema";
+import { mediaUrl } from "@/lib/media";
 import { businessRepository } from "@/server/repositories/business.repository";
 import type { BusinessProfileData } from "@/types/business-profile";
 
 type Dzongkhag = AddressInput["dzongkhag"];
+export interface BusinessMedia {
+  logo: string;
+  cover: string;
+  gallery: { id: string; url: string }[];
+}
+
 export interface Owner {
   id: string;
   name: string;
@@ -57,12 +64,17 @@ export function readHours(value: unknown): BusinessHoursInput["hours"] {
 
 export const businessService = {
   /** The owner's profile, or a blank one (email prefilled) before they have saved anything. */
-  async get(owner: Owner): Promise<{ exists: boolean; slug: string | null; data: BusinessProfileData }> {
+  async get(owner: Owner): Promise<{ exists: boolean; slug: string | null; data: BusinessProfileData; media: BusinessMedia }> {
     const { id: ownerId, email: accountEmail, name: accountName } = owner;
     const b = await businessRepository.findByOwner(ownerId);
     return {
       exists: !!b,
       slug: b?.slug ?? null,
+      media: {
+        logo: mediaUrl(b?.logoKey ?? ""),
+        cover: mediaUrl(b?.coverKey ?? ""),
+        gallery: (b?.gallery ?? []).map((key) => ({ id: key, url: mediaUrl(key) })),
+      },
       data: {
         general: { name: b?.name ?? accountName, tagline: b?.tagline ?? "", description: b?.description ?? "" },
         contact: { phone: b?.phone ?? "", email: b?.email || accountEmail, website: b?.website ?? "" },

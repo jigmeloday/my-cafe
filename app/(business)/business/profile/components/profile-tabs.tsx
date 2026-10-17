@@ -11,9 +11,10 @@ import { MediaSection } from "./media-section";
 import { OfferingsForm } from "./offerings-form";
 import { SectionCard } from "@/components/business/section-card";
 import { SocialForm } from "./social-form";
+import type { BusinessMedia } from "@/services/business/business.service";
 import type { BusinessProfileData } from "@/types/business-profile";
 
-export function ProfileTabs({ data }: { data: BusinessProfileData }) {
+export function ProfileTabs({ data, media }: { data: BusinessProfileData; media: BusinessMedia }) {
   return (
     <Tabs defaultValue={PROFILE_TABS[0].id}>
       <TabsList>
@@ -45,7 +46,7 @@ export function ProfileTabs({ data }: { data: BusinessProfileData }) {
         </SectionCard>
       </TabsContent>
       <TabsContent value="photos">
-        <MediaSection />
+        <MediaSection media={media} />
       </TabsContent>
       <TabsContent value="offerings">
         <SectionCard {...CARD_COPY.offerings}>
