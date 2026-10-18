@@ -1,19 +1,20 @@
 import type { Metadata } from "next";
 
-import { BUSINESS_SHELL } from "@/components/business/constant/business-nav.constant";
+import { requireRole } from "@/lib/session";
+import { walletService } from "@/services/wallet/wallet.service";
 
 import { BalanceCard } from "./components/balance-card";
 import { CoinPurchase } from "./components/coin-purchase";
 import { CoinUses } from "./components/coin-uses";
 import { RecentActivity } from "./components/recent-activity";
 import { WALLET_COPY } from "./constant/wallet.constant";
-import { COIN_TRANSACTIONS } from "./constant/wallet.data";
-import { recentTransactions, withBalances } from "./utils/wallet.utils";
+import { recentTransactions } from "./utils/wallet.utils";
 
 export const metadata: Metadata = { title: "Wallet — kuzu business" };
 
-export default function WalletPage() {
-  const rows = withBalances(COIN_TRANSACTIONS, BUSINESS_SHELL.walletCoins);
+export default async function WalletPage() {
+  const user = await requireRole("BUSINESS_OWNER");
+  const { balance, rows } = await walletService.overview(user);
 
   return (
     <div className="space-y-8">
@@ -21,7 +22,7 @@ export default function WalletPage() {
         <h1>{WALLET_COPY.title}</h1>
         <p className="text-sm text-muted-foreground">{WALLET_COPY.subtitle}</p>
       </header>
-      <BalanceCard balance={BUSINESS_SHELL.walletCoins} />
+      <BalanceCard balance={balance} />
       <section
         id="buy"
         aria-labelledby="buy-coins"

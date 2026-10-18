@@ -1,23 +1,33 @@
 import type { Metadata } from "next";
 
+import { requireRole } from "@/lib/session";
+import { analyticsService } from "@/services/analytics/analytics.service";
+import { promotionService } from "@/services/promotion/promotion.service";
+
 import { DashboardCharts } from "./components/dashboard-charts";
 import { DashboardHeader } from "./components/dashboard-header";
 import { PromotionsList } from "./components/promotions-list";
-import { RecentCampaigns } from "./components/recent-campaigns";
 import { StatsGrid } from "./components/stats-grid";
+import { FOLLOWER_DAYS } from "./constant/dashboard.constant";
+import { clicksByPromotion, getSummary, performancePoints } from "./utils/dashboard.utils";
 
 export const metadata: Metadata = { title: "Overview — kuzu business" };
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const user = await requireRole("BUSINESS_OWNER");
+  const [{ data }, followers, promotions] = await Promise.all([
+    analyticsService.forOwner(user.id),
+    analyticsService.followerSeries(user.id, FOLLOWER_DAYS),
+    promotionService.list(user.id),
+  ]);
+  const live = promotions.filter((p) => p.status === "PUBLISHED").length;
+
   return (
     <div className="space-y-6">
       <DashboardHeader />
-      <StatsGrid />
-      <DashboardCharts />
-      <div className="grid gap-4 lg:grid-cols-2">
-        <RecentCampaigns />
-        <PromotionsList />
-      </div>
+      <StatsGrid stats={getSummary({ data, followers: followers.points, live, total: promotions.length })} />
+      <DashboardCharts performance={performancePoints(data)} followers={followers.points} />
+      <PromotionsList items={promotions} clicks={clicksByPromotion(data)} />
     </div>
   );
 }

@@ -24,9 +24,9 @@ export async function BusinessHeader() {
         className="flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-medium tabular-nums transition-colors hover:border-foreground"
       >
         <Coins className="size-4 text-gold" />
-        {formatNumber(BUSINESS_SHELL.walletCoins)}
+        {formatNumber(business?.balance ?? 0)}
       </Link>
-      <BusinessUserMenu publicHref={business ? `/businesses/${business.slug}` : null} />
+      <BusinessUserMenu publicHref={business ? "/business/preview" : null} />
     </header>
   );
 }

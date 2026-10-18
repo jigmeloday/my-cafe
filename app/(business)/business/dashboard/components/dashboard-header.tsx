@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Mail, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -15,14 +15,8 @@ export function DashboardHeader() {
         </p>
       </div>
       <div className="flex flex-wrap gap-2">
-        <Button
-          render={<Link href="/business/promotions/new" />}
-          variant="secondary"
-        >
+        <Button render={<Link href="/business/promotions/new" />}>
           <Plus /> {DASHBOARD_COPY.createPromotion}
-        </Button>
-        <Button render={<Link href="/business/campaigns/new" />}>
-          <Mail /> {DASHBOARD_COPY.createCampaign}
         </Button>
       </div>
     </header>

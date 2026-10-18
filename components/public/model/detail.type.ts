@@ -23,6 +23,19 @@ export interface DetailShop {
   href: string;
 }
 
+export interface ShopLine {
+  key: "hours" | "phone" | "address" | "website";
+  text: string;
+  /** Makes the line a link (a phone number or website). */
+  href?: string;
+}
+
+export interface DetailCta {
+  label: string;
+  /** Where the button goes. Opened in a new tab when it leaves the site. */
+  href: string;
+}
+
 export interface DetailData {
   kind: DetailKind;
   slug: string;
@@ -33,4 +46,12 @@ export interface DetailData {
   description: string[];
   shop: DetailShop;
   related: PromotionCardData[];
+  /** Set for real promotions. Used to count views and clicks. */
+  promotionId?: string;
+  photos?: string[];
+  cta?: DetailCta;
+  shopLines?: ShopLine[];
+  shopLogo?: string;
+  /** Overrides the "back" link (used by the owner's preview, which must stay inside the dashboard). */
+  back?: { label: string; href: string };
 }

@@ -6,6 +6,7 @@ import {
 } from "@/lib/validations/campaign.schema";
 
 import type { ActionResult } from "./action.type";
+import { denyUnless } from "./guard";
 
 const NOT_CONNECTED: ActionResult = {
   ok: false,
@@ -18,19 +19,27 @@ const MISSING: ActionResult = { ok: false, error: "Missing campaign." };
 export async function saveCampaignAction(
   input: CampaignInput,
 ): Promise<ActionResult> {
+  const denied = await denyUnless("BUSINESS_OWNER");
+  if (denied) return denied;
   return campaignSchema.safeParse(input).success
     ? NOT_CONNECTED
     : { ok: false, error: "Please check the form and try again." };
 }
 
 export async function pauseCampaignAction(id: string): Promise<ActionResult> {
+  const denied = await denyUnless("BUSINESS_OWNER");
+  if (denied) return denied;
   return id ? NOT_CONNECTED : MISSING;
 }
 
 export async function resumeCampaignAction(id: string): Promise<ActionResult> {
+  const denied = await denyUnless("BUSINESS_OWNER");
+  if (denied) return denied;
   return id ? NOT_CONNECTED : MISSING;
 }
 
 export async function cancelCampaignAction(id: string): Promise<ActionResult> {
+  const denied = await denyUnless("BUSINESS_OWNER");
+  if (denied) return denied;
   return id ? NOT_CONNECTED : MISSING;
 }

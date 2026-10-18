@@ -21,6 +21,8 @@ export const businessMediaService = {
     const key = `business/${business.id}/${kind}-${randomBytes(8).toString("hex")}.${image.ext}`;
     await storage.put(key, bytes, image.mime);
 
+    // Promotion photos and banner images are only files here. The promotion or banner keeps the key when it is saved.
+    if (kind === "promotion" || kind === "banner") return { ok: true, key };
     if (kind === "gallery") await businessRepository.update(business.id, owner.id, { gallery: { push: key } });
     else await businessRepository.update(business.id, owner.id, kind === "logo" ? { logoKey: key } : { coverKey: key });
 
@@ -30,6 +32,8 @@ export const businessMediaService = {
   },
 
   async remove(owner: Owner, kind: MediaKind, key: string): Promise<Result> {
+    // A promotion photo is removed when the promotion is saved without it, not before.
+    if (kind === "promotion" || kind === "banner") return { ok: true };
     const business = await businessRepository.findByOwner(owner.id);
     if (!business) return { ok: false, error: "Nothing to remove." };
 

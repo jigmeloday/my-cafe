@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { requireRole } from "@/lib/session";
 
 import { AttentionCard } from "./components/attention-card";
 import { DashboardCharts } from "./components/dashboard-charts";
@@ -8,7 +9,10 @@ import { DASHBOARD_COPY } from "./constant/dashboard.constant";
 
 export const metadata: Metadata = { title: "Overview — kuzu admin" };
 
-export default function AdminDashboardPage() {
+export default async function AdminDashboardPage() {
+  // The layout checks this too, but a page must not rely on that.
+  await requireRole("ADMIN");
+
   return (
     <div className="space-y-6">
       <header className="space-y-1">

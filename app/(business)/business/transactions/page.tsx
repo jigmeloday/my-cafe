@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
 
-import { BUSINESS_SHELL } from "@/components/business/constant/business-nav.constant";
+import { requireRole } from "@/lib/session";
+import { walletService } from "@/services/wallet/wallet.service";
 
-import { COIN_TRANSACTIONS } from "../wallet/constant/wallet.data";
-import { withBalances } from "../wallet/utils/wallet.utils";
 import { TransactionsExplorer } from "./components/transactions-explorer";
 import { TRANSACTIONS_COPY } from "./constant/transactions.constant";
 
 export const metadata: Metadata = { title: "Transactions — kuzu business" };
 
-export default function TransactionsPage() {
-  const rows = withBalances(COIN_TRANSACTIONS, BUSINESS_SHELL.walletCoins);
+export default async function TransactionsPage() {
+  const user = await requireRole("BUSINESS_OWNER");
+  const { rows } = await walletService.overview(user);
 
   return (
     <div className="space-y-6">

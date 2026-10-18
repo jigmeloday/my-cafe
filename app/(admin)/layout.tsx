@@ -1,6 +1,6 @@
 import { ADMIN_NAV } from "@/components/admin/constant/admin-nav.constant";
 import { AdminHeader } from "@/components/admin/header";
-import { requireRole } from "@/lib/session";
+import { guardArea } from "@/lib/session";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 
 export default async function AdminLayout({
@@ -8,7 +8,7 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  await requireRole("ADMIN");
+  await guardArea("admin");
 
   return (
     <div className="flex min-h-screen bg-muted/40">

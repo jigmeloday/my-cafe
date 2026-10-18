@@ -26,6 +26,10 @@ export const MAIN_NAV: NavLink[] = [
 
 export const SIGNED_IN_MENU = {
   account: { label: "My account", href: "/profile" },
+  /** Business owners manage a business profile, not a customer one. */
+  accounts: {
+    BUSINESS_OWNER: { label: "Business profile", href: "/business/profile" },
+  } as Record<string, NavLink>,
   dashboards: {
     BUSINESS_OWNER: { label: "Business dashboard", href: "/business/dashboard" },
     ADMIN: { label: "Admin", href: "/admin/dashboard" },
@@ -40,7 +44,7 @@ export const USER_MENU: NavLink[] = [
 ];
 
 export const CATEGORIES: CategoryItem[] = [
-  { label: "Tshechu", href: "/categories/tshechu", icon: Sparkles },
+  { label: "Festival", href: "/categories/festival", icon: Sparkles },
   { label: "Food", href: "/categories/food", icon: UtensilsCrossed },
   { label: "Cafés", href: "/categories/cafes", icon: Coffee },
   { label: "Fashion", href: "/categories/fashion", icon: Shirt },
@@ -72,7 +76,6 @@ export const FOOTER_COLUMNS: FooterColumn[] = [
     title: "Businesses",
     links: [
       { label: "List your business", href: "/business" },
-      { label: "Advertise with banners", href: "/business/campaigns" },
       { label: "Business dashboard", href: "/business/dashboard" },
     ],
   },

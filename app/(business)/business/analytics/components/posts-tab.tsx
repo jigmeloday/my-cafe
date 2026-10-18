@@ -3,16 +3,15 @@ import { BreakdownList } from "@/components/business/charts/breakdown-list";
 import { SectionCard } from "@/components/business/section-card";
 
 import { ANALYTICS_COPY } from "../constant/analytics.constant";
-import type { Dataset, RangeDays } from "../model/analytics.type";
+import type { Dataset, PromotionMeta, RangeDays } from "../model/analytics.type";
 import { promotionRows, rangeTotals } from "../utils/dataset.utils";
-import { PROMOTION_METAS } from "../utils/promotion-meta.utils";
 import { PostTrend } from "./post-trend";
 import { PromotionsTable } from "./promotions-table";
 
 const BAR_LIMIT = 6;
 
-export function PostsTab({ data, range }: { data: Dataset; range: RangeDays }) {
-  const rows = promotionRows(data, range, PROMOTION_METAS);
+export function PostsTab({ data, range, metas }: { data: Dataset; range: RangeDays; metas: PromotionMeta[] }) {
+  const rows = promotionRows(data, range, metas);
   const byType = new Map<string, number>();
   rows.forEach((r) => byType.set(r.type, (byType.get(r.type) ?? 0) + r.clicks));
   const typeRows = [...byType.entries()]

@@ -34,6 +34,12 @@ enum PromotionType {
   ANNOUNCEMENT
 }
 
+/// What a visitor did with a promotion. Saves come from Favorite instead, so they stay in step with the heart button.
+enum PromotionEventType {
+  VIEW
+  CLICK
+}
+
 enum PromotionStatus {
   DRAFT
   PUBLISHED
@@ -42,6 +48,7 @@ enum PromotionStatus {
 
 enum CoinTransactionType {
   PURCHASE
+  PUBLISH
   EMAIL_CAMPAIGN
   BANNER
   TOP_RANK
@@ -152,27 +159,33 @@ model Business {
   updatedAt    DateTime       @updatedAt
   promotions   Promotion[]
   wallet       Wallet?
+  banners      Banner[]
 
   @@index([ownerId])
 }
 
 model Promotion {
-  id          String          @id @default(cuid())
+  id          String           @id @default(cuid())
   businessId  String
-  business    Business        @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  business    Business         @relation(fields: [businessId], references: [id], onDelete: Cascade)
   categoryId  String?
-  category    Category?       @relation(fields: [categoryId], references: [id])
-  slug        String          @unique
+  category    Category?        @relation(fields: [categoryId], references: [id])
+  slug        String           @unique
   title       String
   type        PromotionType
-  status      PromotionStatus @default(DRAFT)
-  discount    String          @default("")
-  description String          @default("")
-  location    String          @default("")
+  status      PromotionStatus  @default(DRAFT)
+  discount    String           @default("")
+  description String           @default("")
+  location    String           @default("")
+  ctaType     String           @default("VIEW_OFFER")
+  ctaUrl      String           @default("")
+  photos      String[]
+  events      PromotionEvent[]
   startsAt    DateTime?
   endsAt      DateTime?
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  banners     Banner[]
 
   @@index([businessId])
   @@index([status, type])
@@ -196,6 +209,8 @@ model CoinTransaction {
   amount       Int
   balanceAfter Int
   description  String
+  /// The payment provider\'s id for a purchase. Unique, so a repeated webhook can never credit twice.
+  reference    String?             @unique
   createdAt    DateTime            @default(now())
 
   @@index([walletId, createdAt])
@@ -283,4 +298,61 @@ model AuditLog {
 
   @@index([createdAt])
   @@index([targetId])
+}
+
+/// One view or click on a promotion. Counted by day for analytics.
+model PromotionEvent {
+  id          String             @id @default(cuid())
+  promotionId String
+  promotion   Promotion          @relation(fields: [promotionId], references: [id], onDelete: Cascade)
+  type        PromotionEventType
+  /// Where the visitor came from: "discover", "deals", "events", "search" or "other".
+  source      String             @default("other")
+  createdAt   DateTime           @default(now())
+
+  @@index([promotionId, createdAt])
+  @@index([createdAt])
+}
+
+/// One failed or throttled attempt (sign-in, sign-up...), kept briefly so too many in a short time can be refused.
+model RateLimitHit {
+  id        String   @id @default(cuid())
+  key       String
+  createdAt DateTime @default(now())
+
+  @@index([key, createdAt])
+  @@index([createdAt])
+}
+
+/// A paid homepage banner. It runs from `startsAt` to `endsAt` (both days included) and is paid for up front in coins.
+model Banner {
+  id          String        @id @default(cuid())
+  businessId  String
+  business    Business      @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  /// Where the banner leads. Empty means the business's own page.
+  promotionId String?
+  promotion   Promotion?    @relation(fields: [promotionId], references: [id], onDelete: SetNull)
+  title       String
+  description String        @default("")
+  imageKey    String
+  startsAt    DateTime      @db.Date
+  endsAt      DateTime      @db.Date
+  /// Coins paid for the whole run.
+  coins       Int
+  createdAt   DateTime      @default(now())
+  events      BannerEvent[]
+
+  @@index([businessId])
+  @@index([startsAt, endsAt])
+}
+
+/// One time a banner was shown (VIEW) or clicked (CLICK).
+model BannerEvent {
+  id        String             @id @default(cuid())
+  bannerId  String
+  banner    Banner             @relation(fields: [bannerId], references: [id], onDelete: Cascade)
+  type      PromotionEventType
+  createdAt DateTime           @default(now())
+
+  @@index([bannerId, createdAt])
 }

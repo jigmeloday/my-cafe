@@ -12,6 +12,7 @@ export const TRANSACTION_TYPE: Record<
   PURCHASE: { label: "Purchase", tone: "success" },
   EMAIL_CAMPAIGN: { label: "Email", tone: "info" },
   BANNER: { label: "Banner", tone: "info" },
+  PUBLISH: { label: "Promotion published", tone: "info" },
   TOP_RANK: { label: "Top ranking", tone: "info" },
   REFUND: { label: "Refund", tone: "neutral" },
 };

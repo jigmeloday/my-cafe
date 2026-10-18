@@ -10,13 +10,15 @@ interface CoinCostSummaryProps {
   /** Total coins this action will cost. */
   cost: number;
   label?: string;
+  /** The wallet balance. Defaults to the sample balance until a screen passes the real one. */
+  balance?: number;
 }
 
 export function CoinCostSummary({
   cost,
   label = "Cost",
+  balance = BUSINESS_SHELL.walletCoins,
 }: CoinCostSummaryProps) {
-  const balance = BUSINESS_SHELL.walletCoins;
   const enough = hasEnoughCoins(balance, cost);
 
   return (

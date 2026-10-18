@@ -3,6 +3,8 @@
  * All prices live here so they are easy to change. These are sample values.
  */
 export const COIN_COSTS = {
+  /** Charged once when a promotion goes live (not for later edits). */
+  publish: 50,
   /** Per follower who will receive the email. */
   emailPerRecipient: 1,
   /** Per day a promotion is shown in the homepage banner. */
@@ -93,6 +95,7 @@ export type CoinPackId = (typeof PACK_COINS)[number]["id"];
 
 export const COIN_TRANSACTION_TYPES = [
   "PURCHASE",
+  "PUBLISH",
   "EMAIL_CAMPAIGN",
   "BANNER",
   "TOP_RANK",

@@ -2,17 +2,26 @@ import Link from "next/link";
 
 import { ImagePlaceholder } from "@/components/shared/image-placeholder";
 
-import { SHOP_DETAILS } from "../constant/detail.constant";
-import type { DetailShop } from "../model/detail.type";
+import { SHOP_DETAILS, SHOP_LINE_ICONS } from "../constant/detail.constant";
+import type { DetailShop, ShopLine } from "../model/detail.type";
 
-export function ShopDetails({ shop }: { shop: DetailShop }) {
+interface ShopDetailsProps {
+  shop: DetailShop;
+  /** Real contact lines. Without them the sample lines are shown. */
+  lines?: ShopLine[];
+  logo?: string;
+}
+
+export function ShopDetails({ shop, lines, logo }: ShopDetailsProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3">
-        <ImagePlaceholder
-          label="Logo"
-          className="size-12 shrink-0 rounded-full"
-        />
+        {logo ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={logo} alt="" className="size-12 shrink-0 rounded-full bg-muted object-cover" />
+        ) : (
+          <ImagePlaceholder label="Logo" className="size-12 shrink-0 rounded-full" />
+        )}
         <div className="min-w-0">
           <h6 className="truncate">
             <Link href={shop.href} className="hover:underline">
@@ -23,15 +32,22 @@ export function ShopDetails({ shop }: { shop: DetailShop }) {
         </div>
       </div>
       <ul className="space-y-3 text-sm">
-        {SHOP_DETAILS.map(({ key, icon: Icon, text }) => (
-          <li
-            key={key}
-            className="flex items-center gap-3 text-muted-foreground"
-          >
-            <Icon className="size-4 shrink-0 text-foreground" />
-            <span className="truncate">{text}</span>
-          </li>
-        ))}
+        {(lines ?? SHOP_DETAILS).map((line) => {
+          const Icon = SHOP_LINE_ICONS[line.key];
+          const href = "href" in line ? line.href : undefined;
+          return (
+            <li key={line.key} className="flex items-center gap-3 text-muted-foreground">
+              <Icon className="size-4 shrink-0 text-foreground" />
+              {href ? (
+                <a href={href} className="truncate hover:text-foreground hover:underline" {...(href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
+                  {line.text}
+                </a>
+              ) : (
+                <span className="truncate">{line.text}</span>
+              )}
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

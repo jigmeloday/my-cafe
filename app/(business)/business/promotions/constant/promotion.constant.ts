@@ -1,4 +1,3 @@
-import { CATEGORIES } from "@/components/public/constant/site.constant";
 import {
   CTA_TYPES,
   PROMOTION_STATUSES,
@@ -48,10 +47,6 @@ export const CTA_OPTIONS: OptionItem[] = CTA_TYPES.map((value) => ({
   value,
   label: CTA_LABELS[value],
 }));
-export const CATEGORY_OPTIONS: OptionItem[] = CATEGORIES.map(({ label }) => ({
-  value: label,
-  label,
-}));
 
 export const TYPE_FILTER_OPTIONS: OptionItem[] = [
   { value: "ALL", label: "All types" },
@@ -76,6 +71,8 @@ export const PROMOTIONS_COPY = {
     "What you're offering. Publish it for free, then tell your followers about it with an email campaign.",
   create: "Create promotion",
   searchPlaceholder: "Search promotions",
+  firstTitle: "No promotions yet",
+  firstDescription: "Create your first promotion to show it on kuzu.",
   emptyTitle: "No promotions match",
   emptyDescription:
     "Try a different search or filter, or create a new promotion.",
@@ -102,21 +99,13 @@ export const NEW_PROMOTION: PromotionInput = {
   category: "",
   ctaType: "VIEW_OFFER",
   ctaUrl: "",
-  emailFollowers: false,
-  bannerDays: "0",
-  topRankDays: "0",
+  photos: [],
   status: "DRAFT",
 };
 
-export const PROMOTE_COPY = {
-  title: "Reach more people",
-  description:
-    "Optional. Publishing is free. Spend coins to tell your followers or to be seen first.",
-  emailLabel: "Email my followers",
-  emailHint:
-    "Followers who agreed to emails get a message about this promotion.",
-  bannerLabel: "Homepage banner",
-  topRankLabel: "Rank at the top",
-  free: "Publishing is free. Add extras above to reach more people.",
-  total: "Total in coins",
+export const PUBLISH_COPY = {
+  title: "Publishing",
+  description: "Going live costs coins, once. Drafts and later edits are free.",
+  alreadyLive: "This promotion is already live, so saving changes is free.",
+  cost: "Cost to publish",
 };
