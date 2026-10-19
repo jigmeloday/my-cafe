@@ -64,6 +64,12 @@ enum KycStatus {
   REJECTED
 }
 
+/// Whether someone at kuzu has dealt with a message from the Contact page.
+enum MessageStatus {
+  OPEN
+  DONE
+}
+
 enum PromotionEventType {
   VIEW
   CLICK
@@ -464,4 +470,23 @@ model KycSubmission {
 
   @@index([businessId, submittedAt])
   @@index([status, submittedAt])
+}
+
+/// A message sent from the public Contact page. Anyone can send one, signed in or not. We keep the name, email
+/// and text only to reply, and do not store the sender's IP address.
+model ContactMessage {
+  id          String        @id @default(cuid())
+  name        String
+  email       String
+  /// One of the topics on the Contact page: question, business, verification, account, privacy, other.
+  topic       String
+  message     String
+  /// Set when the sender was logged in.
+  userId      String?
+  status      MessageStatus @default(OPEN)
+  handledById String?
+  handledAt   DateTime?
+  createdAt   DateTime      @default(now())
+
+  @@index([status, createdAt])
 }

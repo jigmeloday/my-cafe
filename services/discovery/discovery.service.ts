@@ -150,7 +150,71 @@ function buildDetail(p: LivePromotion, related: LivePromotion[], today: Date, no
     };
 }
 
+export interface AreaTown {
+  name: string;
+  /** "3 places · Food, Cafés" */
+  description: string;
+}
+
+export interface AreaGroup {
+  /** The dzongkhag, e.g. "Thimphu". */
+  name: string;
+  towns: AreaTown[];
+}
+
+interface BusinessArea {
+  town: string;
+  dzongkhag: string;
+  promotions: { category: { name: string } | null }[];
+}
+
+const MAX_AREA_TABS = 6;
+const MAX_TOWNS = 12;
+
+/**
+ * Groups businesses by dzongkhag and town for "Explore by area". Busiest first. Each town says how many places
+ * it has and what they mostly offer. Towns are matched ignoring letter case and stray spaces.
+ */
+export function groupAreas(businesses: BusinessArea[]): AreaGroup[] {
+  const places = new Map<string, { name: string; towns: Map<string, { name: string; count: number; categories: Map<string, number> }> }>();
+
+  for (const b of businesses) {
+    const dzongkhag = b.dzongkhag.trim();
+    const town = b.town.trim();
+    if (!dzongkhag || !town) continue;
+
+    const group = places.get(dzongkhag.toLowerCase()) ?? { name: dzongkhag, towns: new Map() };
+    const entry = group.towns.get(town.toLowerCase()) ?? { name: town, count: 0, categories: new Map() };
+    entry.count += 1;
+    for (const p of b.promotions) if (p.category) entry.categories.set(p.category.name, (entry.categories.get(p.category.name) ?? 0) + 1);
+    group.towns.set(town.toLowerCase(), entry);
+    places.set(dzongkhag.toLowerCase(), group);
+  }
+
+  return [...places.values()]
+    .map((group) => ({
+      name: group.name,
+      total: [...group.towns.values()].reduce((sum, t) => sum + t.count, 0),
+      towns: [...group.towns.values()]
+        .sort((a, c) => c.count - a.count || a.name.localeCompare(c.name))
+        .slice(0, MAX_TOWNS)
+        .map((t): AreaTown => {
+          const top = [...t.categories.entries()].sort((a, c) => c[1] - a[1] || a[0].localeCompare(c[0])).slice(0, 2).map(([name]) => name);
+          const places = `${t.count} ${t.count === 1 ? "place" : "places"}`;
+          return { name: t.name, description: top.length ? `${places} · ${top.join(", ")}` : places };
+        }),
+    }))
+    .sort((a, c) => c.total - a.total || a.name.localeCompare(c.name))
+    .slice(0, MAX_AREA_TABS)
+    .map(({ name, towns }) => ({ name, towns }));
+}
+
 export const discoveryService = {
+  /** Where businesses are, for "Explore by area" on the home page. */
+  async areas(): Promise<AreaGroup[]> {
+    return groupAreas(await repo.businessAreas());
+  },
+
   /** Everything the home page shows. Sections with nothing in them are simply empty. */
   async landing(now = new Date(), random: () => number = Math.random): Promise<Landing> {
     const today = bhutanToday(now);
@@ -192,6 +256,9 @@ export const discoveryService = {
       events: events.map((e) => toCard(e, today)),
     };
   },
+
+  /** How much there is to find on kuzu right now, for the About page. */
+  siteStats: (now = new Date()) => repo.siteCounts(bhutanToday(now)),
 
   /** Every live deal (anything but an event), tagged for the Deals page filters. */
   async deals(now = new Date()): Promise<TaggedPromotion[]> {

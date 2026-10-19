@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const landing = await discoveryService.landing();
+  const [landing, areas] = await Promise.all([discoveryService.landing(), discoveryService.areas()]);
   const sections = HOME_SECTIONS.map((s) => ({ ...s, items: landing[s.key] })).filter((s) => s.items.length > 0);
 
   return (
@@ -33,9 +33,11 @@ export default async function HomePage() {
       <Reveal>
         <CtaBanner />
       </Reveal>
-      <Reveal>
-        <ExploreAreas />
-      </Reveal>
+      {areas.length > 0 && (
+        <Reveal>
+          <ExploreAreas areas={areas} />
+        </Reveal>
+      )}
     </Container>
   );
 }

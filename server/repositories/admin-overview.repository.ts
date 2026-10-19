@@ -44,7 +44,7 @@ export const adminOverviewRepository = {
 
   /** Everything counted in one go. `today` is a Bhutan date at midnight UTC. */
   async totals(today: Date) {
-    const [users, businesses, livePromotions, runningBanners, pendingVerifications, suspendedBusinesses, suspendedUsers] = await Promise.all([
+    const [users, businesses, livePromotions, runningBanners, pendingVerifications, suspendedBusinesses, suspendedUsers, openMessages] = await Promise.all([
       db.user.count({ where: { role: { not: "ADMIN" } } }),
       db.business.count(),
       db.promotion.count({ where: livePromotionWhere(today) }),
@@ -52,8 +52,9 @@ export const adminOverviewRepository = {
       db.kycSubmission.count({ where: { status: "PENDING" } }),
       db.business.count({ where: { status: "SUSPENDED" } }),
       db.user.count({ where: { status: "SUSPENDED" } }),
+      db.contactMessage.count({ where: { status: "OPEN" } }),
     ]);
-    return { users, businesses, livePromotions, runningBanners, pendingVerifications, suspendedBusinesses, suspendedUsers, pendingVerifications };
+    return { users, businesses, livePromotions, runningBanners, pendingVerifications, suspendedBusinesses, suspendedUsers, openMessages };
   },
 
   newestBusinesses: (take: number) =>

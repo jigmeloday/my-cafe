@@ -29,6 +29,8 @@ async function uniqueSlug(title: string) {
 
 const publishCharge = (title: string) => ({ amount: COIN_COSTS.publish, description: `Published: ${title}` });
 
+const SUSPENDED = "Your business is suspended, so you can't publish or change promotions right now. Please contact us.";
+
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 const CTA_TYPES = ["VIEW_OFFER", "VISIT_WEBSITE", "CONTACT_BUSINESS"] as const;
@@ -105,6 +107,7 @@ export const promotionService = {
 
     try {
       const business = await businessService.ensure(owner);
+      if (business.status === "SUSPENDED") return { ok: false, error: SUSPENDED };
       // Photos must be files this business uploaded, never someone else's.
       if (!data.photos.every((key) => keyBelongsTo(key, business.id))) {
         return { ok: false, error: "One of the photos isn't valid. Remove it and add it again." };

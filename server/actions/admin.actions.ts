@@ -1,37 +1,54 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 
 import { getCurrentUser } from "@/lib/session";
 import { resolveSchema, type ResolveInput } from "@/lib/validations/report.schema";
+import { adminBusinessService } from "@/services/admin/admin-business.service";
 import { reportService } from "@/services/report/report.service";
 
 import type { ActionResult } from "./action.type";
-import { denyUnless } from "./guard";
 
-const NOT_CONNECTED: ActionResult = {
-  ok: false,
-  error: "This isn't connected yet. Admin tools are coming soon.",
-};
 const MISSING: ActionResult = { ok: false, error: "Missing item." };
 
-// Every action checks the caller is an admin first. When these are connected, anything that changes what the
-// public sees (suspend, remove) must also write an audit log entry.
-const needsId = async (id: string): Promise<ActionResult> => (await denyUnless("ADMIN")) ?? (id ? NOT_CONNECTED : MISSING);
-
-export async function verifyBusinessAction(id: string): Promise<ActionResult> {
-  return needsId(id);
+/** Checks the caller is a signed-in admin, runs the change, and refreshes the lists that show it. Every admin action starts here. */
+async function asAdmin(run: (actor: { id: string; email: string }) => Promise<ActionResult>): Promise<ActionResult> {
+  const user = await getCurrentUser();
+  if (user?.role !== "ADMIN") return { ok: false, error: "Only admins can do this." };
+  const result = await run({ id: user.id, email: user.email });
+  if (result.ok) {
+    revalidatePath("/admin/businesses");
+    revalidatePath("/admin/dashboard");
+  }
+  return result;
 }
 
-export async function suspendBusinessAction(id: string): Promise<ActionResult> {
-  return needsId(id);
+const idSchema = z.string().min(1).max(100);
+const suspendSchema = z.object({
+  id: idSchema,
+  /** Shown to the owner, so it has to say something useful. */
+  reason: z.string().trim().min(10, "Tell the owner why (at least 10 characters)").max(300, "Keep it under 300 characters"),
+});
+
+export async function verifyBusinessAction(id: string): Promise<ActionResult> {
+  const parsed = idSchema.safeParse(id);
+  if (!parsed.success) return MISSING;
+  return asAdmin((actor) => adminBusinessService.verify(actor, parsed.data));
+}
+
+export async function suspendBusinessAction(input: { id: string; reason: string }): Promise<ActionResult> {
+  const parsed = suspendSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: parsed.error.issues[0]?.message ?? "Please check and try again." };
+  return asAdmin((actor) => adminBusinessService.suspend(actor, parsed.data.id, parsed.data.reason));
 }
 
 export async function reinstateBusinessAction(id: string): Promise<ActionResult> {
-  return needsId(id);
+  const parsed = idSchema.safeParse(id);
+  if (!parsed.success) return MISSING;
+  return asAdmin((actor) => adminBusinessService.reinstate(actor, parsed.data));
 }
 
-/** An admin settles every open report about one ad: dismiss it, warn the business, or take the ad down. */
 export async function resolveReportAction(input: ResolveInput): Promise<ActionResult> {
   const user = await getCurrentUser();
   if (user?.role !== "ADMIN") return { ok: false, error: "Only admins can do this." };

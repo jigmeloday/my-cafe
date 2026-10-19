@@ -49,7 +49,7 @@ export const adminUserRepository = {
 export interface AuditEntry {
   actorId: string;
   actorEmail: string;
-  action: "user.suspend" | "user.unsuspend" | "user.delete" | "wallet.recharge" | "report.dismiss" | "report.warn" | "report.remove" | "kyc.view" | "kyc.approve" | "kyc.reject";
+  action: "user.suspend" | "user.unsuspend" | "user.delete" | "wallet.recharge" | "report.dismiss" | "report.warn" | "report.remove" | "kyc.view" | "kyc.approve" | "kyc.reject" | "business.verify" | "business.suspend" | "business.reinstate";
   targetId: string;
   /** The person's name and email, copied in so the record still makes sense after they are deleted. */
   targetLabel: string;

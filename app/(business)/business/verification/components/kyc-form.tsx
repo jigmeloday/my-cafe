@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { SectionCard } from "@/components/business/section-card";
 import { FormMessage } from "@/components/shared/form-message";
 import { Button } from "@/components/ui/button";
@@ -35,7 +37,13 @@ export function KycForm() {
   return (
     <form onSubmit={submit} noValidate className="max-w-2xl space-y-4">
       {result && !result.ok && <FormMessage tone="error">{result.error}</FormMessage>}
-      <p className="rounded-xl bg-muted px-4 py-3 text-sm text-muted-foreground">{KYC_COPY.privacy}</p>
+      <p className="rounded-xl bg-muted px-4 py-3 text-sm text-muted-foreground">
+        {KYC_COPY.privacy}{" "}
+        <Link href="/privacy#verification" target="_blank" className="font-medium text-foreground underline underline-offset-2">
+          How we protect them
+        </Link>
+        .
+      </p>
       <SectionCard title="Your details">
         <div className="space-y-4">
           <Input label="Full name, as on your ID" error={errors.ownerName?.message} autoComplete="name" {...register("ownerName")} />

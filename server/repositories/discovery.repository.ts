@@ -77,6 +77,26 @@ export const discoveryRepository = {
       },
     }),
 
+  /** Totals for the About page: what visitors can actually find on kuzu today. */
+  async siteCounts(today: Date) {
+    const live = livePromotionWhere(today);
+    const [businesses, verified, deals, events] = await Promise.all([
+      db.business.count({ where: { status: { not: "SUSPENDED" }, owner: { status: "ACTIVE" } } }),
+      db.business.count({ where: { status: "VERIFIED", owner: { status: "ACTIVE" } } }),
+      db.promotion.count({ where: { AND: [live, { type: { not: "EVENT" } }] } }),
+      db.promotion.count({ where: { AND: [live, { type: "EVENT" }] } }),
+    ]);
+    return { businesses, verified, deals, events };
+  },
+
+  /** Where businesses are: each visible business's town, area and the categories of its live promotions. */
+  businessAreas: () =>
+    db.business.findMany({
+      where: { status: { not: "SUSPENDED" }, owner: { status: "ACTIVE" } },
+      select: { town: true, dzongkhag: true, promotions: { where: { status: "PUBLISHED", removedAt: null }, select: { category: { select: { name: true } } } } },
+      take: 2000,
+    }),
+
   newBusinesses: (take: number) =>
     db.business.findMany({
       where: { status: { not: "SUSPENDED" }, owner: { status: "ACTIVE" } },
