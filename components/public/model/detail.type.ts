@@ -14,7 +14,6 @@ export interface DetailKindConfig {
   asideNote: string;
   factLabels: string[];
   relatedTitle: string;
-  description: string[];
 }
 
 export interface DetailShop {

@@ -39,7 +39,7 @@ export const FAQ_TOPICS: FaqTopic[] = [
     faqs: [
       { q: "Why do I have to confirm my email?", a: "It proves the address is yours and keeps your account safe. We send a link when you sign up, and you can't log in until you open it." },
       { q: "I didn't get the confirmation email", a: "Look in your spam folder first. On the “Check your email” page you can send a new link, one a minute. Make sure you typed your address correctly when you signed up." },
-      { q: "I forgot my password", a: "Resetting a password by email isn't available yet. Write to us from the address on your account and we'll help you get back in." },
+      { q: "I forgot my password", a: "On the login page press “Forgot password”, enter your email and we'll send you a link. It works once and for an hour. When you choose a new password you're signed out on all your devices, and we email you so you know it happened. No email? Check spam, then write to us." },
       { q: "How do I change my details or delete my account?", a: "Open your profile. You can change your details and notification choices there, and delete a customer account. If you run a business, remove the business first, or contact us." },
       { q: "My account was suspended", a: "Accounts are suspended when the rules are broken or to keep people safe. Write to us and we will explain what happened and what can be done." },
     ],

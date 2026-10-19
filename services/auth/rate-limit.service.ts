@@ -10,6 +10,9 @@ export const LIMITS = {
   loginPerIp: { max: 30, windowMs: 15 * MINUTE },
   registerPerIp: { max: 10, windowMs: 60 * MINUTE },
   resendPerIp: { max: 10, windowMs: 60 * MINUTE },
+  forgotPerIp: { max: 8, windowMs: 60 * MINUTE },
+  forgotPerEmail: { max: 3, windowMs: 60 * MINUTE },
+  resetPerIp: { max: 10, windowMs: 60 * MINUTE },
   contactPerIp: { max: 5, windowMs: 60 * MINUTE },
   contactPerEmail: { max: 3, windowMs: 24 * 60 * MINUTE },
 } as const;

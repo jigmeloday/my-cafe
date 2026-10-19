@@ -16,7 +16,7 @@ export function DetailPage({ detail }: { detail: DetailData }) {
     <Container className="space-y-10 py-6 sm:py-8">
       <DetailHeader detail={detail} />
       {detail.promotionId && <TrackView promotionId={detail.promotionId} />}
-      <DetailGallery photos={detail.photos} />
+      {detail.photos && detail.photos.length > 0 && <DetailGallery photos={detail.photos} />}
       <div className="grid gap-10 lg:grid-cols-[1fr_22rem] lg:gap-16">
         <div className="space-y-8">
           <DetailFacts facts={detail.facts} />

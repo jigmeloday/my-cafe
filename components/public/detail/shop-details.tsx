@@ -2,12 +2,12 @@ import Link from "next/link";
 
 import { ImagePlaceholder } from "@/components/shared/image-placeholder";
 
-import { SHOP_DETAILS, SHOP_LINE_ICONS } from "../constant/detail.constant";
+import { SHOP_LINE_ICONS } from "../constant/detail.constant";
 import type { DetailShop, ShopLine } from "../model/detail.type";
 
 interface ShopDetailsProps {
   shop: DetailShop;
-  /** Real contact lines. Without them the sample lines are shown. */
+  /** The business's contact lines. */
   lines?: ShopLine[];
   logo?: string;
 }
@@ -32,9 +32,9 @@ export function ShopDetails({ shop, lines, logo }: ShopDetailsProps) {
         </div>
       </div>
       <ul className="space-y-3 text-sm">
-        {(lines ?? SHOP_DETAILS).map((line) => {
+        {(lines ?? []).map((line) => {
           const Icon = SHOP_LINE_ICONS[line.key];
-          const href = "href" in line ? line.href : undefined;
+          const href = line.href;
           return (
             <li key={line.key} className="flex items-center gap-3 text-muted-foreground">
               <Icon className="size-4 shrink-0 text-foreground" />

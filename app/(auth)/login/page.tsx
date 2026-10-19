@@ -12,7 +12,7 @@ export const metadata: Metadata = { title: "Log in — kuzu" };
 export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   // Already signed in: go to your own area instead.
   await guardArea("auth");
-  const { next, verified } = await searchParams;
+  const { next, verified, reset } = await searchParams;
   return (
     <AuthCard
       title={LOGIN_COPY.title}
@@ -20,6 +20,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
       footerText={LOGIN_COPY.footerText}
       footerLink={LOGIN_COPY.footerLink}
     >
+      {reset === "1" && <FormMessage tone="success">{LOGIN_COPY.passwordChanged}</FormMessage>}
       {verified === "1" && <FormMessage tone="success">{LOGIN_COPY.verified}</FormMessage>}
       <LoginForm next={typeof next === "string" ? next : undefined} />
     </AuthCard>

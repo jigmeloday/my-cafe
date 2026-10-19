@@ -1,36 +1,8 @@
 import { Globe, Link2, Mail, MapPin, Phone } from "lucide-react";
 
-import type {
-  ActivityTab,
-  BusinessContact,
-  BusinessHours,
-} from "../model/business.type";
-
-export const BUSINESS_ABOUT = [
-  "[Tell people what this place is, what it is known for and what to try first.]",
-  "[Add a few details: the story, the team, and what makes it worth a visit.]",
-];
-
-export const BUSINESS_HOURS: BusinessHours[] = [
-  { day: "Monday", hours: "9:00 am – 6:00 pm" },
-  { day: "Tuesday", hours: "9:00 am – 6:00 pm" },
-  { day: "Wednesday", hours: "9:00 am – 6:00 pm" },
-  { day: "Thursday", hours: "9:00 am – 6:00 pm" },
-  { day: "Friday", hours: "9:00 am – 8:00 pm" },
-  { day: "Saturday", hours: "10:00 am – 8:00 pm" },
-  { day: "Sunday", hours: "Closed" },
-];
-
-export const BUSINESS_CONTACTS: BusinessContact[] = [
-  { key: "phone", icon: Phone, text: "[Phone number]" },
-  { key: "email", icon: Mail, text: "[Email address]" },
-  { key: "address", icon: MapPin, text: "[Street address]" },
-  { key: "website", icon: Globe, text: "[Website]" },
-];
+import type { ActivityTab } from "../model/business.type";
 
 export const CONTACT_ICONS = { phone: Phone, email: Mail, address: MapPin, website: Globe, social: Link2 } as const;
-
-export const GALLERY_ITEMS = ["Photo 1", "Photo 2", "Photo 3", "Photo 4"];
 
 export const BUSINESS_COPY = {
   back: "New places",
@@ -70,5 +42,3 @@ export const ACTIVITY_TABS: ActivityTab[] = [
   },
 ];
 
-export const LIST_LIMIT = 4;
-export const DEFAULT_CATEGORY = "Local business";

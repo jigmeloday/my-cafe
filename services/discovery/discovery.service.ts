@@ -4,6 +4,7 @@ import { CTA_TYPE_LABELS, TYPE_LABELS } from "@/lib/promotion-labels";
 import { mediaUrl } from "@/lib/media";
 import type { DetailData, ShopLine } from "@/components/public/model/detail.type";
 import type { PromotionCardData, TaggedPromotion } from "@/components/public/model/promotion.type";
+import { whenRange } from "@/lib/search-when";
 import { dealTags, eventDateText, eventTags, mainCategory, openedText, placeTags } from "@/lib/discovery-tags";
 import { FEATURED_ROW_SIZE } from "@/lib/featured";
 import { bannerRepository } from "@/server/repositories/banner.repository";
@@ -209,7 +210,141 @@ export function groupAreas(businesses: BusinessArea[]): AreaGroup[] {
     .map(({ name, towns }) => ({ name, towns }));
 }
 
+/** What each interest on a profile means in terms of promotion categories, so offers can be matched to people. */
+const INTEREST_CATEGORIES: Record<string, string[]> = {
+  "Food & drink": ["Food", "Cafés"],
+  "Cafés": ["Cafés"],
+  Fashion: ["Fashion"],
+  Electronics: ["Phones"],
+  Wellness: ["Wellness"],
+  Stays: ["Stays"],
+  Kids: ["Kids"],
+  Culture: ["Festival", "Events"],
+  Music: ["Events"],
+  Sports: ["Events", "Kids"],
+  Books: ["Events"],
+  Crafts: ["Fashion", "Home"],
+};
+
+const slugOf = (href: string) => href.slice(href.lastIndexOf("/") + 1);
+
+export interface FollowedPlaceCard {
+  href: string;
+  title: string;
+  subtitle: string;
+  imageUrl?: string;
+}
+
+export interface CategoryLink {
+  name: string;
+  slug: string;
+  count: number;
+}
+
+export interface CategoryPage {
+  name: string;
+  deals: PromotionCardData[];
+  events: PromotionCardData[];
+  places: PromotionCardData[];
+}
+
 export const discoveryService = {
+  /** Categories that have something live in them, most to least, for browsing. */
+  async categories(now = new Date()): Promise<CategoryLink[]> {
+    const rows = await repo.categoriesWithCounts(bhutanToday(now));
+    return rows
+      .map((c) => ({ name: c.name, slug: c.slug, count: c._count.promotions }))
+      .filter((c) => c.count > 0)
+      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+  },
+
+  /** Everything live in one category: deals, events, and the businesses behind them. Null for an unknown category. */
+  async categoryPage(slug: string, now = new Date()): Promise<CategoryPage | null> {
+    const category = await repo.findCategoryBySlug(slug);
+    if (!category) return null;
+    const today = bhutanToday(now);
+    const started = { OR: [{ type: "EVENT" as const }, { startsAt: null }, { startsAt: { lte: today } }] };
+    const rows = await repo.livePromotions(today, { AND: [{ categoryId: category.id }, started] }, 72, [{ createdAt: "desc" }]);
+
+    const seen = new Set<string>();
+    const places = rows.flatMap((p): PromotionCardData[] => {
+      if (seen.has(p.business.id)) return [];
+      seen.add(p.business.id);
+      return [{
+        id: p.business.id,
+        title: p.business.name,
+        meta: [[p.business.town, p.business.dzongkhag].filter(Boolean)[0] ?? "Bhutan"],
+        highlight: "",
+        href: `/businesses/${p.business.slug}`,
+        imageUrl: p.business.logoKey ? mediaUrl(p.business.logoKey) : undefined,
+      }];
+    }).slice(0, 12);
+
+    return {
+      name: category.name,
+      deals: rows.filter((p) => p.type !== "EVENT").map((p) => toCard(p, today)),
+      events: rows.filter((p) => p.type === "EVENT").map((p) => toCard(p, today)),
+      places,
+    };
+  },
+
+  /**
+   * The promotions someone saved, in the order they saved them (newest first). Each card keeps the address it was
+   * saved under, so its heart stays filled. Offers that have ended are shown with an "Ended" label.
+   */
+  async savedCards(hrefs: string[], now = new Date()): Promise<PromotionCardData[]> {
+    const today = bhutanToday(now);
+    const rows = await repo.promotionsBySlugs(hrefs.filter((h) => !h.startsWith("/businesses/")).map(slugOf));
+    const bySlug = new Map(rows.map((p) => [p.slug, p]));
+    return hrefs.flatMap((href) => {
+      const p = bySlug.get(slugOf(href));
+      if (!p) return [];
+      const ended = p.status === "ENDED" || (p.endsAt !== null && p.endsAt < today);
+      return [{ ...toCard(p, today, ended ? "Ended" : undefined), href }];
+    });
+  },
+
+  /** The places someone follows, in the order they followed them. */
+  async followedPlaces(hrefs: string[]): Promise<FollowedPlaceCard[]> {
+    const rows = await repo.businessesBySlugs(hrefs.map(slugOf));
+    const bySlug = new Map(rows.map((b) => [b.slug, b]));
+    return hrefs.flatMap((href) => {
+      const b = bySlug.get(slugOf(href));
+      if (!b) return [];
+      const area = [b.town, b.dzongkhag].filter(Boolean).join(", ");
+      return [{ href, title: b.name, subtitle: [area, b.tagline].filter(Boolean).join(" · "), imageUrl: b.logoKey ? mediaUrl(b.logoKey) : undefined }];
+    });
+  },
+
+  /**
+   * Deals that suit someone's interests, skipping ones they already saved. With nothing matching (or no interests),
+   * it shows the newest deals instead and says so (`personal: false`).
+   */
+  async recommended(interests: string[], savedHrefs: string[], limit = 4, now = new Date()): Promise<{ items: PromotionCardData[]; personal: boolean }> {
+    const today = bhutanToday(now);
+    const saved = savedHrefs.map(slugOf);
+    const started = { OR: [{ startsAt: null }, { startsAt: { lte: today } }] };
+    const notSaved = saved.length ? { slug: { notIn: saved } } : {};
+    const wanted = [...new Set(interests.flatMap((i) => INTEREST_CATEGORIES[i] ?? []))];
+
+    const matching = wanted.length
+      ? await repo.livePromotions(today, { AND: [{ type: { not: "EVENT" } }, started, notSaved, { category: { is: { name: { in: wanted } } } }] }, limit, [{ createdAt: "desc" }])
+      : [];
+    const fill = matching.length < limit
+      ? await repo.livePromotions(today, { AND: [{ type: { not: "EVENT" } }, started, notSaved, { id: { notIn: matching.map((m) => m.id) } }] }, limit - matching.length, [{ createdAt: "desc" }])
+      : [];
+    return { items: [...matching, ...fill].map((p) => toCard(p, today)), personal: matching.length > 0 };
+  },
+
+  /** Events on the coming weekend (or what is left of it), soonest first. */
+  async weekendEvents(limit = 4, now = new Date()): Promise<PromotionCardData[]> {
+    const today = bhutanToday(now);
+    const range = whenRange("weekend", today);
+    if (!range) return [];
+    const rows = await repo.livePromotions(today, { AND: [{ type: "EVENT" }, { startsAt: { lte: range.to } }, { OR: [{ endsAt: null }, { endsAt: { gte: range.from } }] }] }, limit, [{ startsAt: { sort: "asc", nulls: "last" } }]);
+    return rows.map((p) => toCard(p, today, "This weekend"));
+  },
+
   /** Where businesses are, for "Explore by area" on the home page. */
   async areas(): Promise<AreaGroup[]> {
     return groupAreas(await repo.businessAreas());

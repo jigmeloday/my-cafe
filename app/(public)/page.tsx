@@ -4,6 +4,7 @@ import { Container } from "@/components/shared/container";
 import { Reveal } from "@/components/shared/reveal";
 import { discoveryService } from "@/services/discovery/discovery.service";
 
+import { CategoryChips } from "./home/components/category-chips";
 import { CtaBanner } from "./home/components/cta-banner";
 import { ExploreAreas } from "./home/components/explore-areas";
 import { HeroCarousel } from "./home/components/hero-carousel";
@@ -19,11 +20,12 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const [landing, areas] = await Promise.all([discoveryService.landing(), discoveryService.areas()]);
+  const [landing, areas, categories] = await Promise.all([discoveryService.landing(), discoveryService.areas(), discoveryService.categories()]);
   const sections = HOME_SECTIONS.map((s) => ({ ...s, items: landing[s.key] })).filter((s) => s.items.length > 0);
 
   return (
     <Container className="space-y-12 py-6 sm:space-y-16 sm:py-8">
+      {categories.length > 0 && <CategoryChips categories={categories} />}
       {landing.hero.length > 0 && <HeroCarousel slides={landing.hero} />}
       {sections.map((section) => (
         <Reveal key={section.id}>

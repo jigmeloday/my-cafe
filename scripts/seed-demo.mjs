@@ -38,7 +38,7 @@ function rng(seed) {
   };
 }
 const id = () => `c${randomBytes(11).toString("hex")}`;
-const slugify = (t) => t.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+const slugify = (t) => t.toLowerCase().normalize("NFKD").replace(/\p{M}/gu, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 // Today in Bhutan (UTC+6), as a date at midnight UTC: how this app stores dates.
 const today = new Date(Math.floor((Date.now() + 6 * 3_600_000) / DAY) * DAY);
 const dayFrom = (offset) => new Date(today.getTime() + offset * DAY);

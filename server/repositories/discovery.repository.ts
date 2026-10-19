@@ -97,6 +97,33 @@ export const discoveryRepository = {
       take: 2000,
     }),
 
+  /** Promotions a person saved, by page slug. Ended ones are kept (so a saved offer doesn't just vanish); removed ones and suspended businesses are not. */
+  promotionsBySlugs: (slugs: string[]) =>
+    slugs.length === 0
+      ? Promise.resolve([])
+      : db.promotion.findMany({
+          where: { slug: { in: slugs }, status: { in: ["PUBLISHED", "ENDED"] }, removedAt: null, business: { status: { not: "SUSPENDED" }, owner: { status: "ACTIVE" } } },
+          include: withBusiness,
+        }),
+
+  /** Businesses a person follows, by page slug. */
+  businessesBySlugs: (slugs: string[]) =>
+    slugs.length === 0
+      ? Promise.resolve([])
+      : db.business.findMany({
+          where: { slug: { in: slugs }, status: { not: "SUSPENDED" }, owner: { status: "ACTIVE" } },
+          select: { slug: true, name: true, tagline: true, town: true, dzongkhag: true, logoKey: true },
+        }),
+
+  /** Every category with how many live promotions it has right now. */
+  categoriesWithCounts: (today: Date) =>
+    db.category.findMany({
+      orderBy: { name: "asc" },
+      select: { id: true, name: true, slug: true, _count: { select: { promotions: { where: livePromotionWhere(today) } } } },
+    }),
+
+  findCategoryBySlug: (slug: string) => db.category.findUnique({ where: { slug }, select: { id: true, name: true, slug: true } }),
+
   newBusinesses: (take: number) =>
     db.business.findMany({
       where: { status: { not: "SUSPENDED" }, owner: { status: "ACTIVE" } },
