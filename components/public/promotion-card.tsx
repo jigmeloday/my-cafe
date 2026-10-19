@@ -26,7 +26,12 @@ export function PromotionCard({
       className={cn("relative w-full space-y-2", className)}
     >
       <div className="relative">
-        <ImagePlaceholder className="aspect-square rounded-2xl" />
+        {item.imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={item.imageUrl} alt="" loading="lazy" className="aspect-square w-full rounded-2xl bg-muted object-cover" />
+        ) : (
+          <ImagePlaceholder className="aspect-square rounded-2xl" />
+        )}
         {item.badge && (
           <span className="absolute top-3 left-3 rounded-full bg-surface px-2.5 py-1 text-xs font-semibold shadow-sm">
             {item.badge}

@@ -5,6 +5,8 @@ export interface PromotionCardData {
   meta: string[];
   highlight: string;
   href: string;
+  /** A stored photo. Without one the card shows a placeholder. */
+  imageUrl?: string;
 }
 
 export interface TaggedPromotion extends PromotionCardData {

@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useScrollRow } from "@/hooks/use-scroll-row";
 
-import { HERO_SLIDES } from "../constant/hero.constant";
+import type { HeroSlideData } from "../model/home.type";
 import { HeroSlide } from "./hero-slide";
 
-export function HeroCarousel() {
+export function HeroCarousel({ slides }: { slides: HeroSlideData[] }) {
   const { ref, index, canPrev, canNext, scrollPrev, scrollNext } =
     useScrollRow<HTMLDivElement>();
 
@@ -20,7 +20,7 @@ export function HeroCarousel() {
           ref={ref}
           className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto"
         >
-          {HERO_SLIDES.map((slide) => (
+          {slides.map((slide) => (
             <HeroSlide key={slide.id} slide={slide} />
           ))}
         </div>
@@ -48,7 +48,7 @@ export function HeroCarousel() {
         )}
       </div>
       <div className="flex justify-center gap-2" aria-hidden>
-        {HERO_SLIDES.map((slide, i) => (
+        {slides.map((slide, i) => (
           <span
             key={slide.id}
             className={cn(

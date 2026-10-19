@@ -1,6 +1,6 @@
 import { BusinessHeader } from "@/components/business/header";
 import { BUSINESS_NAV } from "@/components/business/constant/business-nav.constant";
-import { requireRole } from "@/lib/session";
+import { guardArea } from "@/lib/session";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 
 export default async function BusinessLayout({
@@ -8,7 +8,7 @@ export default async function BusinessLayout({
 }: {
   children: React.ReactNode;
 }) {
-  await requireRole("BUSINESS_OWNER", "ADMIN");
+  await guardArea("business");
 
   return (
     <div className="flex min-h-screen bg-muted/40">

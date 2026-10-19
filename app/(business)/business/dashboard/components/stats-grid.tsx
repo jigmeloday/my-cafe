@@ -1,14 +1,11 @@
 import { StatCard } from "@/components/business/stat-card";
 
-import { getSummary } from "../utils/dashboard.utils";
+import type { SummaryStat } from "../model/dashboard.type";
 
-export function StatsGrid() {
+export function StatsGrid({ stats }: { stats: SummaryStat[] }) {
   return (
-    <section
-      aria-label="Summary"
-      className="grid grid-cols-2 gap-3 lg:grid-cols-4"
-    >
-      {getSummary().map((stat) => (
+    <section aria-label="Summary" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      {stats.map((stat) => (
         <StatCard key={stat.label} {...stat} />
       ))}
     </section>

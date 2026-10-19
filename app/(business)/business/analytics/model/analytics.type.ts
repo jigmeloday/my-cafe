@@ -16,16 +16,6 @@ export interface Totals {
   saves: number;
 }
 
-export interface BannerRun {
-  id: string;
-  promotionId: string;
-  /** First day, "YYYY-MM-DD". */
-  start: string;
-  days: number;
-  /** Coins paid for the whole run. */
-  coins: number;
-}
-
 export interface PromotionMeta {
   id: string;
   title: string;
@@ -35,20 +25,11 @@ export interface PromotionMeta {
 
 export interface PromotionStatsRow extends PromotionMeta, Totals {}
 
-export interface BannerRunRow extends BannerRun {
-  title: string;
-  active: boolean;
-  impressions: number;
-  clicks: number;
-}
-
 /** Everything is built from daily numbers, so any range adds up exactly. */
 export interface Dataset {
   days: DayStats[];
   /** Per promotion id, one entry per day (same order as `days`). */
   promotions: Record<string, DayStats[]>;
-  /** Per source id, clicks per day. */
+  /** Per source id, clicks per day (same order as `days`). */
   sources: Record<string, number[]>;
-  bannerClicks: number[];
-  bannerImpressions: number[];
 }

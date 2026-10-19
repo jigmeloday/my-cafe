@@ -1,6 +1,7 @@
 import { BreakdownList } from "@/components/business/charts/breakdown-list";
 import { FunnelChart } from "@/components/business/charts/funnel-chart";
 import { PerformanceChart } from "@/components/business/charts/performance-chart";
+import type { BarItem } from "@/components/business/charts/model/chart.type";
 import { SectionCard } from "@/components/business/section-card";
 
 import { ANALYTICS_COPY, METRICS } from "../constant/analytics.constant";
@@ -18,9 +19,10 @@ import { CoinsCard } from "./coins-card";
 interface TabProps {
   data: Dataset;
   range: RangeDays;
+  coins: BarItem[];
 }
 
-export function OverviewTab({ data, range }: TabProps) {
+export function OverviewTab({ data, range, coins }: TabProps) {
   const totals = rangeTotals(data, range);
 
   return (
@@ -47,7 +49,7 @@ export function OverviewTab({ data, range }: TabProps) {
             ]}
           />
         </SectionCard>
-        <CoinsCard />
+        <CoinsCard rows={coins} />
       </div>
     </div>
   );

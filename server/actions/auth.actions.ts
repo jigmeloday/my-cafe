@@ -9,6 +9,7 @@ import { db } from "@/lib/db";
 import { verifyEmailHref } from "@/lib/auth-paths";
 import { safeNextPath } from "@/lib/redirect";
 import { HOME_BY_ROLE } from "@/lib/session";
+import { LIMITS, TOO_MANY, clientIp, loginKeys, rateLimit } from "@/services/auth/rate-limit.service";
 import { VERIFIED_PATH } from "@/services/auth/verification.service";
 
 import {
@@ -44,6 +45,14 @@ export async function loginAction(input: LoginInput): Promise<ActionResult> {
   const parsed = loginSchema.safeParse(input);
   if (!parsed.success) return INVALID;
 
+  // Too many wrong passwords for this account, or too many tries from this address: refuse without even
+  // checking the password, and without saying which of the two it was.
+  const ip = await clientIp();
+  const keys = loginKeys(parsed.data.email, ip);
+  if ((await rateLimit.isBlocked(keys.email, LIMITS.loginPerEmail)) || (await rateLimit.isBlocked(keys.ip, LIMITS.loginPerIp))) {
+    return { ok: false, error: TOO_MANY };
+  }
+
   let notVerified = false;
   try {
     await auth.api.signInEmail({
@@ -52,8 +61,13 @@ export async function loginAction(input: LoginInput): Promise<ActionResult> {
   } catch (error) {
     // Only someone who knows the right password gets this answer; a wrong password is reported as one.
     if (error instanceof APIError && error.body?.code === "EMAIL_NOT_VERIFIED") notVerified = true;
-    else return { ok: false, error: messageFor(error, "Wrong email or password.") };
+    else {
+      // A wrong password counts against both the account and the address.
+      await Promise.all([rateLimit.record(keys.email), rateLimit.record(keys.ip)]);
+      return { ok: false, error: messageFor(error, "Wrong email or password.") };
+    }
   }
+  await rateLimit.clear(keys.email);
   // A new verification email was already sent (at most one a minute). Take them where it says so.
   if (notVerified) redirect(verifyEmailHref(parsed.data.email));
 
@@ -70,6 +84,11 @@ export async function registerAction(input: RegisterInput): Promise<ActionResult
   if (!parsed.success) return INVALID;
   const { accountType, name, email, password } = parsed.data;
   const startedAt = new Date();
+
+  // Every sign-up attempt counts, so the form can't be used to flood people with emails or fill the database.
+  const ipKey = `register:ip:${await clientIp()}`;
+  if (await rateLimit.isBlocked(ipKey, LIMITS.registerPerIp)) return { ok: false, error: TOO_MANY };
+  await rateLimit.record(ipKey);
 
   try {
     await auth.api.signUpEmail({ body: { name, email, password, callbackURL: VERIFIED_PATH } });
@@ -91,6 +110,10 @@ export async function registerAction(input: RegisterInput): Promise<ActionResult
 export async function resendVerificationAction(input: ResendVerificationInput): Promise<ActionResult> {
   const parsed = resendVerificationSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "Enter a valid email address." };
+
+  const ipKey = `resend:ip:${await clientIp()}`;
+  if (await rateLimit.isBlocked(ipKey, LIMITS.resendPerIp)) return { ok: false, error: TOO_MANY };
+  await rateLimit.record(ipKey);
 
   try {
     // Does nothing for unknown or already-verified addresses. A repeat within a minute is skipped quietly.

@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, type DefaultValues, type FieldValues } from "react-hook-form";
 import type { ZodType } from "zod";
 
+import { scrollToFirstProblem } from "@/lib/scroll";
 import type { ActionResult } from "@/server/actions/action.type";
 
 interface ActionFormOptions {
@@ -27,18 +28,22 @@ export function useActionForm<T extends FieldValues>(
   // Read during render so React Hook Form keeps it up to date.
   const dirty = form.formState.isDirty;
 
-  const submit = form.handleSubmit((values) => {
-    // Nothing changed (for example Enter pressed in a field): don't call the server.
-    if (!dirty) return;
+  const submit = form.handleSubmit(
+    (values) => {
+      // Nothing changed (for example Enter pressed in a field): don't call the server.
+      if (!dirty) return;
 
-    setResult(null);
-    startTransition(async () => {
-      const outcome = await action(values);
-      setResult(outcome);
-      // The saved values become the new starting point, so Save turns off until the next edit.
-      if (outcome.ok) form.reset(clearOnSuccess ? defaultValues : values);
-    });
-  });
+      setResult(null);
+      startTransition(async () => {
+        const outcome = await action(values);
+        setResult(outcome);
+        // The saved values become the new starting point, so Save turns off until the next edit.
+        if (outcome.ok) form.reset(clearOnSuccess ? defaultValues : values);
+      });
+    },
+    // On a long form the problem can be off-screen. Take the person to it.
+    () => requestAnimationFrame(() => scrollToFirstProblem()),
+  );
 
   return { form, submit, result, pending, dirty };
 }

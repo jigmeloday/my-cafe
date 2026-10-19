@@ -13,7 +13,7 @@ export function ProfileHeader({ slug }: { slug: string | null }) {
         <p className="text-sm text-muted-foreground">{PROFILE_COPY.subtitle}</p>
       </div>
       {slug && (
-        <Button render={<Link href={`/businesses/${slug}`} />} variant="secondary">
+        <Button render={<Link href="/business/preview" />} variant="secondary">
           <ExternalLink /> {PROFILE_COPY.viewPublic}
         </Button>
       )}

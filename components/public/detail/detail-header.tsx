@@ -7,7 +7,9 @@ import { DETAIL_KINDS } from "../constant/detail.constant";
 import type { DetailData } from "../model/detail.type";
 
 export function DetailHeader({ detail }: { detail: DetailData }) {
-  const { backHref, backLabel } = DETAIL_KINDS[detail.kind];
+  const config = DETAIL_KINDS[detail.kind];
+  const backHref = detail.back?.href ?? config.backHref;
+  const backLabel = detail.back?.label ?? config.backLabel;
 
   return (
     <header className="space-y-3">

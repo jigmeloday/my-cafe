@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 
+import { getCurrentPromotions } from "@/services/promotion/current-promotions";
 import { Button } from "@/components/ui/button";
 
 import { PromotionsExplorer } from "./components/promotions-explorer";
@@ -9,7 +10,9 @@ import { PROMOTIONS_COPY } from "./constant/promotion.constant";
 
 export const metadata: Metadata = { title: "Promotions — kuzu business" };
 
-export default function PromotionsPage() {
+export default async function PromotionsPage() {
+  const items = await getCurrentPromotions();
+
   return (
     <div className="space-y-6">
       <header className="flex flex-wrap items-end justify-between gap-4">
@@ -23,7 +26,7 @@ export default function PromotionsPage() {
           <Plus /> {PROMOTIONS_COPY.create}
         </Button>
       </header>
-      <PromotionsExplorer />
+      <PromotionsExplorer items={items} />
     </div>
   );
 }

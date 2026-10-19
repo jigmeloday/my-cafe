@@ -1,14 +1,4 @@
-import {
-  bannerCost,
-  COIN_COSTS,
-  emailCost,
-  PLACEMENT_DAYS,
-  topRankCost,
-} from "@/lib/coins";
-import { formatCoins } from "@/lib/formatters/number";
 import type { PromotionInput } from "@/lib/validations/promotion.schema";
-
-import { estimateRecipients } from "../../campaigns/utils/email-campaign.utils";
 
 import { DEFAULT_FILTERS } from "../constant/promotion.constant";
 import type { PromotionFilters, PromotionItem } from "../model/promotion.type";
@@ -57,38 +47,3 @@ export function formatDateRange({
   if (startDate) return `From ${formatDay(startDate)}`;
   return "No dates";
 }
-
-/** Select options such as "3 days · 600 coins" for a placement that costs `perDay` coins a day. */
-export const dayOptions = (perDay: number) =>
-  PLACEMENT_DAYS.map((value) => ({
-    value,
-    label:
-      value === "0"
-        ? "Not now"
-        : `${value} days · ${formatCoins(Number(value) * perDay)}`,
-  }));
-
-export const BANNER_OPTIONS = dayOptions(COIN_COSTS.bannerPerDay);
-export const TOP_RANK_OPTIONS = dayOptions(COIN_COSTS.topRankPerDay);
-
-/** All followers who could receive an email (no audience filters). */
-export const allFollowerRecipients = () =>
-  estimateRecipients({
-    locations: [],
-    interests: [],
-    birthdayThisMonth: false,
-  });
-
-type CostInput = Pick<
-  PromotionInput,
-  "emailFollowers" | "bannerDays" | "topRankDays"
->;
-
-export const promotionCoinCost = ({
-  emailFollowers,
-  bannerDays,
-  topRankDays,
-}: CostInput) =>
-  (emailFollowers ? emailCost(allFollowerRecipients()) : 0) +
-  bannerCost(Number(bannerDays)) +
-  topRankCost(Number(topRankDays));

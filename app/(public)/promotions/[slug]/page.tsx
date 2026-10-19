@@ -2,21 +2,22 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { DetailPage } from "@/components/public/detail/detail-page";
-import {
-  buildDetail,
-  slugFromHref,
-} from "@/components/public/utils/detail.utils";
+import { buildDetail } from "@/components/public/utils/detail.utils";
+import { discoveryService } from "@/services/discovery/discovery.service";
 
 import { PROMOTIONS } from "../constant/promotions.data";
 
-export const generateStaticParams = () =>
-  PROMOTIONS.map((item) => ({ slug: slugFromHref(item.href) }));
+// Real promotions are added at any time, so every page is read when asked for.
+export const dynamic = "force-dynamic";
+
+/** A published promotion from the database, otherwise one of the sample deals. */
+const load = async (slug: string) => (await discoveryService.promotionDetail(slug)) ?? buildDetail("promotion", slug, PROMOTIONS);
 
 export async function generateMetadata({
   params,
 }: PageProps<"/promotions/[slug]">): Promise<Metadata> {
   const { slug } = await params;
-  const detail = buildDetail("promotion", slug, PROMOTIONS);
+  const detail = await load(slug);
   return { title: detail ? `${detail.title} — kuzu` : "Deal not found — kuzu" };
 }
 
@@ -24,7 +25,7 @@ export default async function PromotionPage({
   params,
 }: PageProps<"/promotions/[slug]">) {
   const { slug } = await params;
-  const detail = buildDetail("promotion", slug, PROMOTIONS);
+  const detail = await load(slug);
   if (!detail) notFound();
   return <DetailPage detail={detail} />;
 }

@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Promotion" ADD COLUMN     "ctaType" TEXT NOT NULL DEFAULT 'VIEW_OFFER',
+ADD COLUMN     "ctaUrl" TEXT NOT NULL DEFAULT '';

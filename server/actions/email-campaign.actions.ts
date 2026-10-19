@@ -6,6 +6,7 @@ import {
 } from "@/lib/validations/email-campaign.schema";
 
 import type { ActionResult } from "./action.type";
+import { denyUnless } from "./guard";
 
 const NOT_CONNECTED: ActionResult = {
   ok: false,
@@ -18,6 +19,8 @@ const MISSING: ActionResult = { ok: false, error: "Missing campaign." };
 export async function saveEmailCampaignAction(
   input: EmailCampaignInput,
 ): Promise<ActionResult> {
+  const denied = await denyUnless("BUSINESS_OWNER");
+  if (denied) return denied;
   return emailCampaignSchema.safeParse(input).success
     ? NOT_CONNECTED
     : { ok: false, error: "Please check the form and try again." };
@@ -26,6 +29,8 @@ export async function saveEmailCampaignAction(
 export async function sendTestEmailAction(
   input: EmailCampaignInput,
 ): Promise<ActionResult> {
+  const denied = await denyUnless("BUSINESS_OWNER");
+  if (denied) return denied;
   return input.subject.trim() && input.body.trim()
     ? NOT_CONNECTED
     : { ok: false, error: "Add a subject and a message to send a test." };
@@ -34,5 +39,7 @@ export async function sendTestEmailAction(
 export async function cancelEmailCampaignAction(
   id: string,
 ): Promise<ActionResult> {
+  const denied = await denyUnless("BUSINESS_OWNER");
+  if (denied) return denied;
   return id ? NOT_CONNECTED : MISSING;
 }

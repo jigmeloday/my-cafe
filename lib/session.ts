@@ -1,14 +1,11 @@
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import type { Role } from "@/generated/prisma/enums";
+import { HOME_BY_ROLE, decide, type Area } from "@/lib/access";
 import { auth } from "@/lib/auth";
 
-export const HOME_BY_ROLE: Record<Role, string> = {
-  ADMIN: "/admin/dashboard",
-  BUSINESS_OWNER: "/business/dashboard",
-  USER: "/profile",
-};
+export { HOME_BY_ROLE };
 
 /** The signed-in user, or null. Suspended accounts count as signed out. */
 export async function getCurrentUser() {
@@ -23,6 +20,23 @@ export async function getCurrentUser() {
 export async function requireRole(...allowed: Role[]) {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
-  if (!allowed.includes(user.role)) redirect(HOME_BY_ROLE[user.role]);
+  if (!allowed.includes(user.role)) {
+    // The admin area doesn't admit it exists to anyone else.
+    if (allowed.length === 1 && allowed[0] === "ADMIN") notFound();
+    redirect(HOME_BY_ROLE[user.role]);
+  }
+  return user;
+}
+
+/**
+ * For layouts and pages: applies the access table for an area (see lib/access.ts). Returns the signed-in user,
+ * or null when the area is open to signed-out visitors. Redirects or 404s everyone else.
+ */
+export async function guardArea(area: Area) {
+  const user = await getCurrentUser();
+  const decision = decide(user?.role ?? null, area);
+  if (decision.action === "login") redirect("/login");
+  if (decision.action === "redirect") redirect(decision.to);
+  if (decision.action === "notFound") notFound();
   return user;
 }

@@ -7,12 +7,14 @@ import { SelectField } from "@/components/shared/select-field";
 import { Input } from "@/components/ui/input";
 import type { PromotionInput } from "@/lib/validations/promotion.schema";
 
-import { CATEGORY_OPTIONS } from "../constant/promotion.constant";
+import type { OptionItem } from "../model/promotion.type";
 
 export function ScheduleFields({
   form,
+  categories,
 }: {
   form: UseFormReturn<PromotionInput>;
+  categories: OptionItem[];
 }) {
   const {
     register,
@@ -46,7 +48,7 @@ export function ScheduleFields({
           control={control}
           name="category"
           label="Category"
-          options={CATEGORY_OPTIONS}
+          options={categories}
           placeholder="Choose a category"
           error={errors.category?.message}
         />

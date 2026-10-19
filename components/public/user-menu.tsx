@@ -22,6 +22,7 @@ export function UserMenu() {
   const router = useRouter();
   const { data } = authClient.useSession();
   const user = data?.user;
+  const account = user ? (SIGNED_IN_MENU.accounts[user.role] ?? SIGNED_IN_MENU.account) : SIGNED_IN_MENU.account;
   const dashboard = user ? SIGNED_IN_MENU.dashboards[user.role] : undefined;
 
   const logout = async () => {
@@ -45,8 +46,8 @@ export function UserMenu() {
           <>
             <DropdownMenuGroup>
               <DropdownMenuLabel className="truncate">{user.name}</DropdownMenuLabel>
-              <DropdownMenuItem render={<Link href={SIGNED_IN_MENU.account.href} />}>
-                {SIGNED_IN_MENU.account.label}
+              <DropdownMenuItem render={<Link href={account.href} />}>
+                {account.label}
               </DropdownMenuItem>
               {dashboard && (
                 <DropdownMenuItem render={<Link href={dashboard.href} />}>{dashboard.label}</DropdownMenuItem>

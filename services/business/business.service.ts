@@ -8,6 +8,7 @@ import type {
   BusinessSocialInput,
 } from "@/lib/validations/business.schema";
 import type { AddressInput } from "@/lib/validations/profile.schema";
+import { slugify } from "@/lib/slug";
 import { mediaUrl } from "@/lib/media";
 import { businessRepository } from "@/server/repositories/business.repository";
 import type { BusinessProfileData } from "@/types/business-profile";
@@ -36,13 +37,7 @@ export const DEFAULT_HOURS: BusinessHoursInput["hours"] = [
   "Sunday",
 ].map((day, i) => ({ day, closed: i === 6, open: i === 5 ? "10:00" : "09:00", close: i === 5 ? "20:00" : "18:00" }));
 
-const slugBase = (name: string) =>
-  name
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 40) || "business";
+const slugBase = (name: string) => slugify(name, "business");
 
 /** A readable, unique address for the business page: "druk-cafe", then "druk-cafe-4f9a" if taken. */
 async function uniqueSlug(name: string) {

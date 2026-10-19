@@ -47,4 +47,6 @@ export const SHOP_DETAILS = [
   { key: "website", icon: Globe, text: "[Website]" },
 ] as const;
 
+export const SHOP_LINE_ICONS = { hours: Clock, phone: Phone, address: MapPin, website: Globe } as const;
+
 export const SHOP_LABEL = "About the shop";

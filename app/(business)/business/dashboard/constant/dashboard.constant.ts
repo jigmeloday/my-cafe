@@ -2,10 +2,12 @@ export const DASHBOARD_COPY = {
   title: "Overview",
   subtitle: "How your business is doing on kuzu.",
   createPromotion: "Create promotion",
-  createCampaign: "Create campaign",
+  // Used by the parked email campaigns card (Release 2).
   campaignsTitle: "Recent campaigns",
   campaignsEmpty: "You haven't sent a campaign yet.",
   promotionsTitle: "Promotions",
+  noPromotionsTitle: "No promotions yet",
+  noPromotionsDescription: "Create your first promotion to start getting views.",
   viewAll: "View all",
 };
 

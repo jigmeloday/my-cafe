@@ -1,7 +1,7 @@
 import type { BarItem } from "@/components/business/charts/model/chart.type";
 
-import { EMAIL_CAMPAIGNS } from "../../campaigns/constant/email-campaigns.data";
-import type { EmailCampaignItem } from "../../campaigns/model/email-campaign.type";
+import { EMAIL_CAMPAIGNS } from "../../_r2-email-campaigns/constant/email-campaigns.data";
+import type { EmailCampaignItem } from "../../_r2-email-campaigns/model/email-campaign.type";
 import { sum } from "./analytics.utils";
 
 /** Whole-number tenths of a percent: 528 means 52.8%. Zero when there is nothing to divide by. */

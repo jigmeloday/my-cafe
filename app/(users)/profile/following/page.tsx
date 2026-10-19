@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { requireRole } from "@/lib/session";
 
 import { getEngagement } from "../utils/engagement.server";
 
@@ -9,6 +10,8 @@ import { PROFILE_COPY } from "../constant/profile.constant";
 export const metadata: Metadata = { title: "Following — kuzu" };
 
 export default async function FollowingPage() {
+  // The layout checks this too, but a page must not rely on that.
+  await requireRole("USER", "ADMIN");
   const engagement = await getEngagement();
   if (!engagement) return null;
 

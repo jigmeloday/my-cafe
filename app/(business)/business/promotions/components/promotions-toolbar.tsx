@@ -15,22 +15,23 @@ import {
   STATUS_FILTERS,
   TYPE_FILTER_OPTIONS,
 } from "../constant/promotion.constant";
-import { PROMOTION_ITEMS } from "../constant/promotions.data";
-import type { PromotionFilters, PromotionType } from "../model/promotion.type";
+import type { PromotionFilters, PromotionItem, PromotionType } from "../model/promotion.type";
 import { countByStatus } from "../utils/promotion.utils";
 
 interface PromotionsToolbarProps {
+  items: PromotionItem[];
   filters: PromotionFilters;
   onChange: (next: PromotionFilters) => void;
 }
 
 export function PromotionsToolbar({
+  items,
   filters,
   onChange,
 }: PromotionsToolbarProps) {
   const statusOptions = STATUS_FILTERS.map(({ id, label }) => ({
     id,
-    label: `${label} ${countByStatus(PROMOTION_ITEMS, id as PromotionFilters["status"])}`,
+    label: `${label} ${countByStatus(items, id as PromotionFilters["status"])}`,
   }));
 
   return (

@@ -3,6 +3,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { CARD_COPY, PROFILE_TABS } from "../constant/profile.constant";
+import { ChangePasswordForm } from "@/app/(users)/profile/components/change-password-form";
 import { ContactForm } from "./contact-form";
 import { GeneralForm } from "./general-form";
 import { HoursForm } from "./hours-form";
@@ -47,6 +48,11 @@ export function ProfileTabs({ data, media }: { data: BusinessProfileData; media:
       </TabsContent>
       <TabsContent value="photos">
         <MediaSection media={media} />
+      </TabsContent>
+      <TabsContent value="account">
+        <SectionCard {...CARD_COPY.account}>
+          <ChangePasswordForm />
+        </SectionCard>
       </TabsContent>
       <TabsContent value="offerings">
         <SectionCard {...CARD_COPY.offerings}>

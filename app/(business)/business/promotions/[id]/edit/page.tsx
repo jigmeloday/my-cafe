@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { requireRole } from "@/lib/session";
+import { promotionService } from "@/services/promotion/promotion.service";
+import { walletService } from "@/services/wallet/wallet.service";
+import { categoryService } from "@/services/category/category.service";
+
 import { FormPageHeader } from "../../components/form-page-header";
 import { PromotionForm } from "../../components/promotion-form";
 import { PROMOTIONS_COPY } from "../../constant/promotion.constant";
-import { findPromotion } from "../../constant/promotions.data";
 
 export const metadata: Metadata = { title: "Edit promotion — kuzu business" };
 
@@ -12,7 +16,9 @@ export default async function EditPromotionPage({
   params,
 }: PageProps<"/business/promotions/[id]/edit">) {
   const { id } = await params;
-  const promotion = findPromotion(id);
+  const user = await requireRole("BUSINESS_OWNER");
+  const balance = await walletService.balanceFor(user);
+  const promotion = await promotionService.get(user.id, id);
   if (!promotion) notFound();
 
   const initial = {
@@ -26,7 +32,7 @@ export default async function EditPromotionPage({
         title={PROMOTIONS_COPY.editTitle}
         subtitle={PROMOTIONS_COPY.editSubtitle}
       />
-      <PromotionForm initial={initial} />
+      <PromotionForm id={id} balance={balance} initial={initial} categories={await categoryService.options()} />
     </div>
   );
 }

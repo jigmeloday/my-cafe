@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 import { EmptyState } from "@/components/shared/empty-state";
@@ -11,20 +12,29 @@ import {
   DEFAULT_FILTERS,
   PROMOTIONS_COPY,
 } from "../constant/promotion.constant";
-import { PROMOTION_ITEMS } from "../constant/promotions.data";
-import type { PromotionFilters } from "../model/promotion.type";
+import type { PromotionFilters, PromotionItem } from "../model/promotion.type";
 import { filterPromotions, hasActiveFilters } from "../utils/promotion.utils";
 import { PromotionsTable } from "./promotions-table";
 import { PromotionsToolbar } from "./promotions-toolbar";
 
-export function PromotionsExplorer() {
+export function PromotionsExplorer({ items: all }: { items: PromotionItem[] }) {
   const [filters, setFilters] = useState<PromotionFilters>(DEFAULT_FILTERS);
   const [notice, setNotice] = useState<ActionResult | null>(null);
-  const items = filterPromotions(PROMOTION_ITEMS, filters);
+  const items = filterPromotions(all, filters);
+
+  if (all.length === 0) {
+    return (
+      <EmptyState
+        title={PROMOTIONS_COPY.firstTitle}
+        description={PROMOTIONS_COPY.firstDescription}
+        action={<Button render={<Link href="/business/promotions/new" />}>{PROMOTIONS_COPY.create}</Button>}
+      />
+    );
+  }
 
   return (
     <div className="space-y-4">
-      <PromotionsToolbar filters={filters} onChange={setFilters} />
+      <PromotionsToolbar items={all} filters={filters} onChange={setFilters} />
       {notice && !notice.ok && (
         <FormMessage tone="error">{notice.error}</FormMessage>
       )}

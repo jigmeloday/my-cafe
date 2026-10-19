@@ -31,8 +31,8 @@ export function BusinessUserMenu({ publicHref }: { publicHref: string | null }) 
             <ExternalLink /> {BUSINESS_SHELL.viewPublic}
           </DropdownMenuItem>
         )}
-        <DropdownMenuItem render={<Link href="/profile" />}>
-          My account
+        <DropdownMenuItem render={<Link href="/business/profile" />}>
+          Business profile
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem variant="destructive" onClick={() => logoutAction()}>

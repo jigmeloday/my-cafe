@@ -1,5 +1,10 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+
+import { getCurrentUser } from "@/lib/session";
+import { promotionService } from "@/services/promotion/promotion.service";
 import {
   promotionSchema,
   type PromotionInput,
@@ -7,24 +12,36 @@ import {
 
 import type { ActionResult } from "./action.type";
 
-const NOT_CONNECTED: ActionResult = {
-  ok: false,
-  error: "Saving isn't connected yet. Business accounts are coming soon.",
-};
-
-// TODO: persist through the promotion service once the database exists.
+/** Creates a promotion, or updates one when `id` is given. On success the owner goes back to the list. */
 export async function savePromotionAction(
   input: PromotionInput,
+  id?: string,
 ): Promise<ActionResult> {
-  return promotionSchema.safeParse(input).success
-    ? NOT_CONNECTED
-    : { ok: false, error: "Please check the form and try again." };
+  const user = await getCurrentUser();
+  if (!user || user.role !== "BUSINESS_OWNER") return { ok: false, error: "Please log in with a business account." };
+  const parsed = promotionSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "Please check the form and try again." };
+
+  const result = await promotionService.save(user, parsed.data, id);
+  if (!result.ok) return result;
+  revalidatePath("/business/promotions");
+  redirect("/business/promotions");
 }
 
-export async function endPromotionAction(id: string): Promise<ActionResult> {
-  return id ? NOT_CONNECTED : { ok: false, error: "Missing promotion." };
+/** Runs a change on one of the signed-in owner's promotions. */
+async function change(
+  id: string,
+  run: (ownerId: string, id: string) => Promise<{ ok: true } | { ok: false; error: string }>
+): Promise<ActionResult> {
+  const user = await getCurrentUser();
+  if (!user || user.role !== "BUSINESS_OWNER") return { ok: false, error: "Please log in with a business account." };
+  if (!id) return { ok: false, error: "Missing promotion." };
+
+  const result = await run(user.id, id);
+  if (result.ok) revalidatePath("/business/promotions");
+  return result.ok ? { ok: true, message: "Done." } : result;
 }
 
-export async function deletePromotionAction(id: string): Promise<ActionResult> {
-  return id ? NOT_CONNECTED : { ok: false, error: "Missing promotion." };
-}
+export const endPromotionAction = async (id: string): Promise<ActionResult> => change(id, promotionService.end);
+
+export const deletePromotionAction = async (id: string): Promise<ActionResult> => change(id, promotionService.remove);

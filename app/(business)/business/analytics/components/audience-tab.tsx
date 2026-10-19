@@ -1,36 +1,30 @@
 import { BreakdownList } from "@/components/business/charts/breakdown-list";
 import { SectionCard } from "@/components/business/section-card";
 import { formatNumber } from "@/lib/formatters/number";
+import type { Audience } from "@/services/analytics/analytics.service";
 
-import { FOLLOWERS_TOTAL } from "../../campaigns/constant/email-campaign.constant";
 import { ANALYTICS_COPY } from "../constant/analytics.constant";
-import { interestRows, locationRows, reachRows } from "../utils/audience.utils";
 
-export function AudienceTab() {
+const NONE = "Nobody follows you yet.";
+
+export function AudienceTab({ audience }: { audience: Audience }) {
+  const { followers, locations, interests, reach } = audience;
+
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">
-        You have{" "}
-        <span className="font-semibold text-foreground">
-          {formatNumber(FOLLOWERS_TOTAL)}
-        </span>{" "}
-        followers right now.
+        You have <span className="font-semibold text-foreground">{formatNumber(followers)}</span>{" "}
+        {followers === 1 ? "follower" : "followers"} right now.
       </p>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <SectionCard title={ANALYTICS_COPY.locationsTitle}>
-          <BreakdownList rows={locationRows()} />
+          {locations.length > 0 ? <BreakdownList rows={locations} /> : <p className="text-sm text-muted-foreground">{NONE}</p>}
         </SectionCard>
-        <SectionCard
-          title={ANALYTICS_COPY.interestsTitle}
-          description="People can pick several, so these overlap."
-        >
-          <BreakdownList rows={interestRows()} showShare={false} />
+        <SectionCard title={ANALYTICS_COPY.interestsTitle} description="People can pick several, so these overlap.">
+          {interests.length > 0 ? <BreakdownList rows={interests} showShare={false} /> : <p className="text-sm text-muted-foreground">Followers have not shared interests yet.</p>}
         </SectionCard>
-        <SectionCard
-          title={ANALYTICS_COPY.reachTitle}
-          description="Only followers who agreed to emails receive your campaigns."
-        >
-          <BreakdownList rows={reachRows()} />
+        <SectionCard title={ANALYTICS_COPY.reachTitle} description="Only followers who agreed to emails can receive them.">
+          {reach.length > 0 ? <BreakdownList rows={reach} /> : <p className="text-sm text-muted-foreground">{NONE}</p>}
         </SectionCard>
       </div>
     </div>

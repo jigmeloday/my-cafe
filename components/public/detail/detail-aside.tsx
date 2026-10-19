@@ -3,6 +3,7 @@ import { FollowButton } from "@/components/shared/follow-button";
 import { DETAIL_KINDS, SHOP_LABEL } from "../constant/detail.constant";
 import type { DetailData } from "../model/detail.type";
 import { ShopDetails } from "./shop-details";
+import { TrackedCta } from "./tracked-cta";
 
 export function DetailAside({ detail }: { detail: DetailData }) {
   const { asideLabel, asideNote } = DETAIL_KINDS[detail.kind];
@@ -15,10 +16,15 @@ export function DetailAside({ detail }: { detail: DetailData }) {
           {detail.highlight}
         </p>
         <p className="text-sm text-muted-foreground">{asideNote}</p>
+        {detail.promotionId && detail.cta && (
+          <div className="pt-2">
+            <TrackedCta promotionId={detail.promotionId} label={detail.cta.label} href={detail.cta.href} />
+          </div>
+        )}
       </div>
       <div className="space-y-4 border-t pt-5">
         <p className="text-sm font-semibold">{SHOP_LABEL}</p>
-        <ShopDetails shop={detail.shop} />
+        <ShopDetails shop={detail.shop} lines={detail.shopLines} logo={detail.shopLogo} />
         <FollowButton href={detail.shop.href} size="lg" className="w-full" />
       </div>
     </aside>

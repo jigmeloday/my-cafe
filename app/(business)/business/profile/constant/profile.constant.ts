@@ -3,7 +3,7 @@ import type { ProfileTab } from "../model/profile.type";
 export const PROFILE_COPY = {
   title: "Business profile",
   subtitle: "This is what people see on your public page.",
-  viewPublic: "View public page",
+  viewPublic: "Preview public page",
   mediaNote:
     "Photos are previewed here. Saving them connects when file storage is set up.",
 };
@@ -14,6 +14,7 @@ export const PROFILE_TABS: ProfileTab[] = [
   { id: "hours", label: "Opening hours" },
   { id: "photos", label: "Photos" },
   { id: "offerings", label: "Services & products" },
+  { id: "account", label: "Account" },
 ];
 
 export const DESCRIPTION_MAX = 500;
@@ -40,6 +41,10 @@ export const CARD_COPY = {
   gallery: {
     title: "Gallery",
     description: "Show off your place, products or team.",
+  },
+  account: {
+    title: "Password",
+    description: "Change the password you use to log in.",
   },
   offerings: {
     title: "Services & products",

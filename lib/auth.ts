@@ -28,6 +28,23 @@ export const auth = betterAuth({
     expiresIn: VERIFICATION_MINUTES * 60,
     sendVerificationEmail: async ({ user, url }) => verificationService.send(user, url),
   },
+  // A session lasts a week and is refreshed daily while used. Cookies are HttpOnly and SameSite=Lax always,
+  // and Secure in production, so scripts can't read them and other sites can't send them.
+  session: { expiresIn: 60 * 60 * 24 * 7, updateAge: 60 * 60 * 24 },
+  advanced: { useSecureCookies: process.env.NODE_ENV === "production" },
+  trustedOrigins: [process.env.BETTER_AUTH_URL].filter((origin): origin is string => !!origin),
+  // Login and sign-up through the browser address (/api/auth/...) get a tight limit too. Our own forms are
+  // limited separately, in the server actions (services/auth/rate-limit.service.ts).
+  rateLimit: {
+    enabled: true,
+    window: 60,
+    max: 60,
+    customRules: {
+      "/sign-in/email": { window: 60, max: 5 },
+      "/sign-up/email": { window: 60, max: 5 },
+      "/send-verification-email": { window: 60, max: 3 },
+    },
+  },
   // Role and status are never accepted from the browser: they are set by the server only.
   user: {
     additionalFields: {

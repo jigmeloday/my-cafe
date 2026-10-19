@@ -2,7 +2,11 @@
 export const mediaUrl = (key: string) => (key ? `/api/media/${key}` : "");
 
 export const MAX_GALLERY = 8;
-export const MEDIA_KINDS = ["logo", "cover", "gallery"] as const;
+export const MEDIA_KINDS = ["logo", "cover", "gallery", "promotion", "banner"] as const;
+
+/** A stored file name inside a business folder, e.g. business/<id>/promotion-<random>.jpg */
+export const keyBelongsTo = (key: string, businessId: string) =>
+  new RegExp(`^business/${businessId}/[\\w-]+\\.(jpg|png|webp)$`).test(key);
 export type MediaKind = (typeof MEDIA_KINDS)[number];
 
 const TYPES = {

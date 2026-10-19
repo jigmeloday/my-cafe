@@ -10,6 +10,9 @@ export interface HeroSlideData {
   href: string;
   sponsored?: boolean;
   imageLabel: string;
+  imageUrl?: string;
+  /** Set for a paid banner. Used to count how often it is seen and clicked. */
+  bannerId?: string;
 }
 
 export interface OfferSectionData {

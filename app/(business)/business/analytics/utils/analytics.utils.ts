@@ -1,4 +1,3 @@
-import { SAMPLE_DAYS, SAMPLE_END_DATE } from "../constant/analytics.constant";
 import type { DayStats, RangeDays, Totals } from "../model/analytics.type";
 
 const MONTHS = [
@@ -23,23 +22,31 @@ export const addDays = (isoDate: string, days: number) =>
     .toISOString()
     .slice(0, 10);
 
+const SAMPLE_END_DATE = "2026-10-07";
+const SAMPLE_COUNT = 60;
+
 /**
- * Sample daily series, oldest first. Integer maths only (no Math.sin / random), so the server and
- * the browser always produce identical numbers and avoid hydration mismatches.
+ * Sample daily series for screens not yet on real data (the admin overview), oldest first. Integer maths
+ * only (no Math.sin / random), so the server and the browser always produce identical numbers.
  */
-export function buildSampleDays(
-  count = SAMPLE_DAYS,
-  endDate = SAMPLE_END_DATE,
-): DayStats[] {
+export function buildSampleDays(count = SAMPLE_COUNT, endDate = SAMPLE_END_DATE): DayStats[] {
   return Array.from({ length: count }, (_, i) => {
     const date = addDays(endDate, -(count - 1 - i));
     const weekday = new Date(`${date}T00:00:00Z`).getUTCDay();
-    const weekend = weekday === 0 || weekday === 6;
-    const views = 200 + ((i * 53) % 41) * 4 + i * 3 + (weekend ? 70 : 0);
+    const views = 200 + ((i * 53) % 41) * 4 + i * 3 + (weekday === 0 || weekday === 6 ? 70 : 0);
     const clicks = Math.floor((views * (40 + ((i * 29) % 17))) / 1000);
     const saves = Math.floor((clicks * (30 + ((i * 13) % 15))) / 100);
     const [, month, day] = date.split("-").map(Number);
     return { date, label: `${day} ${MONTHS[month - 1]}`, views, clicks, saves };
+  });
+}
+
+/** The last `count` days ending on `endDate`, oldest first, each with its "5 Oct" label. */
+export function lastDays(endDate: string, count: number): { date: string; label: string }[] {
+  return Array.from({ length: count }, (_, i) => {
+    const date = addDays(endDate, -(count - 1 - i));
+    const [, month, day] = date.split("-").map(Number);
+    return { date, label: `${day} ${MONTHS[month - 1]}` };
   });
 }
 
