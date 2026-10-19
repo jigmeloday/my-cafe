@@ -3,13 +3,16 @@ import { randomBytes } from "node:crypto";
 import { keyBelongsTo } from "@/lib/media";
 import { storage } from "@/lib/storage";
 import { COIN_COSTS } from "@/lib/coins";
+import { daysOfRun, FEATURED_HORIZON_DAYS, featuredPrice } from "@/lib/featured";
 import { formatCoins } from "@/lib/formatters/number";
 import type { Promotion } from "@/generated/prisma/client";
 import { slugify } from "@/lib/slug";
 import type { PromotionInput } from "@/lib/validations/promotion.schema";
 import type { PromotionItem } from "@/app/(business)/business/promotions/model/promotion.type";
-import { InsufficientCoinsError } from "@/server/repositories/wallet.repository";
+import { FeaturedFullError, FeaturedOverlapError, type FeaturedRequest } from "@/server/repositories/featured.repository";
+import { InsufficientCoinsError, walletRepository } from "@/server/repositories/wallet.repository";
 import { promotionRepository } from "@/server/repositories/promotion.repository";
+import { bhutanToday } from "@/services/discovery/discovery.service";
 import { businessService, type Owner } from "@/services/business/business.service";
 
 type Result = { ok: true } | { ok: false; error: string };
@@ -25,6 +28,8 @@ async function uniqueSlug(title: string) {
 }
 
 const publishCharge = (title: string) => ({ amount: COIN_COSTS.publish, description: `Published: ${title}` });
+
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 const CTA_TYPES = ["VIEW_OFFER", "VISIT_WEBSITE", "CONTACT_BUSINESS"] as const;
 
@@ -47,8 +52,11 @@ function toItem(p: Promotion): PromotionItem {
       ctaType: CTA_TYPES.find((t) => t === p.ctaType) ?? "VIEW_OFFER",
       ctaUrl: p.ctaUrl,
       photos: p.photos,
+      featureDays: "0",
+      featureStart: "",
       status: p.status === "DRAFT" ? "DRAFT" : "PUBLISHED",
     },
+    removed: p.removedAt !== null,
   };
 }
 
@@ -85,6 +93,16 @@ export const promotionService = {
       photos: [...new Set(input.photos)],
     };
 
+    // Featuring is booked together with going live (or on an already live promotion), and paid on top.
+    const days = Number(input.featureDays);
+    let featured: FeaturedRequest | undefined;
+    if (days > 0) {
+      const today = bhutanToday().toISOString().slice(0, 10);
+      if (input.featureStart < today) return { ok: false, error: "Choose today or a later day to start featuring." };
+      if (input.featureStart > daysOfRun(today, FEATURED_HORIZON_DAYS).at(-1)!) return { ok: false, error: `You can book up to ${FEATURED_HORIZON_DAYS} days ahead.` };
+      featured = { start: input.featureStart, days, coins: featuredPrice(days), title: input.title };
+    }
+
     try {
       const business = await businessService.ensure(owner);
       // Photos must be files this business uploaded, never someone else's.
@@ -95,22 +113,34 @@ export const promotionService = {
       if (id) {
         const before = await promotionRepository.findOwned(id, owner.id);
         if (!before) return NOT_FOUND;
+        if (before.removedAt) return { ok: false, error: "kuzu took this promotion down after a report, so it can't be changed or republished. Contact us if you think this is a mistake." };
         // Going live costs coins, but editing something already live is free.
         const charge = input.status === "PUBLISHED" && before.status !== "PUBLISHED" ? publishCharge(input.title) : undefined;
-        if (!(await promotionRepository.update(id, owner.id, data, charge))) return NOT_FOUND;
+        if (!(await promotionRepository.update(id, owner.id, data, charge, featured))) return NOT_FOUND;
         // Photos taken off the promotion are no longer needed.
         await Promise.all(before.photos.filter((key) => !data.photos.includes(key)).map((key) => storage.remove(key)));
         return { ok: true };
       }
 
       const charge = input.status === "PUBLISHED" ? publishCharge(input.title) : undefined;
-      await promotionRepository.create({ ...data, businessId: business.id, slug: await uniqueSlug(input.title) }, charge);
+      await promotionRepository.create({ ...data, businessId: business.id, slug: await uniqueSlug(input.title) }, charge, featured);
       return { ok: true };
     } catch (error) {
+      if (error instanceof FeaturedFullError) {
+        const list = error.days.map((d) => `${Number(d.slice(8))} ${MONTHS[Number(d.slice(5, 7)) - 1]}`).join(", ");
+        return { ok: false, error: `Featured places are full on ${list}. Choose other days, or publish without featuring.` };
+      }
+      if (error instanceof FeaturedOverlapError) return { ok: false, error: "This promotion is already featured on some of those days." };
       if (error instanceof InsufficientCoinsError) {
+        // Everything was rolled back, so the wallet still holds what it did. Say what the whole thing costs.
+        const business = await businessService.ensure(owner);
+        const balance = await walletRepository.balance(business.id);
+        const total = error.needed;
         return {
           ok: false,
-          error: `Publishing costs ${formatCoins(error.needed)} and you have ${formatCoins(error.balance)}. Buy more coins, or save it as a draft.`,
+          error: featured
+            ? `This costs more than you have (${formatCoins(balance)}). Publishing is ${formatCoins(COIN_COSTS.publish)} and featuring is ${formatCoins(featured.coins)}. Buy more coins, or turn off featuring.`
+            : `Publishing costs ${formatCoins(total)} and you have ${formatCoins(balance)}. Buy more coins, or save it as a draft.`,
         };
       }
       throw error;

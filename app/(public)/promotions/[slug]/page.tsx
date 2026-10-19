@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import { DetailPage } from "@/components/public/detail/detail-page";
 import { buildDetail } from "@/components/public/utils/detail.utils";
@@ -27,5 +27,7 @@ export default async function PromotionPage({
   const { slug } = await params;
   const detail = await load(slug);
   if (!detail) notFound();
+  // A real event lives under /events.
+  if (detail.kind === "event" && detail.promotionId) redirect(`/events/${slug}`);
   return <DetailPage detail={detail} />;
 }

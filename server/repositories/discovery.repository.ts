@@ -14,6 +14,7 @@ export type LivePromotion = Prisma.PromotionGetPayload<{ include: typeof withBus
  */
 export const livePromotionWhere = (today: Date): Prisma.PromotionWhereInput => ({
   status: "PUBLISHED",
+  removedAt: null,
   OR: [{ endsAt: null }, { endsAt: { gte: today } }],
   business: { status: { not: "SUSPENDED" }, owner: { status: "ACTIVE" } },
 });
@@ -21,6 +22,13 @@ export const livePromotionWhere = (today: Date): Prisma.PromotionWhereInput => (
 export const discoveryRepository = {
   livePromotions: (today: Date, extra: Prisma.PromotionWhereInput, take: number, orderBy: Prisma.PromotionOrderByWithRelationInput[]) =>
     db.promotion.findMany({ where: { AND: [livePromotionWhere(today), extra] }, include: withBusiness, orderBy, take }),
+
+  /** Live promotions that are featured today. All of them: the caller shuffles and takes as many as fit. */
+  featuredToday: (today: Date) =>
+    db.promotion.findMany({
+      where: { AND: [livePromotionWhere(today), { featuredBookings: { some: { startsAt: { lte: today }, endsAt: { gte: today } } } }] },
+      include: withBusiness,
+    }),
 
   findLiveBySlug: (today: Date, slug: string) =>
     db.promotion.findFirst({ where: { AND: [livePromotionWhere(today), { slug }] }, include: withBusiness }),
@@ -52,9 +60,21 @@ export const discoveryRepository = {
   /** Every published or ended promotion of one business (drafts are private), newest first. */
   forBusiness: (businessId: string) =>
     db.promotion.findMany({
-      where: { businessId, status: { in: ["PUBLISHED", "ENDED"] } },
+      where: { businessId, status: { in: ["PUBLISHED", "ENDED"] }, removedAt: null },
       include: withBusiness,
       orderBy: [{ createdAt: "desc" }],
+    }),
+
+  /** Businesses for the New places page, each with the categories of its promotions (to work out what it is). */
+  businessesWithCategories: (take: number) =>
+    db.business.findMany({
+      where: { status: { not: "SUSPENDED" }, owner: { status: "ACTIVE" } },
+      orderBy: { createdAt: "desc" },
+      take,
+      select: {
+        id: true, name: true, slug: true, tagline: true, town: true, dzongkhag: true, logoKey: true, coverKey: true, createdAt: true,
+        promotions: { where: { status: "PUBLISHED" }, select: { category: { select: { name: true } } } },
+      },
     }),
 
   newBusinesses: (take: number) =>

@@ -9,8 +9,8 @@ export const COIN_COSTS = {
   emailPerRecipient: 1,
   /** Per day a promotion is shown in the homepage banner. */
   bannerPerDay: 200,
-  /** Per day a promotion is ranked at the top of discovery lists. */
-  topRankPerDay: 100,
+  /** Per day a promotion is featured in the home page's "Featured" row. Paid on top of the publish fee. */
+  featuredPerDay: 100,
 } as const;
 
 /** Days a placement can run. "0" means not selected. Strings so they work as form select values. */
@@ -98,6 +98,7 @@ export const COIN_TRANSACTION_TYPES = [
   "PUBLISH",
   "EMAIL_CAMPAIGN",
   "BANNER",
+  "FEATURED",
   "TOP_RANK",
   "REFUND",
 ] as const;
@@ -105,7 +106,7 @@ export const COIN_TRANSACTION_TYPES = [
 export const emailCost = (recipients: number) =>
   recipients * COIN_COSTS.emailPerRecipient;
 export const bannerCost = (days: number) => days * COIN_COSTS.bannerPerDay;
-export const topRankCost = (days: number) => days * COIN_COSTS.topRankPerDay;
+export const featuredCost = (days: number) => days * COIN_COSTS.featuredPerDay;
 
 export const hasEnoughCoins = (balance: number, cost: number) =>
   balance >= cost;

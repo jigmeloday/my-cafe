@@ -21,7 +21,7 @@ export function ReportActions({ report, onResult }: ReportActionsProps) {
   const [confirmRemove, setConfirmRemove] = useState(false);
   const { run, pending } = useActionRunner(onResult);
   const decide = (decision: ReportDecision) =>
-    run(resolveReportAction, { id: report.id, decision });
+    run(resolveReportAction, { kind: report.kind, targetId: report.targetId, decision });
 
   return (
     <div className="flex flex-wrap gap-2">
@@ -53,7 +53,7 @@ export function ReportActions({ report, onResult }: ReportActionsProps) {
         open={confirmRemove}
         onOpenChange={setConfirmRemove}
         title={MODERATION_COPY.removeTitle}
-        description={`“${report.promotionTitle}” will be taken off kuzu and ${report.businessName} is told why.`}
+        description={`“${report.title}” will be taken off kuzu and ${report.businessName} is told why. Coins already paid are not refunded.`}
         confirmLabel={MODERATION_COPY.removeConfirm}
         cancelLabel="Cancel"
         onConfirm={() => decide("REMOVED")}

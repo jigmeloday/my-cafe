@@ -10,6 +10,11 @@ import { COIN_COSTS } from "@/lib/coins";
 import { mediaUrl } from "@/lib/media";
 import { uploadBusinessImage } from "@/lib/upload-client";
 import { scrollToFirstProblem } from "@/lib/scroll";
+import { useWatch } from "react-hook-form";
+
+import { todayIso } from "@/lib/formatters/date";
+import { featuredPrice } from "@/lib/featured";
+import type { OwnBooking } from "@/services/featured/featured.service";
 import { useActionForm } from "@/hooks/use-action-form";
 import {
   promotionSchema,
@@ -19,6 +24,7 @@ import { savePromotionAction } from "@/server/actions/promotion.actions";
 
 import {
   MAX_PHOTOS,
+  FEATURE_COPY,
   PUBLISH_COPY,
   PROMOTIONS_COPY,
 } from "../constant/promotion.constant";
@@ -26,10 +32,15 @@ import type { OptionItem } from "../model/promotion.type";
 import { CtaFields } from "./cta-fields";
 import { DetailsFields } from "./details-fields";
 import { PromotionPreview } from "./promotion-preview";
+import { FeatureFields } from "./feature-fields";
 import { PublishCost } from "./publish-cost";
 import { ScheduleFields } from "./schedule-fields";
 
 interface PromotionFormProps {
+  /** Places left on each day, for the Feature section. */
+  availability: Record<string, number>;
+  /** Bookings this promotion already has (editing only). */
+  bookings?: OwnBooking[];
   initial: PromotionInput;
   categories: OptionItem[];
   /** Set when editing an existing promotion. */
@@ -38,18 +49,20 @@ interface PromotionFormProps {
   balance: number;
 }
 
-export function PromotionForm({ initial, categories, id, balance }: PromotionFormProps) {
+export function PromotionForm({ initial, categories, id, balance, availability, bookings = [] }: PromotionFormProps) {
   // Going live costs coins once; changing something already live is free.
   const publishFee = id && initial.status === "PUBLISHED" ? 0 : COIN_COSTS.publish;
   const { form, submit, result, pending } = useActionForm(
     promotionSchema,
     (values) => savePromotionAction(values, id),
-    initial,
+    { ...initial, featureStart: initial.featureStart || todayIso() },
   );
   // A failed save (like "not enough coins") can be far above the buttons: bring it into view.
   useEffect(() => {
     if (result && !result.ok) scrollToFirstProblem();
   }, [result]);
+  const [featureDays] = useWatch({ control: form.control, name: ["featureDays"] });
+  const featuredFee = featuredPrice(Number(featureDays));
   const setStatus = (status: PromotionInput["status"]) => () =>
     form.setValue("status", status, { shouldDirty: true });
 
@@ -90,11 +103,14 @@ export function PromotionForm({ initial, categories, id, balance }: PromotionFor
         >
           <CtaFields form={form} />
         </SectionCard>
+        <SectionCard title={FEATURE_COPY.title} description={FEATURE_COPY.description}>
+          <FeatureFields form={form} availability={availability} bookings={bookings} />
+        </SectionCard>
         <SectionCard
           title={PUBLISH_COPY.title}
           description={PUBLISH_COPY.description}
         >
-          <PublishCost balance={balance} publishFee={publishFee} />
+          <PublishCost balance={balance} publishFee={publishFee} featuredFee={featuredFee} />
         </SectionCard>
         <div className="flex flex-wrap gap-2">
           <Button

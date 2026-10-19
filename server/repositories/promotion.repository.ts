@@ -1,6 +1,7 @@
 import type { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
 
+import { featuredRepository, type FeaturedRequest } from "./featured.repository";
 import { walletRepository } from "./wallet.repository";
 
 interface Charge {
@@ -25,21 +26,23 @@ export const promotionRepository = {
   categoryExists: async (id: string) => (await db.category.count({ where: { id } })) > 0,
 
   /** A charge taken together with the save: both happen, or neither does. */
-  async create(data: Prisma.PromotionUncheckedCreateInput, charge?: Charge) {
+  async create(data: Prisma.PromotionUncheckedCreateInput, charge?: Charge, featured?: FeaturedRequest) {
     return db.$transaction(async (tx) => {
       const created = await tx.promotion.create({ data });
       if (charge) await walletRepository.spend(tx, data.businessId, charge.amount, "PUBLISH", charge.description);
+      if (featured) await featuredRepository.book(tx, created.id, data.businessId, featured);
       return created;
     });
   },
 
   /** Returns how many rows changed: 0 means it isn't this owner's promotion. */
-  async update(id: string, ownerId: string, data: Prisma.PromotionUncheckedUpdateInput, charge?: Charge) {
+  async update(id: string, ownerId: string, data: Prisma.PromotionUncheckedUpdateInput, charge?: Charge, featured?: FeaturedRequest) {
     return db.$transaction(async (tx) => {
       const found = await tx.promotion.findFirst({ where: { id, business: { ownerId } }, select: { businessId: true } });
       if (!found) return 0;
       await tx.promotion.update({ where: { id }, data });
       if (charge) await walletRepository.spend(tx, found.businessId, charge.amount, "PUBLISH", charge.description);
+      if (featured) await featuredRepository.book(tx, id, found.businessId, featured);
       return 1;
     });
   },

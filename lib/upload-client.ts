@@ -19,3 +19,14 @@ export async function removeBusinessImage(kind: MediaKind, key = ""): Promise<vo
   });
   if (!response.ok) throw new Error((await response.json().catch(() => ({}))).error ?? "We couldn't remove that image.");
 }
+
+/** Sends one identity document to the private store. Resolves with its key, which the request form then names. */
+export async function uploadKycDocument(kind: "id" | "license" | "premises", file: File): Promise<string> {
+  const form = new FormData();
+  form.set("kind", kind);
+  form.set("file", file);
+  const response = await fetch("/api/business/kyc", { method: "POST", body: form });
+  const body = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(body.error ?? "The upload failed. Please try again.");
+  return body.key;
+}

@@ -14,6 +14,8 @@ export const PLACE_FILTERS: FilterOption[] = [
 export const DISCOVER_COPY = {
   title: "New places",
   description: "Restaurants, shops and services that opened recently near you.",
+  nothingTitle: "No new places yet",
+  nothingDescription: "Businesses that join kuzu will show up here.",
   emptyTitle: "No new places match this filter",
   emptyDescription: "Try another filter to see what else just opened.",
   resetLabel: "Show all new places",

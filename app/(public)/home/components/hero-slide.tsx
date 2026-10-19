@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 
+import { ReportButton } from "@/components/public/report-button";
 import { Button } from "@/components/ui/button";
 import { ImagePlaceholder } from "@/components/shared/image-placeholder";
 import { trackBanner } from "@/lib/track-client";
@@ -40,7 +41,12 @@ export function HeroSlide({ slide }: { slide: HeroSlideData }) {
       <div className="absolute inset-x-3 bottom-3 space-y-3 rounded-2xl bg-surface p-5 shadow-xl sm:inset-x-auto sm:bottom-8 sm:left-8 sm:w-80 md:left-12">
         <div className="flex items-center justify-between text-xs">
           <span className="font-semibold text-primary">{slide.eyebrow}</span>
-          {slide.sponsored && <span className="text-muted-foreground">Sponsored</span>}
+          {slide.sponsored && (
+            <span className="flex items-center gap-2 text-muted-foreground">
+              Sponsored
+              {bannerId && <ReportButton bannerId={bannerId} variant="link" />}
+            </span>
+          )}
         </div>
         <h3>{slide.title}</h3>
         {slide.description && <p className="text-sm text-muted-foreground">{slide.description}</p>}

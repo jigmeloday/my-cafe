@@ -16,6 +16,8 @@ export const DEALS_COPY = {
   title: "Deals",
   description:
     "Discounts, bundles and limited-time offers from local businesses.",
+  nothingTitle: "No deals yet",
+  nothingDescription: "Businesses haven't posted any deals yet. Check back soon.",
   emptyTitle: "No deals match this filter",
   emptyDescription: "Try another filter to see more offers.",
   resetLabel: "Show all deals",

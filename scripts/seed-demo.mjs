@@ -19,6 +19,7 @@ const RESET_ONLY = process.argv.includes("--reset");
 const INTERESTS = ["Food & drink", "Cafés", "Fashion", "Electronics", "Wellness", "Stays", "Music", "Culture", "Kids", "Sports", "Books", "Crafts"];
 const DAY = 86_400_000;
 const PUBLISH_FEE = 50;
+const FEATURED_PER_DAY = 100;
 const HISTORY_DAYS = 45;
 
 if (process.env.NODE_ENV === "production" && !process.argv.includes("--force")) {
@@ -124,6 +125,7 @@ async function main() {
     const promoRows = [];
     const promoMeta = []; // for events, favourites and notifications
     const walletRows = [];
+    const featuredRows = [];
     const txRows = [];
 
     BUSINESSES.forEach((b, i) => {
@@ -141,16 +143,23 @@ async function main() {
         promoRows.push([promoId, businessId, category ? categoryId[category] : null, slug, title, type, status, discount, description, b.town ? `${b.town}, ${b.dzongkhag}` : "",
           status === "DRAFT" ? null : dayFrom(start), status === "DRAFT" ? null : end === null ? null : dayFrom(end), created, created]);
         if (status !== "DRAFT") live++;
-        promoMeta.push({ promoId, businessId, slug, title, status, start, end, popularity: extra.popularity ?? 3, owner: b.name });
+        promoMeta.push({ promoId, businessId, slug, title, status, start, end, popularity: extra.popularity ?? 3, owner: b.name, featured: extra.featured });
+        if (extra.featured) {
+          const [from, days] = extra.featured;
+          featuredRows.push([id(), promoId, businessId, dayFrom(from), dayFrom(from + days - 1), days * FEATURED_PER_DAY, created]);
+        }
       });
 
       // Coins: bought enough to cover every publish fee plus a cushion, then spent 50 per published promotion.
-      const fees = live * PUBLISH_FEE;
+      const featuredCoins = promoMeta.filter((p) => p.businessId === businessId && p.featured).reduce((s, p) => s + p.featured[1] * FEATURED_PER_DAY, 0);
+      const fees = live * PUBLISH_FEE + featuredCoins;
       const bought = Math.max(b.purchased, Math.ceil((fees + 150) / 100) * 100);
       const walletId = `demo-wallet-${b.key}`;
       const history = [{ type: "PURCHASE", amount: bought, description: `Bought ${bought.toLocaleString("en")} coins`, at: new Date(opened.getTime() + 3_600_000) }];
       promoMeta.filter((p) => p.businessId === businessId && p.status !== "DRAFT").forEach((p, n) =>
         history.push({ type: "PUBLISH", amount: -PUBLISH_FEE, description: `Published: ${p.title}`, at: new Date(opened.getTime() + (n + 2) * 3_600_000 + 86_400_000) }));
+      promoMeta.filter((p) => p.businessId === businessId && p.featured).forEach((p, n) =>
+        history.push({ type: "FEATURED", amount: -p.featured[1] * FEATURED_PER_DAY, description: `Featured on the home page: ${p.title} · ${p.featured[1]} ${p.featured[1] === 1 ? "day" : "days"}`, at: new Date(opened.getTime() + (n + 12) * 3_600_000 + 86_400_000) }));
       history.sort((x, y) => x.at - y.at);
       let balance = 0;
       history.forEach((h) => {
@@ -166,6 +175,8 @@ async function main() {
       ["startsAt", "date"], ["endsAt", "date"], ["createdAt"], ["updatedAt"]], promoRows);
     await insertMany("Wallet", [["id"], ["businessId"], ["balance"]], walletRows);
     await insertMany("CoinTransaction", [["id"], ["walletId"], ["type", `"CoinTransactionType"`], ["amount"], ["balanceAfter"], ["description"], ["createdAt"]], txRows);
+
+    await insertMany("FeaturedBooking", [["id"], ["promotionId"], ["businessId"], ["startsAt", "date"], ["endsAt", "date"], ["coins"], ["createdAt"]], featuredRows);
 
     // Views and clicks over the last month and a half. Busier on weekends, weighted by each promotion's popularity.
     const eventRows = [];
@@ -206,13 +217,25 @@ async function main() {
       const event = pick(liveMeta.filter((p) => p.start > 0)) ?? fresh;
       notifications.push([id(), userId, "Happening soon", event.title, `/promotions/${event.slug}`, null, dayFrom(-Math.floor(random() * 3))]);
     });
+    // A few reports so the admin Moderation queue has something to review.
+    const reportRows = [];
+    const reportOn = (title, reporters, reason, detail, status = "OPEN", decision = null, daysAgo = 1) => {
+      const promo = promoMeta.find((p) => p.title === title);
+      reporters.forEach((n, i) =>
+        reportRows.push([id(), `demo-customer-${n}`, promo.promoId, reason, i === 0 ? detail : "", status, decision, status === "OPEN" ? null : "demo-admin", status === "OPEN" ? null : dayFrom(-daysAgo + 1), dayFrom(-daysAgo)]));
+    };
+    reportOn("Winter coats clearance", [1, 4, 7], "MISLEADING", "The sale ended last week but the page still shows 40% off.", "OPEN", null, 2);
+    reportOn("Launch week: first visit 20% off", [2], "WRONG_PRICE", "Price at the spa was different.", "OPEN", null, 1);
+    reportOn("Hiking boots & jackets", [3, 5], "SPAM", "Posted the same offer many times.", "RESOLVED", "DISMISSED", 6);
+    await insertMany("Report", [["id"], ["reporterId"], ["promotionId"], ["reason", `"ReportReason"`], ["details"], ["status", `"ReportStatus"`], ["decision", `"ReportDecision"`], ["resolvedById"], ["resolvedAt"], ["createdAt"]], reportRows);
+
     await insertMany("Follow", [["userId"], ["href"], ["createdAt"]], follows);
     await insertMany("Favorite", [["userId"], ["href"], ["createdAt"]], favorites);
     await insertMany("Notification", [["id"], ["userId"], ["title"], ["description"], ["href"], ["readAt"], ["createdAt"]], notifications);
 
     await client.query("commit");
     console.log(`\n✓ Demo content created`);
-    console.log(`  ${BUSINESSES.length} businesses · ${promoRows.length} promotions · ${CUSTOMERS.length} customers`);
+    console.log(`  ${BUSINESSES.length} businesses · ${promoRows.length} promotions (${featuredRows.length} featured) · ${CUSTOMERS.length} customers`);
     console.log(`  ${eventRows.length.toLocaleString("en")} views/clicks · ${follows.length} follows · ${favorites.length} saved · ${notifications.length} notifications`);
     console.log(`\n  Log in as any demo account (password: ${DEMO_PASSWORD}):`);
     console.log(`    business owner  demo-owner-1@${DEMO_EMAIL_DOMAIN}   (Druk Pizzeria; owners 1 to ${BUSINESSES.length})`);

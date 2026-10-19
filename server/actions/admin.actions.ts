@@ -1,6 +1,10 @@
 "use server";
 
-import { REPORT_DECISIONS } from "@/lib/constants";
+import { revalidatePath } from "next/cache";
+
+import { getCurrentUser } from "@/lib/session";
+import { resolveSchema, type ResolveInput } from "@/lib/validations/report.schema";
+import { reportService } from "@/services/report/report.service";
 
 import type { ActionResult } from "./action.type";
 import { denyUnless } from "./guard";
@@ -27,15 +31,14 @@ export async function reinstateBusinessAction(id: string): Promise<ActionResult>
   return needsId(id);
 }
 
-export async function resolveReportAction(input: {
-  id: string;
-  decision: string;
-}): Promise<ActionResult> {
-  const denied = await denyUnless("ADMIN");
-  if (denied) return denied;
-  if (!input.id) return MISSING;
-  if (!(REPORT_DECISIONS as readonly string[]).includes(input.decision)) {
-    return { ok: false, error: "Choose what to do with this report." };
-  }
-  return NOT_CONNECTED;
+/** An admin settles every open report about one ad: dismiss it, warn the business, or take the ad down. */
+export async function resolveReportAction(input: ResolveInput): Promise<ActionResult> {
+  const user = await getCurrentUser();
+  if (user?.role !== "ADMIN") return { ok: false, error: "Only admins can do this." };
+  const parsed = resolveSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "Choose what to do with this report." };
+
+  const result = await reportService.resolve({ id: user.id, email: user.email }, parsed.data);
+  if (result.ok) revalidatePath("/admin/moderation");
+  return result;
 }

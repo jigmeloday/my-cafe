@@ -31,6 +31,10 @@ export function PromotionExplorer({
       ? items
       : items.filter((i) => i.tags.includes(filter));
 
+  if (items.length === 0 && copy.nothingTitle) {
+    return <EmptyState title={copy.nothingTitle} description={copy.nothingDescription} />;
+  }
+
   return (
     <div className="space-y-8">
       <FilterChips options={filters} active={filter} onChange={setFilter} />

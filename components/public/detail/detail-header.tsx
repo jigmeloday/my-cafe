@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 
+import { ReportButton } from "@/components/public/report-button";
 import { FavoriteButton } from "@/components/shared/favorite-button";
 
 import { DETAIL_KINDS } from "../constant/detail.constant";
@@ -37,7 +38,10 @@ export function DetailHeader({ detail }: { detail: DetailData }) {
             · {detail.shop.area}
           </p>
         </div>
-        <FavoriteButton href={`/${detail.kind === "event" ? "events" : "promotions"}/${detail.slug}`} className="shrink-0 border" />
+        <div className="flex shrink-0 items-center gap-1">
+          {detail.promotionId && <ReportButton promotionId={detail.promotionId} />}
+          <FavoriteButton href={`/${detail.kind === "event" ? "events" : "promotions"}/${detail.slug}`} className="border" />
+        </div>
       </div>
     </header>
   );

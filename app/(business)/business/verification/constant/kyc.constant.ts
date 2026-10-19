@@ -1,0 +1,15 @@
+export const KYC_COPY = {
+  title: "Verification",
+  subtitle: "Verified businesses show a Verified badge, so customers know you're real.",
+  privacy: "Only the kuzu review team can see these documents. We use them to check your business and for nothing else, and they are never shown on your page.",
+  consent: "I confirm these documents are mine, and I agree that kuzu may keep them to verify my business.",
+  submit: "Send for review",
+  noBusinessTitle: "Save your business profile first",
+  noBusinessText: "We verify the business you've set up, so add its name and details first.",
+  pendingTitle: "We're reviewing your documents",
+  pendingText: "This usually takes a few days. We'll send you a message here when there's news. Nothing else changes while you wait.",
+  verifiedTitle: "Your business is verified",
+  verifiedText: "The Verified badge shows on your public page.",
+  rejectedTitle: "We couldn't verify your business yet",
+  rejectedHelp: "Fix what's described above, then send your documents again.",
+};

@@ -66,9 +66,13 @@ export function PromotionsTable({ items, onResult }: PromotionsTableProps) {
                 </div>
               </td>
               <td className="px-4 py-3">
-                <StatusBadge tone={STATUS_TONES[item.status]}>
-                  {STATUS_LABELS[item.status]}
-                </StatusBadge>
+                {item.removed ? (
+                  <StatusBadge tone="danger">Removed by kuzu</StatusBadge>
+                ) : (
+                  <StatusBadge tone={STATUS_TONES[item.status]}>
+                    {STATUS_LABELS[item.status]}
+                  </StatusBadge>
+                )}
               </td>
               <td className="px-4 py-3 whitespace-nowrap text-muted-foreground">
                 {formatDateRange(item.values)}

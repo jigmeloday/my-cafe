@@ -35,6 +35,35 @@ enum PromotionType {
 }
 
 /// What a visitor did with a promotion. Saves come from Favorite instead, so they stay in step with the heart button.
+/// Why someone reported an ad (a promotion or a banner).
+enum ReportReason {
+  MISLEADING
+  WRONG_PRICE
+  SCAM
+  SPAM
+  OFFENSIVE
+  CLOSED
+  OTHER
+}
+
+enum ReportStatus {
+  OPEN
+  RESOLVED
+}
+
+enum ReportDecision {
+  DISMISSED
+  WARNED
+  REMOVED
+}
+
+/// Where a business's identity check (KYC) stands. A business can send a new request after a rejection.
+enum KycStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 enum PromotionEventType {
   VIEW
   CLICK
@@ -51,6 +80,7 @@ enum CoinTransactionType {
   PUBLISH
   EMAIL_CAMPAIGN
   BANNER
+  FEATURED
   TOP_RANK
   REFUND
 }
@@ -74,6 +104,7 @@ model User {
   favorites          Favorite[]
   follows            Follow[]
   notifications      Notification[]
+  reports            Report[]
 }
 
 // The next three models are the tables Better Auth needs.
@@ -130,62 +161,68 @@ model Category {
 }
 
 model Business {
-  id           String         @id @default(cuid())
-  ownerId      String
-  owner        User           @relation(fields: [ownerId], references: [id])
-  name         String
-  slug         String         @unique
-  tagline      String         @default("")
-  description  String         @default("")
-  phone        String         @default("")
-  email        String         @default("")
-  website      String         @default("")
-  addressLine1 String         @default("")
-  addressLine2 String         @default("")
-  town         String         @default("")
-  dzongkhag    String         @default("")
-  postalCode   String         @default("")
-  facebook     String         @default("")
-  instagram    String         @default("")
-  tiktok       String         @default("")
-  logoKey      String         @default("")
-  coverKey     String         @default("")
-  gallery      String[]
-  hours        Json?
-  services     String[]
-  products     String[]
-  status       BusinessStatus @default(PENDING)
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  promotions   Promotion[]
-  wallet       Wallet?
-  banners      Banner[]
+  id               String            @id @default(cuid())
+  ownerId          String
+  owner            User              @relation(fields: [ownerId], references: [id])
+  name             String
+  slug             String            @unique
+  tagline          String            @default("")
+  description      String            @default("")
+  phone            String            @default("")
+  email            String            @default("")
+  website          String            @default("")
+  addressLine1     String            @default("")
+  addressLine2     String            @default("")
+  town             String            @default("")
+  dzongkhag        String            @default("")
+  postalCode       String            @default("")
+  facebook         String            @default("")
+  instagram        String            @default("")
+  tiktok           String            @default("")
+  logoKey          String            @default("")
+  coverKey         String            @default("")
+  gallery          String[]
+  hours            Json?
+  services         String[]
+  products         String[]
+  status           BusinessStatus    @default(PENDING)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  promotions       Promotion[]
+  wallet           Wallet?
+  banners          Banner[]
+  featuredBookings FeaturedBooking[]
+  kycSubmissions   KycSubmission[]
 
   @@index([ownerId])
 }
 
 model Promotion {
-  id          String           @id @default(cuid())
-  businessId  String
-  business    Business         @relation(fields: [businessId], references: [id], onDelete: Cascade)
-  categoryId  String?
-  category    Category?        @relation(fields: [categoryId], references: [id])
-  slug        String           @unique
-  title       String
-  type        PromotionType
-  status      PromotionStatus  @default(DRAFT)
-  discount    String           @default("")
-  description String           @default("")
-  location    String           @default("")
-  ctaType     String           @default("VIEW_OFFER")
-  ctaUrl      String           @default("")
-  photos      String[]
-  events      PromotionEvent[]
-  startsAt    DateTime?
-  endsAt      DateTime?
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  banners     Banner[]
+  id               String            @id @default(cuid())
+  businessId       String
+  business         Business          @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  categoryId       String?
+  category         Category?         @relation(fields: [categoryId], references: [id])
+  slug             String            @unique
+  title            String
+  type             PromotionType
+  status           PromotionStatus   @default(DRAFT)
+  discount         String            @default("")
+  description      String            @default("")
+  location         String            @default("")
+  ctaType          String            @default("VIEW_OFFER")
+  ctaUrl           String            @default("")
+  photos           String[]
+  events           PromotionEvent[]
+  startsAt         DateTime?
+  endsAt           DateTime?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  banners          Banner[]
+  featuredBookings FeaturedBooking[]
+  reports          Report[]
+  /// Set when an admin took it down after a report. It is never shown again and the owner can\'t republish it.
+  removedAt        DateTime?
 
   @@index([businessId])
   @@index([status, type])
@@ -341,6 +378,9 @@ model Banner {
   coins       Int
   createdAt   DateTime      @default(now())
   events      BannerEvent[]
+  reports     Report[]
+  /// Set when an admin took it down after a report. Coins are not refunded.
+  removedAt   DateTime?
 
   @@index([businessId])
   @@index([startsAt, endsAt])
@@ -355,4 +395,73 @@ model BannerEvent {
   createdAt DateTime           @default(now())
 
   @@index([bannerId, createdAt])
+}
+
+/// A paid place in the home page's "Featured" row. Each day has a limited number of places (see lib/featured.ts).
+model FeaturedBooking {
+  id          String    @id @default(cuid())
+  promotionId String
+  promotion   Promotion @relation(fields: [promotionId], references: [id], onDelete: Cascade)
+  businessId  String
+  business    Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  /// First and last day it is featured, both included.
+  startsAt    DateTime  @db.Date
+  endsAt      DateTime  @db.Date
+  /// Coins paid for the whole run.
+  coins       Int
+  createdAt   DateTime  @default(now())
+
+  @@index([startsAt, endsAt])
+  @@index([promotionId])
+  @@index([businessId])
+}
+
+/// Someone reporting an ad. Exactly one of `promotionId` and `bannerId` is set. A person can report an ad once.
+model Report {
+  id           String          @id @default(cuid())
+  reporterId   String
+  reporter     User            @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+  promotionId  String?
+  promotion    Promotion?      @relation(fields: [promotionId], references: [id], onDelete: Cascade)
+  bannerId     String?
+  banner       Banner?         @relation(fields: [bannerId], references: [id], onDelete: Cascade)
+  reason       ReportReason
+  details      String          @default("")
+  status       ReportStatus    @default(OPEN)
+  decision     ReportDecision?
+  resolvedById String?
+  resolvedAt   DateTime?
+  createdAt    DateTime        @default(now())
+
+  @@unique([reporterId, promotionId])
+  @@unique([reporterId, bannerId])
+  @@index([status, createdAt])
+  @@index([promotionId])
+  @@index([bannerId])
+}
+
+/// A business owner's request to be verified. The documents are private files in the bucket under kyc/<businessId>/
+/// and are only ever opened by an admin. Personal details here are for the reviewing admin only.
+model KycSubmission {
+  id            String    @id @default(cuid())
+  businessId    String
+  business      Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  status        KycStatus @default(PENDING)
+  /// Full name as written on the ID.
+  ownerName     String
+  /// National ID (CID) number.
+  idNumber      String
+  licenseNumber String
+  idDocKey      String
+  licenseDocKey String
+  /// Optional photo of the shop front.
+  premisesKey   String    @default("")
+  /// Why a rejected request was rejected. Shown to the owner.
+  reviewNote    String    @default("")
+  submittedAt   DateTime  @default(now())
+  reviewedById  String?
+  reviewedAt    DateTime?
+
+  @@index([businessId, submittedAt])
+  @@index([status, submittedAt])
 }

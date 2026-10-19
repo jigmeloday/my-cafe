@@ -1,16 +1,12 @@
 import { StatCard } from "@/components/business/stat-card";
+import type { Overview } from "@/services/admin/admin-overview.service";
 
-import { buildSeries, getSummary } from "../utils/dashboard.utils";
+import { getSummary } from "../utils/dashboard.utils";
 
-const SERIES = buildSeries();
-
-export function StatsGrid() {
+export function StatsGrid({ overview }: { overview: Overview }) {
   return (
-    <section
-      aria-label="Summary"
-      className="grid grid-cols-2 gap-3 lg:grid-cols-4"
-    >
-      {getSummary(SERIES).map((stat) => (
+    <section aria-label="Summary" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      {getSummary(overview).map((stat) => (
         <StatCard key={stat.label} {...stat} />
       ))}
     </section>

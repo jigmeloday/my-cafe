@@ -27,6 +27,6 @@ export default async function PreviewPage() {
     );
   }
   // Inside the preview, offers open the preview of that promotion (owners don't browse the public site).
-  const inPreview = { ...business, activity: business.activity.map((a) => ({ ...a, href: a.href.replace("/promotions/", "/business/preview/") })) };
+  const inPreview = { ...business, activity: business.activity.map((a) => ({ ...a, href: a.href.replace(/^\/(promotions|events)\//, "/business/preview/") })) };
   return <BusinessProfileView business={inPreview} />;
 }

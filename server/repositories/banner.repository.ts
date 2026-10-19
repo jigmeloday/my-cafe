@@ -25,7 +25,7 @@ export const bannerRepository = {
   /** Banners showing on `today`: started, not ended, from a business and owner that aren't suspended. */
   active: (today: Date) =>
     db.banner.findMany({
-      where: { startsAt: { lte: today }, endsAt: { gte: today }, business: { status: { not: "SUSPENDED" }, owner: { status: "ACTIVE" } } },
+      where: { removedAt: null, startsAt: { lte: today }, endsAt: { gte: today }, business: { status: { not: "SUSPENDED" }, owner: { status: "ACTIVE" } } },
       orderBy: { createdAt: "desc" },
       include: withBusiness,
     }),
@@ -44,7 +44,7 @@ export const bannerRepository = {
 
   /** Counts a banner showing or being clicked. Only for a banner that is running today. */
   async recordEvent(bannerId: string, type: "VIEW" | "CLICK", today: Date) {
-    const running = await db.banner.count({ where: { id: bannerId, startsAt: { lte: today }, endsAt: { gte: today } } });
+    const running = await db.banner.count({ where: { id: bannerId, removedAt: null, startsAt: { lte: today }, endsAt: { gte: today } } });
     if (!running) return false;
     await db.bannerEvent.create({ data: { bannerId, type } });
     return true;

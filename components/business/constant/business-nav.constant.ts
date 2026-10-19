@@ -3,6 +3,7 @@ import type { DashboardNavItem } from "@/components/dashboard/model/nav.type";
 export const BUSINESS_NAV: DashboardNavItem[] = [
   { label: "Overview", href: "/business/dashboard", icon: "LayoutDashboard" },
   { label: "Business profile", href: "/business/profile", icon: "Store" },
+  { label: "Verification", href: "/business/verification", icon: "ShieldCheck" },
   { label: "Promotions", href: "/business/promotions", icon: "Tag" },
   { label: "Banners", href: "/business/banners", icon: "Megaphone" },
   { label: "Wallet", href: "/business/wallet", icon: "Wallet" },

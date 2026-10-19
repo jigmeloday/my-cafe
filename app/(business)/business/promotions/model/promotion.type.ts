@@ -10,6 +10,8 @@ export interface PromotionItem {
   clicks: number;
   boosted: boolean;
   values: PromotionInput;
+  /** An admin took it down after a report. */
+  removed?: boolean;
 }
 
 export interface OptionItem<T extends string = string> {
