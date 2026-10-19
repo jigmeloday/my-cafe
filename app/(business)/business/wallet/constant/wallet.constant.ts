@@ -13,6 +13,7 @@ export const TRANSACTION_TYPE: Record<
   EMAIL_CAMPAIGN: { label: "Email", tone: "info" },
   BANNER: { label: "Banner", tone: "info" },
   PUBLISH: { label: "Promotion published", tone: "info" },
+  FEATURED: { label: "Featured", tone: "info" },
   TOP_RANK: { label: "Top ranking", tone: "info" },
   REFUND: { label: "Refund", tone: "neutral" },
 };
@@ -33,11 +34,11 @@ export const COIN_USES = [
     price: `${COIN_COSTS.bannerPerDay} coins per day`,
   },
   {
-    id: "rank",
+    id: "featured",
     icon: TrendingUp,
-    title: "Rank at the top",
-    description: "Appear first in Deals, Events and New places.",
-    price: `${COIN_COSTS.topRankPerDay} coins per day`,
+    title: "Feature a promotion",
+    description: "Show a promotion in the Featured row on the home page. Limited places each day.",
+    price: `${COIN_COSTS.featuredPerDay} coins per day`,
   },
 ];
 

@@ -37,7 +37,7 @@ export function PromotionCard({
             {item.badge}
           </span>
         )}
-        <FavoriteButton href={item.href} defaultSaved={defaultSaved} className="absolute top-2 right-2" />
+        <FavoriteButton href={item.href} defaultSaved={defaultSaved} className="absolute top-2 right-2 z-10" />
       </div>
       <Link
         href={item.href}

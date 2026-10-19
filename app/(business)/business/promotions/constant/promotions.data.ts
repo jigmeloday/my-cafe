@@ -24,6 +24,8 @@ const make = (
     ctaType: "VIEW_OFFER",
     ctaUrl: "",
     photos: [],
+    featureDays: "0",
+    featureStart: "",
     ...values,
     status: "PUBLISHED",
   },

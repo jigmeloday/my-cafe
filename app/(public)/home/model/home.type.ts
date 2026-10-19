@@ -1,5 +1,4 @@
 import type { PromotionCardData } from "@/components/public/model/promotion.type";
-import type { AREA_TABS } from "../constant/areas.constant";
 
 export interface HeroSlideData {
   id: string;
@@ -22,9 +21,3 @@ export interface OfferSectionData {
   items: PromotionCardData[];
 }
 
-export type AreaTab = (typeof AREA_TABS)[number];
-
-export interface AreaItem {
-  name: string;
-  description: string;
-}

@@ -14,6 +14,8 @@ export const EVENT_FILTERS: FilterOption[] = [
 export const EVENTS_COPY = {
   title: "Events",
   description: "Festivals, workshops and nights out happening around Bhutan.",
+  nothingTitle: "No events yet",
+  nothingDescription: "Nothing is scheduled yet. Check back soon.",
   emptyTitle: "No events match this filter",
   emptyDescription: "Try another filter to see what else is on.",
   resetLabel: "Show all events",

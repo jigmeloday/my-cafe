@@ -23,3 +23,12 @@ export function sniffImage(bytes: Uint8Array): (typeof TYPES)[keyof typeof TYPES
   if (is(0x52, 0x49, 0x46, 0x46) && bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50) return TYPES.webp;
   return null;
 }
+
+const DOC_TYPES = { ...TYPES, pdf: { ext: "pdf", mime: "application/pdf" } } as const;
+
+/** Like `sniffImage`, but a PDF is accepted too. Used for identity documents. The file's first bytes decide, not its name. */
+export function sniffDocument(bytes: Uint8Array): (typeof DOC_TYPES)[keyof typeof DOC_TYPES] | null {
+  const is = (...sig: number[]) => sig.every((b, i) => bytes[i] === b);
+  if (is(0x25, 0x50, 0x44, 0x46, 0x2d)) return DOC_TYPES.pdf; // "%PDF-"
+  return sniffImage(bytes);
+}

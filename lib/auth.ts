@@ -3,6 +3,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 
 import { db } from "@/lib/db";
+import { RESET_MINUTES, passwordResetService } from "@/services/auth/password-reset.service";
 import { VERIFICATION_MINUTES, verificationService } from "@/services/auth/verification.service";
 
 export const auth = betterAuth({
@@ -13,6 +14,12 @@ export const auth = betterAuth({
     enabled: true,
     minPasswordLength: 8,
     requireEmailVerification: true,
+    // "Forgot password": the link is emailed (and works once, for an hour). Choosing a new password signs the
+    // person out everywhere, and they're emailed so they notice if it wasn't them.
+    resetPasswordTokenExpiresIn: RESET_MINUTES * 60,
+    revokeSessionsOnPasswordReset: true,
+    sendResetPassword: async ({ user, url }) => passwordResetService.sendLink(user, url),
+    onPasswordReset: async ({ user }) => passwordResetService.notifyChanged(user),
     // Signing up with an email that already has an account looks identical on screen, so nobody can use the
     // form to find out who is registered. The real owner is told by email instead.
     onExistingUserSignUp: async ({ user }) => {

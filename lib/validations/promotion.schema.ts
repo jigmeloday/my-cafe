@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { CTA_TYPES, PROMOTION_TYPES } from "@/lib/constants";
+import { daysOfRun, FEATURE_CHOICES } from "@/lib/featured";
 
 export const PUBLISHABLE = ["DRAFT", "PUBLISHED"] as const;
 
@@ -27,6 +28,10 @@ export const promotionSchema = z
         "Enter a full link starting with https://",
       ),
     photos: z.array(z.string().max(200)).max(5, "Add up to 5 photos"),
+    /** How many days to feature it on the home page. "0" means not featured. */
+    featureDays: z.enum(FEATURE_CHOICES),
+    /** First featured day, "YYYY-MM-DD". Only used when `featureDays` isn't "0". */
+    featureStart: z.string(),
     status: z.enum(PUBLISHABLE),
   })
   .superRefine((v, ctx) => {
@@ -35,6 +40,14 @@ export const promotionSchema = z
 
     if (v.startDate && v.endDate && v.endDate < v.startDate)
       add("endDate", "End date must be after the start date");
+    if (v.featureDays !== "0") {
+      if (v.status !== "PUBLISHED") add("featureDays", "Publish the promotion to feature it");
+      else if (!/^\d{4}-\d{2}-\d{2}$/.test(v.featureStart)) add("featureStart", "Choose the first day to feature it");
+      else {
+        const last = daysOfRun(v.featureStart, Number(v.featureDays)).at(-1)!;
+        if (v.endDate && last > v.endDate) add("featureDays", "Your promotion ends before this feature would finish");
+      }
+    }
     if (v.status !== "PUBLISHED") return;
 
     if (v.description.length < 20)

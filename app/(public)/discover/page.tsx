@@ -2,16 +2,21 @@ import type { Metadata } from "next";
 
 import { PromotionExplorer } from "@/components/public/promotion-explorer";
 import { Container } from "@/components/shared/container";
+import { discoveryService } from "@/services/discovery/discovery.service";
 
 import { DISCOVER_COPY, PLACE_FILTERS } from "./constant/discover.constant";
-import { NEW_PLACES } from "./constant/discover.data";
 
 export const metadata: Metadata = {
   title: `${DISCOVER_COPY.title} — kuzu`,
   description: DISCOVER_COPY.description,
 };
 
-export default function DiscoverPage() {
+// New promotions appear as soon as they are published, so this page is built per request.
+export const dynamic = "force-dynamic";
+
+export default async function DiscoverPage() {
+  const items = await discoveryService.newPlaces();
+
   return (
     <Container className="space-y-8 py-8 sm:py-10">
       <header className="space-y-2">
@@ -21,7 +26,7 @@ export default function DiscoverPage() {
         </p>
       </header>
       <PromotionExplorer
-        items={NEW_PLACES}
+        items={items}
         filters={PLACE_FILTERS}
         copy={DISCOVER_COPY}
       />

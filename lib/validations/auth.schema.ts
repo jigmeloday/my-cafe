@@ -33,6 +33,8 @@ export const forgotPasswordSchema = z.object({ email });
 
 export const resetPasswordSchema = z
   .object({
+    /** From the link in the email. */
+    token: z.string().min(10, "This link isn't valid").max(200),
     password,
     confirmPassword: z.string().min(1, "Confirm your password"),
   })

@@ -38,13 +38,13 @@ export function BusinessProfileView({
           <BusinessSection id="activity" title={BUSINESS_COPY.activity}>
             <BusinessActivity items={business.activity} />
           </BusinessSection>
-          {business.showGallery !== false && (
+          {business.showGallery && (
             <BusinessSection id="photos" title={BUSINESS_COPY.gallery}>
-              <BusinessGallery photos={business.photos} />
+              <BusinessGallery photos={business.photos ?? []} />
             </BusinessSection>
           )}
         </div>
-        <BusinessInfoCard hours={business.hours} contacts={business.contacts} />
+        <BusinessInfoCard hours={business.hours} contacts={business.contacts ?? []} />
       </div>
       <RelatedGrid title={BUSINESS_COPY.similar} items={business.similar} />
     </Container>

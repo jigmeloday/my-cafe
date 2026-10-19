@@ -2,7 +2,7 @@ import type { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
 
 type Tx = Prisma.TransactionClient;
-type SpendType = "PUBLISH" | "EMAIL_CAMPAIGN" | "BANNER" | "TOP_RANK";
+type SpendType = "PUBLISH" | "EMAIL_CAMPAIGN" | "BANNER" | "FEATURED" | "TOP_RANK";
 
 /** Thrown inside a transaction when the wallet can't cover a charge, so everything in it is undone. */
 export class InsufficientCoinsError extends Error {

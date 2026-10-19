@@ -14,6 +14,7 @@ const HOURS = (open = "09:00", close = "18:00", sundayClosed = true) =>
     close: i === 5 ? "20:00" : close,
   }));
 
+// "featured: [startOffset, days]" books a place in the home page's Featured row (100 coins a day).
 // promotion fields: [title, type, status, discount, description, startOffset, endOffset|null, category, extra?]
 // startOffset / endOffset are days from today. status "PUBLISHED" | "DRAFT" | "ENDED".
 export const BUSINESSES = [
@@ -26,7 +27,7 @@ export const BUSINESSES = [
     status: "VERIFIED", openedDaysAgo: 120, hours: HOURS("11:00", "22:00", false),
     services: ["Dine-in", "Takeaway", "Catering"], products: ["Margherita", "Ema datshi pizza", "Garlic bread"], purchased: 1000,
     promotions: [
-      ["Second pizza free on Fridays", "DEAL", "PUBLISHED", "Buy 1 get 1", "Order any pizza on a Friday evening and get a second one of equal or lesser value free. Dine-in only, from 5 pm.", -40, null, "Food", { popularity: 9 }],
+      ["Second pizza free on Fridays", "DEAL", "PUBLISHED", "Buy 1 get 1", "Order any pizza on a Friday evening and get a second one of equal or lesser value free. Dine-in only, from 5 pm.", -40, null, "Food", { popularity: 9, featured: [0, 3] }],
       ["Lunch set, two for one", "DEAL", "PUBLISHED", "Buy 1 get 1", "Our weekday lunch set (pizza, salad and a drink) for two people at the price of one. Today only.", -2, 0, "Food", { popularity: 6 }],
       ["Wood-fired pizza night", "EVENT", "PUBLISHED", "Free entry", "Watch our chefs stretch, top and fire pizzas live. Free tasting slices for the first fifty guests.", 5, 5, "Events", { popularity: 4 }],
       ["Student discount", "DEAL", "DRAFT", "", "", 0, null, "", {}],
@@ -41,7 +42,7 @@ export const BUSINESSES = [
     status: "VERIFIED", openedDaysAgo: 300, hours: HOURS("09:30", "19:00"),
     services: ["Tailoring", "Alterations", "Gift wrapping"], products: ["Hand-woven kira", "Gho", "Wool scarves"], purchased: 1500,
     promotions: [
-      ["Hand-woven kira for Tshechu", "SALE", "PUBLISHED", "20% off", "Dress up for the festival with 20% off every hand-woven kira in store. Tailoring takes three days, so order early.", -10, 3, "Fashion", { popularity: 10 }],
+      ["Hand-woven kira for Tshechu", "SALE", "PUBLISHED", "20% off", "Dress up for the festival with 20% off every hand-woven kira in store. Tailoring takes three days, so order early.", -10, 3, "Fashion", { popularity: 10, featured: [0, 7] }],
       ["Winter coats clearance", "SALE", "PUBLISHED", "40% off", "Last winter's coats and jackets, up to 40% off while stock lasts.", -5, 7, "Fashion", { popularity: 5 }],
       ["Weaving demonstration day", "EVENT", "PUBLISHED", "Free entry", "Meet the weavers and try the loom yourself. Light refreshments served.", 9, 9, "Events", { popularity: 3 }],
       ["Summer sale", "SALE", "ENDED", "30% off", "Our summer clearance. Thank you to everyone who came.", -120, -90, "Fashion", { popularity: 7 }],
@@ -56,7 +57,7 @@ export const BUSINESSES = [
     status: "VERIFIED", openedDaysAgo: 500, hours: HOURS("09:00", "19:30", false),
     services: ["Screen repair", "Laptop service", "Data transfer"], products: ["Smartphones", "Earbuds", "Chargers"], purchased: 1000,
     promotions: [
-      ["Phone trade-in offer", "DEAL", "PUBLISHED", "15% off", "Trade in any working phone and take 15% off a new one. Bring your ID and the original charger if you have it.", -20, 6, "Phones", { popularity: 8 }],
+      ["Phone trade-in offer", "DEAL", "PUBLISHED", "15% off", "Trade in any working phone and take 15% off a new one. Bring your ID and the original charger if you have it.", -20, 6, "Phones", { popularity: 8, featured: [-1, 3] }],
       ["Wireless earbuds sale", "SALE", "PUBLISHED", "25% off", "Selected wireless earbuds at 25% off this week only.", -4, 2, "Phones", { popularity: 7 }],
       ["Laptop service check", "SERVICE", "PUBLISHED", "Free diagnosis", "Slow or noisy laptop? We will diagnose it for free and tell you honestly what it needs.", -15, 12, "Services", { popularity: 4 }],
     ],
@@ -96,7 +97,7 @@ export const BUSINESSES = [
     status: "VERIFIED", openedDaysAgo: 220, hours: HOURS("09:00", "18:30"),
     services: ["Boot fitting", "Team orders"], products: ["Hiking boots", "Rain jackets", "Football kit"], purchased: 500,
     promotions: [
-      ["Hiking boots & jackets", "SALE", "PUBLISHED", "30% off", "Get ready for trekking season: 30% off selected boots and jackets.", -9, 4, "Home", { popularity: 6 }],
+      ["Hiking boots & jackets", "SALE", "PUBLISHED", "30% off", "Get ready for trekking season: 30% off selected boots and jackets.", -9, 4, "Home", { popularity: 6, featured: [0, 3] }],
       ["Family football day", "EVENT", "PUBLISHED", "Free entry", "Bring the family for matches, relay races and a picnic on the ground. All ages welcome.", 14, 14, "Kids", { popularity: 5 }],
     ],
   },
@@ -109,7 +110,7 @@ export const BUSINESSES = [
     status: "VERIFIED", openedDaysAgo: 14, hours: HOURS("08:00", "21:00", false),
     services: ["Dine-in", "Takeaway", "Beans to go"], products: ["Espresso", "Pour-over", "Cakes"], purchased: 1000,
     promotions: [
-      ["Coffee & cake combo", "DEAL", "PUBLISHED", "Nu. 250", "Any coffee with a slice of the cake of the day for Nu. 250. Today only.", 0, 0, "Cafés", { popularity: 9 }],
+      ["Coffee & cake combo", "DEAL", "PUBLISHED", "Nu. 250", "Any coffee with a slice of the cake of the day for Nu. 250. Today only.", 0, 0, "Cafés", { popularity: 9, featured: [0, 1] }],
       ["Free first tasting flight", "DEAL", "PUBLISHED", "Free tasting", "Try our three-coffee tasting flight on your first visit, on us.", -13, 10, "Cafés", { popularity: 6 }],
       ["Acoustic open mic", "EVENT", "PUBLISHED", "Free entry", "Bring a guitar or just a song. Sign up at the counter from 6 pm.", 21, 21, "Events", { popularity: 4 }],
     ],
@@ -136,7 +137,7 @@ export const BUSINESSES = [
     status: "VERIFIED", openedDaysAgo: 400, hours: HOURS("09:00", "17:00"),
     services: ["Event organising", "Stall booking"], products: [], purchased: 1500,
     promotions: [
-      ["Festival night market", "EVENT", "PUBLISHED", "Free entry", "Food, crafts and live music in the town centre. Dozens of stalls, open until late.", 6, 6, "Festival", { popularity: 10 }],
+      ["Festival night market", "EVENT", "PUBLISHED", "Free entry", "Food, crafts and live music in the town centre. Dozens of stalls, open until late.", 6, 6, "Festival", { popularity: 10, featured: [-1, 7] }],
       ["Live music evening", "EVENT", "PUBLISHED", "Nu. 300", "Three local bands, one stage. Tickets at the gate or in advance.", 3, 3, "Events", { popularity: 7 }],
       ["Archery open day", "EVENT", "PUBLISHED", "Free entry", "Try Bhutan's national sport with coaches on hand. All ages, no experience needed.", 1, 1, "Events", { popularity: 5 }],
       ["Crafts fair", "EVENT", "PUBLISHED", "Free entry", "Woodwork, weaving, jewellery and paintings from makers across the country.", 11, 12, "Events", { popularity: 6 }],

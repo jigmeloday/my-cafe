@@ -1,13 +1,10 @@
-import { ImagePlaceholder } from "@/components/shared/image-placeholder";
-
 import {
-  BUSINESS_CONTACTS,
   BUSINESS_COPY,
 } from "../constant/business.constant";
 import type { BusinessContact, BusinessHours } from "../model/business.type";
 import { HoursList } from "./hours-list";
 
-export function BusinessInfoCard({ hours, contacts = BUSINESS_CONTACTS }: { hours: BusinessHours[]; contacts?: BusinessContact[] }) {
+export function BusinessInfoCard({ hours, contacts }: { hours: BusinessHours[]; contacts: BusinessContact[] }) {
   return (
     <aside className="space-y-6 rounded-2xl border p-5 lg:sticky lg:top-24">
       <section className="space-y-3">
@@ -33,7 +30,6 @@ export function BusinessInfoCard({ hours, contacts = BUSINESS_CONTACTS }: { hour
             </li>
           ))}
         </ul>
-        {contacts === BUSINESS_CONTACTS && <ImagePlaceholder label="Map" className="aspect-video rounded-xl" />}
       </section>
     </aside>
   );

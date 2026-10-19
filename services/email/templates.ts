@@ -63,3 +63,50 @@ export function accountExistsEmail(input: { name: string; loginUrl: string }): E
     ),
   };
 }
+
+/** A message from the Contact page, sent to the team. Everything the sender wrote is escaped. */
+export function contactNotificationEmail(input: { name: string; email: string; topic: string; message: string }): EmailContent {
+  const { name, email, topic, message } = input;
+  return {
+    subject: `Contact: ${topic} — ${name}`.slice(0, 120),
+    text: `From: ${name} <${email}>\nAbout: ${topic}\n\n${message}\n\nReply to this email to answer them.`,
+    html: `<!doctype html><html><body style="font-family:Helvetica,Arial,sans-serif;color:#211a1c;max-width:560px;margin:0 auto;padding:24px">
+  <p style="margin:0 0 4px"><strong>${escapeHtml(name)}</strong> &lt;${escapeHtml(email)}&gt;</p>
+  <p style="margin:0 0 16px;color:#756b6e">About: ${escapeHtml(topic)}</p>
+  <div style="white-space:pre-wrap;background:#f6f6f6;border-radius:12px;padding:16px">${escapeHtml(message)}</div>
+  <p style="color:#756b6e;font-size:13px;margin-top:16px">Reply to this email to answer them.</p>
+</body></html>`,
+  };
+}
+
+/** The link to choose a new password. Only sent to an address that has an account. */
+export function passwordResetEmail(input: { name: string; url: string; expiresInMinutes: number }): EmailContent {
+  const { name, url, expiresInMinutes } = input;
+  return {
+    subject: `Reset your ${APP_NAME} password`,
+    text: `Hi ${name},\n\nSomeone asked to reset the password for your ${APP_NAME} account. To choose a new one, open this link:\n\n${url}\n\nThe link works for ${expiresInMinutes} minutes and can be used once. If you didn't ask for this, you can ignore this email: your password won't change.`,
+    html: layout(
+      "Reset your password",
+      `<p style="margin:0 0 8px">Hi ${escapeHtml(name)},</p>
+       <p style="margin:0">Someone asked to reset the password for your account. To choose a new one, press the button.</p>
+       ${button(url, "Choose a new password")}
+       <p style="font-size:13px;color:#756b6e;margin:0">The link works for ${expiresInMinutes} minutes and can be used once. If you didn't ask for this, ignore this email and your password won't change.</p>`
+    ),
+  };
+}
+
+/** Sent after a password was changed through the reset link, so the owner notices if it wasn't them. */
+export function passwordChangedEmail(input: { name: string; contactUrl: string }): EmailContent {
+  const { name, contactUrl } = input;
+  return {
+    subject: `Your ${APP_NAME} password was changed`,
+    text: `Hi ${name},\n\nThe password for your ${APP_NAME} account was just changed, and you were signed out on all devices.\n\nIf this was you, there's nothing to do. If it wasn't, contact us right away:\n\n${contactUrl}`,
+    html: layout(
+      "Your password was changed",
+      `<p style="margin:0 0 8px">Hi ${escapeHtml(name)},</p>
+       <p style="margin:0">The password for your account was just changed, and you were signed out on all devices.</p>
+       <p style="margin:16px 0 0">If this was you, there's nothing to do. If it wasn't, contact us right away.</p>
+       ${button(contactUrl, "Contact us")}`
+    ),
+  };
+}

@@ -1,20 +1,15 @@
 import { cn } from "@/lib/utils";
 
-import { AREA_TABS } from "../constant/areas.constant";
-import type { AreaTab } from "../model/home.type";
-
 interface AreaTabsProps {
-  active: AreaTab;
-  onChange: (tab: AreaTab) => void;
+  tabs: string[];
+  active: string;
+  onChange: (tab: string) => void;
 }
 
-export function AreaTabs({ active, onChange }: AreaTabsProps) {
+export function AreaTabs({ tabs, active, onChange }: AreaTabsProps) {
   return (
-    <div
-      role="tablist"
-      className="no-scrollbar flex gap-6 overflow-x-auto border-b"
-    >
-      {AREA_TABS.map((tab) => (
+    <div role="tablist" className="no-scrollbar flex gap-6 overflow-x-auto border-b">
+      {tabs.map((tab) => (
         <button
           key={tab}
           role="tab"

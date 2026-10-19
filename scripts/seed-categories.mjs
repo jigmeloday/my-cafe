@@ -6,7 +6,7 @@ import { randomBytes } from "node:crypto";
 config({ path: ".env.local", quiet: true });
 
 const NAMES = ["Festival", "Food", "Cafés", "Fashion", "Phones", "Stays", "Wellness", "Events", "Kids", "Home", "Services"];
-const slugify = (t) => t.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "category";
+const slugify = (t) => t.toLowerCase().normalize("NFKD").replace(/\p{M}/gu, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "category";
 
 const client = new pg.Client({ connectionString: process.env.DATABASE_URL });
 try {

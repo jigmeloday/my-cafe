@@ -12,16 +12,15 @@ import {
   FILTERS,
   MODERATION_COPY,
 } from "../constant/report.constant";
-import { REPORTS } from "../constant/reports.data";
-import type { ReportFilter } from "../model/report.type";
+import type { Report, ReportFilter } from "../model/report.type";
 import { countFor, filterReports } from "../utils/report.utils";
 import { ReportCard } from "./report-card";
 
-export function ReportsExplorer() {
+export function ReportsExplorer({ reports }: { reports: Report[] }) {
   const [filter, setFilter] = useState<ReportFilter>(DEFAULT_FILTER);
   const [query, setQuery] = useState("");
   const [notice, setNotice] = useState<ActionResult | null>(null);
-  const items = filterReports(REPORTS, filter, query);
+  const items = filterReports(reports, filter, query);
 
   return (
     <div className="space-y-4">
@@ -29,7 +28,7 @@ export function ReportsExplorer() {
         query={query}
         onQueryChange={setQuery}
         placeholder={MODERATION_COPY.searchPlaceholder}
-        filters={FILTERS.map((f) => ({ ...f, count: countFor(REPORTS, f.id) }))}
+        filters={FILTERS.map((f) => ({ ...f, count: countFor(reports, f.id) }))}
         active={filter}
         onActiveChange={(id) => setFilter(id as ReportFilter)}
       />

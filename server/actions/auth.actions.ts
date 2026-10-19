@@ -10,6 +10,7 @@ import { verifyEmailHref } from "@/lib/auth-paths";
 import { safeNextPath } from "@/lib/redirect";
 import { HOME_BY_ROLE } from "@/lib/session";
 import { LIMITS, TOO_MANY, clientIp, loginKeys, rateLimit } from "@/services/auth/rate-limit.service";
+import { RESET_PATH } from "@/services/auth/password-reset.service";
 import { VERIFIED_PATH } from "@/services/auth/verification.service";
 
 import {
@@ -129,18 +130,45 @@ export async function logoutAction(): Promise<void> {
   redirect("/login");
 }
 
-export async function forgotPasswordAction(
-  input: ForgotPasswordInput,
-): Promise<ActionResult> {
-  return forgotPasswordSchema.safeParse(input).success
-    ? NOT_CONNECTED
-    : INVALID;
+/**
+ * Emails a link to choose a new password. The answer is always the same, whether or not the address has an
+ * account, so this form can't be used to find out who is registered. Limited per address and per email.
+ */
+export async function forgotPasswordAction(input: ForgotPasswordInput): Promise<ActionResult> {
+  const parsed = forgotPasswordSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "Enter a valid email address." };
+
+  const ipKey = `forgot:ip:${await clientIp()}`;
+  const emailKey = `forgot:email:${parsed.data.email.toLowerCase()}`;
+  if ((await rateLimit.isBlocked(ipKey, LIMITS.forgotPerIp)) || (await rateLimit.isBlocked(emailKey, LIMITS.forgotPerEmail))) {
+    return { ok: false, error: TOO_MANY };
+  }
+  await Promise.all([rateLimit.record(ipKey), rateLimit.record(emailKey)]);
+
+  try {
+    await auth.api.requestPasswordReset({ body: { email: parsed.data.email, redirectTo: RESET_PATH } });
+  } catch {
+    // Same answer either way.
+  }
+  return { ok: true, message: "If an account exists for that email, a reset link is on its way. It works for an hour." };
 }
 
-export async function resetPasswordAction(
-  input: ResetPasswordInput,
-): Promise<ActionResult> {
-  return resetPasswordSchema.safeParse(input).success ? NOT_CONNECTED : INVALID;
+/** Sets a new password using the token from the emailed link. Signs the person out on every device. */
+export async function resetPasswordAction(input: ResetPasswordInput): Promise<ActionResult> {
+  const parsed = resetPasswordSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: parsed.error.issues[0]?.message ?? "Please check the form and try again." };
+
+  const ipKey = `reset:ip:${await clientIp()}`;
+  if (await rateLimit.isBlocked(ipKey, LIMITS.resetPerIp)) return { ok: false, error: TOO_MANY };
+  await rateLimit.record(ipKey);
+
+  try {
+    await auth.api.resetPassword({ body: { newPassword: parsed.data.password, token: parsed.data.token } });
+  } catch (error) {
+    // A used, expired or made-up token all look the same.
+    return { ok: false, error: error instanceof APIError && error.body?.code === "PASSWORD_TOO_SHORT" ? "Choose a password with at least 8 characters." : "This link isn't valid any more. Ask for a new one." };
+  }
+  redirect("/login?reset=1");
 }
 
 export async function googleAuthAction(

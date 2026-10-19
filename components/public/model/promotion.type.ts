@@ -19,6 +19,9 @@ export interface FilterOption {
 }
 
 export interface ExplorerCopy {
+  /** Shown when there is nothing at all yet (not when a filter hides everything). */
+  nothingTitle?: string;
+  nothingDescription?: string;
   emptyTitle: string;
   emptyDescription: string;
   resetLabel: string;

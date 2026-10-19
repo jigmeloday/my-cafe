@@ -58,4 +58,6 @@ export interface FollowedPlace {
   href: string;
   title: string;
   subtitle: string;
+  /** The business's logo, when it has one. */
+  imageUrl?: string;
 }

@@ -11,7 +11,6 @@ import { NotificationList } from "./components/notification-list";
 import { PreviewSection } from "./components/preview-section";
 import { SavedOffers } from "./components/saved-offers";
 import { OVERVIEW_COPY } from "./constant/profile.constant";
-import { WEEKEND_EVENTS } from "./constant/profile.data";
 import { getEngagement } from "./utils/engagement.server";
 import { getCompletion, getSummary } from "./utils/profile.utils";
 
@@ -66,13 +65,11 @@ export default async function OverviewPage() {
       >
         <PromotionGrid items={engagement.recommended.items} />
       </PreviewSection>
-      <PreviewSection
-        id="weekend"
-        title={OVERVIEW_COPY.weekendTitle}
-        href="/events"
-      >
-        <PromotionGrid items={WEEKEND_EVENTS} />
-      </PreviewSection>
+      {engagement.weekend.length > 0 && (
+        <PreviewSection id="weekend" title={OVERVIEW_COPY.weekendTitle} href="/events">
+          <PromotionGrid items={engagement.weekend} />
+        </PreviewSection>
+      )}
     </div>
   );
 }

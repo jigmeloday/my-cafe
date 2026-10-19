@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useAutoSwap } from "@/hooks/use-auto-swap";
 import { useScrollRow } from "@/hooks/use-scroll-row";
 
 import type { HeroSlideData } from "../model/home.type";
@@ -12,9 +13,10 @@ import { HeroSlide } from "./hero-slide";
 export function HeroCarousel({ slides }: { slides: HeroSlideData[] }) {
   const { ref, index, canPrev, canNext, scrollPrev, scrollNext } =
     useScrollRow<HTMLDivElement>();
+  const pause = useAutoSwap(ref, { count: slides.length });
 
   return (
-    <section aria-label="Featured" className="space-y-4">
+    <section aria-label="Featured" className="space-y-4" {...pause}>
       <div className="relative">
         <div
           ref={ref}

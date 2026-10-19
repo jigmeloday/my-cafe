@@ -1,3 +1,4 @@
+import { FEATURED_DAYS, featuredPrice } from "@/lib/featured";
 import {
   CTA_TYPES,
   PROMOTION_STATUSES,
@@ -100,7 +101,21 @@ export const NEW_PROMOTION: PromotionInput = {
   ctaType: "VIEW_OFFER",
   ctaUrl: "",
   photos: [],
+  featureDays: "0",
+  featureStart: "",
   status: "DRAFT",
+};
+
+/** "Not featured", "1 day · 100 coins", "3 days · 300 coins"... */
+export const FEATURE_OPTIONS = [
+  { value: "0", label: "Not featured" },
+  ...FEATURED_DAYS.map((d) => ({ value: d, label: `${d} ${d === "1" ? "day" : "days"} · ${featuredPrice(Number(d)).toLocaleString("en")} coins` })),
+];
+
+export const FEATURE_COPY = {
+  title: "Feature on the home page",
+  description: "Show this promotion in the Featured row on the home page. Paid on top of publishing.",
+  note: (slots: number) => `Only ${slots} promotions can be featured on any one day, so busy days sell out. The row shows a few at a time and rotates on every visit.`,
 };
 
 export const PUBLISH_COPY = {

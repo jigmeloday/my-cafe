@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { requireRole } from "@/lib/session";
 import { promotionService } from "@/services/promotion/promotion.service";
 import { walletService } from "@/services/wallet/wallet.service";
+import { featuredService } from "@/services/featured/featured.service";
 import { categoryService } from "@/services/category/category.service";
 
 import { FormPageHeader } from "../../components/form-page-header";
@@ -32,7 +33,7 @@ export default async function EditPromotionPage({
         title={PROMOTIONS_COPY.editTitle}
         subtitle={PROMOTIONS_COPY.editSubtitle}
       />
-      <PromotionForm id={id} balance={balance} initial={initial} categories={await categoryService.options()} />
+      <PromotionForm id={id} balance={balance} initial={initial} categories={await categoryService.options()} availability={await featuredService.availability()} bookings={await featuredService.forPromotion(user.id, id)} />
     </div>
   );
 }

@@ -10,7 +10,7 @@ export function filterReports(
     (r) =>
       (filter === "ALL" || r.status === filter) &&
       (!text ||
-        r.promotionTitle.toLowerCase().includes(text) ||
+        r.title.toLowerCase().includes(text) ||
         r.businessName.toLowerCase().includes(text)),
   );
 }

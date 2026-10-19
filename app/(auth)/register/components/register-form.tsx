@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { GoogleAuthButton } from "@/components/auth/google-auth-button";
 import { OrDivider } from "@/components/auth/or-divider";
 import { FormMessage } from "@/components/shared/form-message";
@@ -43,7 +45,15 @@ export function RegisterForm() {
           {pending ? "Creating account…" : REGISTER_COPY.submit}
         </Button>
         <p className="text-center text-xs text-muted-foreground">
-          {REGISTER_COPY.terms}
+          {REGISTER_COPY.termsPrefix}{" "}
+          <Link href={REGISTER_COPY.termsLink.href} target="_blank" className="font-medium text-foreground underline underline-offset-2">
+            {REGISTER_COPY.termsLink.label}
+          </Link>{" "}
+          and{" "}
+          <Link href={REGISTER_COPY.privacyLink.href} target="_blank" className="font-medium text-foreground underline underline-offset-2">
+            {REGISTER_COPY.privacyLink.label}
+          </Link>
+          .
         </p>
       </form>
       <OrDivider />

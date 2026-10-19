@@ -2,12 +2,13 @@ import Link from "next/link";
 
 import { SectionCard } from "@/components/business/section-card";
 import { cn } from "@/lib/utils";
+import type { Overview } from "@/services/admin/admin-overview.service";
 
 import { DASHBOARD_COPY } from "../constant/dashboard.constant";
 import { attentionItems } from "../utils/dashboard.utils";
 
-export function AttentionCard() {
-  const items = attentionItems();
+export function AttentionCard({ overview }: { overview: Overview }) {
+  const items = attentionItems(overview);
   const nothing = items.every((item) => item.count === 0);
 
   return (

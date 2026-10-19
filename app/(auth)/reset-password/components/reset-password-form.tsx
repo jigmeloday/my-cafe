@@ -9,11 +9,11 @@ import { resetPasswordAction } from "@/server/actions/auth.actions";
 
 import { RESET_COPY } from "../constant/reset-password.constant";
 
-export function ResetPasswordForm() {
+export function ResetPasswordForm({ token }: { token: string }) {
   const { form, submit, result, pending } = useActionForm(
     resetPasswordSchema,
     resetPasswordAction,
-    { password: "", confirmPassword: "" },
+    { token, password: "", confirmPassword: "" },
   );
   const {
     register,

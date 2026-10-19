@@ -2,6 +2,8 @@ import type { EmailContent } from "./templates";
 
 export interface EmailMessage extends EmailContent {
   to: string;
+  /** Where a reply goes, if not the sender address. Must already be a checked email address. */
+  replyTo?: string;
 }
 
 type Env = Record<string, string | undefined>;
@@ -23,6 +25,7 @@ export const buildResendPayload = (message: EmailMessage, from: string) => ({
   subject: message.subject,
   html: message.html,
   text: message.text,
+  ...(message.replyTo ? { reply_to: message.replyTo } : {}),
 });
 
 function printEmail(message: EmailMessage, reason: string) {

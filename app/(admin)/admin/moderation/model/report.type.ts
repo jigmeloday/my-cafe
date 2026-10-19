@@ -1,24 +1,7 @@
-import type { REPORT_DECISIONS, REPORT_STATUSES } from "@/lib/constants";
+import type { ReportItem } from "@/services/report/report.service";
 
-export type ReportStatus = (typeof REPORT_STATUSES)[number];
-export type ReportDecision = (typeof REPORT_DECISIONS)[number];
-export type ReportReason =
-  "MISLEADING" | "WRONG_PRICE" | "SPAM" | "OFFENSIVE" | "CLOSED";
+export type { ReportItem as Report };
 
-export interface Report {
-  id: string;
-  promotionTitle: string;
-  /** Public page: /promotions/{promotionSlug} */
-  promotionSlug: string;
-  businessName: string;
-  reason: ReportReason;
-  details: string;
-  /** How many people reported it. */
-  count: number;
-  /** "YYYY-MM-DDTHH:mm" */
-  firstReported: string;
-  status: ReportStatus;
-  decision?: ReportDecision;
-}
-
+export type ReportStatus = ReportItem["status"];
+export type ReportDecision = NonNullable<ReportItem["decision"]>;
 export type ReportFilter = ReportStatus | "ALL";

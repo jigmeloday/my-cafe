@@ -18,10 +18,26 @@ const securityHeaders = [
     : []),
 ];
 
+/**
+ * Identity documents get the strictest rules: shown on their own, able to run or load nothing, and never sent on
+ * as a referrer. These replace the general set (headers from here win over a route's own).
+ */
+const documentHeaders = [
+  { key: "X-Frame-Options", value: "DENY" },
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "Referrer-Policy", value: "no-referrer" },
+  { key: "Content-Security-Policy", value: "default-src 'none'; img-src 'self' data:; style-src 'unsafe-inline'; sandbox" },
+  { key: "Cache-Control", value: "private, no-store" },
+];
+
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
+    return [
+      { source: "/api/admin/kyc/:path*", headers: documentHeaders },
+      // Everything else gets the general set.
+      { source: "/((?!api/admin/kyc/).*)", headers: securityHeaders },
+    ];
   },
 };
 

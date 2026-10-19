@@ -1,9 +1,11 @@
 import {
   ChartColumn,
   LayoutDashboard,
+  Mail,
   Megaphone,
   Receipt,
   ShieldAlert,
+  ShieldCheck,
   Store,
   Tag,
   Users,
@@ -18,9 +20,11 @@ import {
 export const NAV_ICONS = {
   ChartColumn,
   LayoutDashboard,
+  Mail,
   Megaphone,
   Receipt,
   ShieldAlert,
+  ShieldCheck,
   Store,
   Tag,
   Users,

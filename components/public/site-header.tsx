@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+
 import { Container } from "@/components/shared/container";
 
 import { Brand } from "./brand";
@@ -13,7 +15,9 @@ export function SiteHeader() {
         <Brand />
         <MainNav className="order-3 flex w-full justify-center lg:order-0 lg:w-auto" />
         <div className="order-4 w-full lg:order-0 lg:min-w-0 lg:flex-1">
-          <SearchBar />
+          <Suspense fallback={<div className="mx-auto h-14 w-full max-w-2xl rounded-full border bg-surface" />}>
+            <SearchBar />
+          </Suspense>
         </div>
         <div className="order-2 ml-auto flex items-center gap-2 lg:order-0">
           <CreateAccountButton />
