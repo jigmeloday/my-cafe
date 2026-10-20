@@ -7,7 +7,7 @@ import {
   NEW_EMAIL_CAMPAIGN,
 } from "../constant/email-campaign.constant";
 
-export const metadata: Metadata = { title: "New campaign — kuzu business" };
+export const metadata: Metadata = { title: "New campaign — Nook business" };
 
 export default function NewCampaignPage() {
   return (

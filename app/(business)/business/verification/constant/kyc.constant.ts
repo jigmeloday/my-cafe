@@ -1,8 +1,8 @@
 export const KYC_COPY = {
   title: "Verification",
   subtitle: "Verified businesses show a Verified badge, so customers know you're real.",
-  privacy: "Only the kuzu review team can see these documents. We use them to check your business and for nothing else, and they are never shown on your page.",
-  consent: "I confirm these documents are mine, and I agree that kuzu may keep them to verify my business.",
+  privacy: "Only the Nook review team can see these documents. We use them to check your business and for nothing else, and they are never shown on your page.",
+  consent: "I confirm these documents are mine, and I agree that Nook may keep them to verify my business.",
   submit: "Send for review",
   noBusinessTitle: "Save your business profile first",
   noBusinessText: "We verify the business you've set up, so add its name and details first.",

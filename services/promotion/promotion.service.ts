@@ -116,7 +116,7 @@ export const promotionService = {
       if (id) {
         const before = await promotionRepository.findOwned(id, owner.id);
         if (!before) return NOT_FOUND;
-        if (before.removedAt) return { ok: false, error: "kuzu took this promotion down after a report, so it can't be changed or republished. Contact us if you think this is a mistake." };
+        if (before.removedAt) return { ok: false, error: "Nook took this promotion down after a report, so it can't be changed or republished. Contact us if you think this is a mistake." };
         // Going live costs coins, but editing something already live is free.
         const charge = input.status === "PUBLISHED" && before.status !== "PUBLISHED" ? publishCharge(input.title) : undefined;
         if (!(await promotionRepository.update(id, owner.id, data, charge, featured))) return NOT_FOUND;

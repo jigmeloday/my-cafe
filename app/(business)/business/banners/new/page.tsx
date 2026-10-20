@@ -10,7 +10,7 @@ import { walletService } from "@/services/wallet/wallet.service";
 import { BannerForm } from "../components/banner-form";
 import { BANNERS_COPY } from "../constant/banner.constant";
 
-export const metadata: Metadata = { title: "Create a banner — kuzu business" };
+export const metadata: Metadata = { title: "Create a banner — Nook business" };
 
 export default async function NewBannerPage() {
   const user = await requireRole("BUSINESS_OWNER");

@@ -14,7 +14,7 @@ export interface FaqTopic {
 
 export const HELP_COPY = {
   title: "Help centre",
-  lead: "Quick answers about using kuzu. Can't find yours? Get in touch and we'll help.",
+  lead: "Quick answers about using Nook. Can't find yours? Get in touch and we'll help.",
   searchLabel: "Search the help centre",
   searchPlaceholder: "Search, for example “coins” or “password”",
   nothingTitle: "No answers match that",
@@ -27,7 +27,7 @@ export const FAQ_TOPICS: FaqTopic[] = [
     id: "start",
     title: "Getting started",
     faqs: [
-      { q: "What is kuzu?", a: "kuzu helps you find deals, events and new places in Bhutan, and helps local businesses tell people about them. It is for discovery: you can't buy or book on kuzu." },
+      { q: "What is Nook?", a: "Nook helps you find deals, events and new places in Bhutan, and helps local businesses tell people about them. It is for discovery: you can't buy or book on Nook." },
       { q: "Do I need an account?", a: "No, you can browse and search without one. You need a free account to save promotions, follow places and report ads." },
       { q: "How do I save a promotion or follow a place?", a: "Press the heart on a promotion to save it, and the Follow button on a business page. Everything you saved and follow is in your profile." },
       { q: "How do I search?", a: "Use the search bar at the top. Type what you want, add a place such as Paro, and choose when: today, this weekend or this week." },
@@ -48,7 +48,7 @@ export const FAQ_TOPICS: FaqTopic[] = [
     id: "deals",
     title: "Deals and events",
     faqs: [
-      { q: "Can I buy or book on kuzu?", a: "No. kuzu shows what's on. You visit the business or contact them directly, so check the details with them first." },
+      { q: "Can I buy or book on Nook?", a: "No. Nook shows what's on. You visit the business or contact them directly, so check the details with them first." },
       { q: "What does “Popular”, “Featured” or “Sponsored” mean?", a: "Popular means a lot of people clicked it recently. Featured and Sponsored are paid places that businesses buy. They are shown in a random order so everyone gets a fair turn." },
       { q: "An offer looks wrong or misleading", a: "Please report it. Open the promotion, press Report, and tell us what's wrong. We review every report." },
     ],

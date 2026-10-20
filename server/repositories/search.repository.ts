@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { livePromotionWhere } from "./discovery.repository";
 
 const promoInclude = {
-  business: { select: { id: true, name: true, slug: true, town: true, dzongkhag: true, logoKey: true, hours: true, phone: true, website: true, addressLine1: true, status: true } },
+  business: { select: { id: true, name: true, slug: true, town: true, dzongkhag: true, logoKey: true, hours: true, phone: true, website: true, addressLine1: true, addressLine2: true, postalCode: true, status: true } },
   category: { select: { name: true } },
 } satisfies Prisma.PromotionInclude;
 

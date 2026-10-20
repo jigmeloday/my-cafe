@@ -5,6 +5,6 @@ export const LOGIN_COPY = {
   verified: "Your email is verified. Log in to continue.",
   passwordChanged: "Your password was changed. Log in with your new password.",
   forgot: "Forgot password?",
-  footerText: "New to kuzu?",
+  footerText: "New to Nook?",
   footerLink: { label: "Create account", href: "/register" },
 };

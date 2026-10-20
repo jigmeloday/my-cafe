@@ -20,7 +20,7 @@ export const ACCOUNT_TYPE_OPTIONS: AccountTypeOption[] = [
 ];
 
 export const REGISTER_COPY = {
-  title: "Welcome to kuzu",
+  title: "Welcome to Nook",
   description: "Create an account to get started.",
   submit: "Create account",
   termsPrefix: "By creating an account you agree to our",

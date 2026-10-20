@@ -5,7 +5,7 @@ import { Container } from "@/components/shared/container";
 import { Button } from "@/components/ui/button";
 import { REPORT_REASONS } from "@/lib/report-reasons";
 
-export const metadata: Metadata = { title: "Report an ad — kuzu" };
+export const metadata: Metadata = { title: "Report an ad — Nook" };
 
 export default function ReportHelpPage() {
   return (

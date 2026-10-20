@@ -140,7 +140,7 @@ export const kycService = {
       now,
       notice:
         decision === "APPROVED"
-          ? { userId: s.business.owner.id, title: "Your business is verified", description: "Thank you. Your business now shows the Verified badge on kuzu.", href: "/business/verification" }
+          ? { userId: s.business.owner.id, title: "Your business is verified", description: "Thank you. Your business now shows the Verified badge on Nook.", href: "/business/verification" }
           : { userId: s.business.owner.id, title: "Your verification needs changes", description: `We couldn't verify your business yet: ${note} You can send your documents again.`, href: "/business/verification" },
       // The audit line names the business, never the owner's ID details.
       audit: { actorId: admin.id, actorEmail: admin.email, action: decision === "APPROVED" ? "kyc.approve" : "kyc.reject", targetId: id, targetLabel: `Verification: ${s.business.name}` },

@@ -91,7 +91,7 @@ export const adminBusinessService = {
       from: b.status,
       to: "SUSPENDED",
       audit: entry(actor, id, b.name, "business.suspend"),
-      notice: { userId: b.owner.id, title: "Your business was suspended", description: `${b.name} is hidden from kuzu for now. Reason: ${reason} Contact us if you'd like to talk about it.`, href: "/business/dashboard" },
+      notice: { userId: b.owner.id, title: "Your business was suspended", description: `${b.name} is hidden from Nook for now. Reason: ${reason} Contact us if you'd like to talk about it.`, href: "/business/dashboard" },
     });
     return done ? { ok: true, message: `${b.name} is suspended and hidden from the public.` } : { ok: false, error: "Someone just changed this business. Refresh and try again." };
   },
@@ -107,7 +107,7 @@ export const adminBusinessService = {
       from: "SUSPENDED",
       to: b.kycSubmissions.length > 0 ? "VERIFIED" : "PENDING",
       audit: entry(actor, id, b.name, "business.reinstate"),
-      notice: { userId: b.owner.id, title: "Your business is back", description: `${b.name} is visible on kuzu again.`, href: "/business/dashboard" },
+      notice: { userId: b.owner.id, title: "Your business is back", description: `${b.name} is visible on Nook again.`, href: "/business/dashboard" },
     });
     return done ? { ok: true, message: `${b.name} is visible again.` } : { ok: false, error: "Someone just changed this business. Refresh and try again." };
   },
@@ -123,7 +123,7 @@ export const adminBusinessService = {
       from: "PENDING",
       to: "VERIFIED",
       audit: entry(actor, id, b.name, "business.verify"),
-      notice: { userId: b.owner.id, title: "Your business is verified", description: "Your business now shows the Verified badge on kuzu.", href: "/business/verification" },
+      notice: { userId: b.owner.id, title: "Your business is verified", description: "Your business now shows the Verified badge on Nook.", href: "/business/verification" },
     });
     return done ? { ok: true, message: `${b.name} is verified.` } : { ok: false, error: "Someone just changed this business. Refresh and try again." };
   },

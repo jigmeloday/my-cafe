@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+
+import { pageMetadata } from "@/lib/seo/metadata";
 import Link from "next/link";
 import { Mail, MapPin } from "lucide-react";
 
@@ -8,10 +10,7 @@ import { LEGAL } from "@/lib/legal";
 import { ContactForm } from "./components/contact-form";
 import { CONTACT_COPY } from "./constant/contact.constant";
 
-export const metadata: Metadata = {
-  title: "Contact us — kuzu",
-  description: "Get in touch with the kuzu team.",
-};
+export const metadata: Metadata = pageMetadata({ title: "Contact us", description: "Get in touch with the Nook team.", path: "/contact" });
 
 /** The address is a placeholder until the company fills it in: then show it as text, not a broken link. */
 const canEmail = !LEGAL.contactEmail.startsWith("[");

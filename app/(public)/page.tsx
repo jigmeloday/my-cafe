@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 
 import { Container } from "@/components/shared/container";
+import { JsonLd } from "@/components/seo/json-ld";
 import { Reveal } from "@/components/shared/reveal";
+import { pageMetadata } from "@/lib/seo/metadata";
+import { organizationSchema, websiteSchema } from "@/lib/seo/schema";
 import { discoveryService } from "@/services/discovery/discovery.service";
 
 import { CategoryChips } from "./home/components/category-chips";
@@ -11,10 +14,11 @@ import { HeroCarousel } from "./home/components/hero-carousel";
 import { OfferRow } from "./home/components/offer-row";
 import { HOME_SECTIONS } from "./home/constant/offers.constant";
 
-export const metadata: Metadata = {
-  title: "kuzu — Discover what's happening",
-  description: "Deals, events and new arrivals from local businesses in Bhutan.",
-};
+export const metadata: Metadata = pageMetadata({
+  title: "Discover what's happening in Bhutan",
+  description: "Deals, events and new arrivals from local businesses in Bhutan. Find what's on near you, save what you like and follow your favourite places.",
+  path: "/",
+});
 
 // New promotions appear as soon as they are published, so this page is built per request.
 export const dynamic = "force-dynamic";
@@ -25,6 +29,7 @@ export default async function HomePage() {
 
   return (
     <Container className="space-y-12 py-6 sm:space-y-16 sm:py-8">
+      <JsonLd data={[websiteSchema(), organizationSchema()]} />
       {categories.length > 0 && <CategoryChips categories={categories} />}
       {landing.hero.length > 0 && <HeroCarousel slides={landing.hero} />}
       {sections.map((section) => (

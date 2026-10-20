@@ -23,7 +23,7 @@ export function EmailPreview({
     <div className="overflow-hidden rounded-xl border bg-surface text-sm">
       <div className="space-y-0.5 border-b bg-muted/50 px-4 py-3">
         <p className="text-xs text-muted-foreground">
-          From {BUSINESS_SHELL.businessName} via kuzu
+          From {BUSINESS_SHELL.businessName} via Nook
         </p>
         <p className="font-semibold">{subject || "Your subject line"}</p>
         {previewText && (

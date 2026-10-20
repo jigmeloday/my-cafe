@@ -6,7 +6,7 @@ import { analyticsService } from "@/services/analytics/analytics.service";
 import { AnalyticsExplorer } from "./components/analytics-explorer";
 import { ANALYTICS_COPY } from "./constant/analytics.constant";
 
-export const metadata: Metadata = { title: "Analytics — kuzu business" };
+export const metadata: Metadata = { title: "Analytics — Nook business" };
 
 export default async function AnalyticsPage() {
   const user = await requireRole("BUSINESS_OWNER");

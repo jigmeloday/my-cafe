@@ -10,7 +10,7 @@ import { kycService } from "@/services/kyc/kyc.service";
 
 import { ReviewPanel } from "../components/review-panel";
 
-export const metadata: Metadata = { title: "Review verification — kuzu admin" };
+export const metadata: Metadata = { title: "Review verification — Nook admin" };
 // Contains identity details, so this page is never cached.
 export const dynamic = "force-dynamic";
 

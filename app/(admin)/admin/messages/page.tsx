@@ -8,7 +8,7 @@ import { contactService } from "@/services/contact/contact.service";
 
 import { MessageCard } from "./components/message-card";
 
-export const metadata: Metadata = { title: "Messages — kuzu admin" };
+export const metadata: Metadata = { title: "Messages — Nook admin" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminMessagesPage({ searchParams }: PageProps<"/admin/messages">) {

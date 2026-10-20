@@ -8,7 +8,7 @@ import { PromotionsList } from "./components/promotions-list";
 import { StatsGrid } from "./components/stats-grid";
 import { WalletCard } from "./components/wallet-card";
 
-export const metadata: Metadata = { title: "Overview — kuzu business" };
+export const metadata: Metadata = { title: "Overview — Nook business" };
 
 export default function DashboardPage() {
   return (

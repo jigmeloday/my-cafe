@@ -7,7 +7,7 @@ import { AddressForm } from "../components/address-form";
 import { ContactForm } from "../components/contact-form";
 import { PROFILE_COPY } from "../constant/profile.constant";
 
-export const metadata: Metadata = { title: "Contact and address — kuzu" };
+export const metadata: Metadata = { title: "Contact and address — Nook" };
 
 export default async function ContactandaddressPage() {
   const profile = await getCurrentProfile();

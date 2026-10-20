@@ -144,7 +144,7 @@ Public: useful, curious, modern, local, visual, trustworthy — lead with "Disco
 ## Demo data
 
 - `npm run seed:demo` fills the database with fictional demo content (9 businesses, ~30 promotions and events, 14 customers, wallets with coin history, a month and a half of views/clicks, follows, saves, notifications). Content lives in `scripts/seed-demo.data.mjs`, the loader in `scripts/seed-demo.mjs`. Dates are relative to today, so it always looks current.
-- Everything it creates is labelled demo: user ids start with `demo-`, emails are `demo-owner-N@demo.kuzu.test` / `demo-customer-N@demo.kuzu.test`, all with the password `Demo-pass-123`. It only ever touches those rows. Running it again replaces them; `npm run seed:demo -- --reset` removes them. It refuses to run when `NODE_ENV=production` unless `--force` is passed.
+- Everything it creates is labelled demo: user ids start with `demo-`, emails are `demo-owner-N@demo.nook.test` / `demo-customer-N@demo.nook.test`, all with the password `Demo-pass-123`. It only ever touches those rows. Running it again replaces them; `npm run seed:demo -- --reset` removes them. It refuses to run when `NODE_ENV=production` unless `--force` is passed.
 
 ## Banners (live on the database, separate from promotions)
 
@@ -171,8 +171,8 @@ Public: useful, curious, modern, local, visual, trustworthy — lead with "Disco
 
 - **Reporting:** a signed-in customer (or admin) can report a live promotion or event (Report button on its page) or a running sponsored banner ("Report ad" in the banner card), choosing a reason (`lib/report-reasons.ts`) and an optional note. Signed-out visitors are sent to log in; business owners can't report. One report per person per ad (database unique), 10 reports per hour per person (`services/report/report.service.ts`). Drafts, ended, removed and not-running ads can't be reported. `/report` explains how.
 - **Admin queue:** `/admin/moderation` shows one card per ad (promotion or banner) with every open report grouped: count, most common reason, latest note. Decisions (`resolveReportAction`, admin only): **Dismiss**, **Warn business** (owner gets a notice, ad stays up) or **Remove ad** (promotion: `removedAt` set and status ENDED; banner: `removedAt` set; no coin refund). Every decision resolves all open reports for that ad in one transaction with the audit log (`report.dismiss|warn|remove`), and two admins acting at once can't both succeed.
-- **Removed ads** disappear from the whole public site (`livePromotionWhere` and `bannerRepository.active` exclude `removedAt`), stop counting views and clicks, and the owner can't edit or republish a removed promotion; the owner's list shows "Removed by kuzu".
-- **Owner notices:** warnings and removals are `Notification` rows for the owner, shown on the business Overview as "Messages from kuzu" for 30 days. The admin overview's "Open reports" count is real; the rest of the admin overview is still sample data.
+- **Removed ads** disappear from the whole public site (`livePromotionWhere` and `bannerRepository.active` exclude `removedAt`), stop counting views and clicks, and the owner can't edit or republish a removed promotion; the owner's list shows "Removed by Nook".
+- **Owner notices:** warnings and removals are `Notification` rows for the owner, shown on the business Overview as "Messages from Nook" for 30 days. The admin overview's "Open reports" count is real; the rest of the admin overview is still sample data.
 
 ## Admin overview (live on the database)
 
@@ -220,3 +220,12 @@ Public: useful, curious, modern, local, visual, trustworthy — lead with "Disco
 - **Browse by category:** `/categories` (all with live counts) and `/categories/<slug>` (deals, events, places) from the admin-managed categories; a "Browse by category" row on the home page. Slugs drop accents ("Cafés" is `cafes`, `lib/slug.ts`).
 - Empty photo spots show a quiet grey block with a picture icon (never "[Photo]" text); detail pages only show a gallery when there are photos.
 - **Still left on purpose:** buying coins online (payment seam in `services/payment`), business email campaigns and ad campaigns (parked in `_r2-*`), Google sign-in (stub), the developer-only `/playground`.
+
+## SEO
+
+- **Helpers** live in `lib/seo/`: `site.ts` (`SEO`, `siteUrl()`, `absoluteUrl()`, `clip()`), `metadata.ts` (`pageMetadata()` gives title, description, canonical and share card; `NO_INDEX` for private areas), `schema.ts` (schema.org builders) and `detail.ts`. `components/seo/` has `JsonLd` and `DetailJsonLd`.
+- **Every public page** sets its metadata with `pageMetadata({ title, description, path })`. Titles already end in " — Nook", so there is no title template: don't add one.
+- **Private areas** (admin, business, users, auth layouts) export `NO_INDEX`. `/search` is `noindex, follow`. A not-found detail page also returns `NO_INDEX`.
+- **Structured data:** home has WebSite (with search box) and Organization; deals are an Offer, events an Event, businesses a LocalBusiness; detail pages also carry a BreadcrumbList. The facts come from `DetailData.seo` and `BusinessProfile.seo`.
+- **`app/robots.ts`, `app/sitemap.ts`** (live promotions, visible businesses and categories, built per request), `app/manifest.ts`, `app/opengraph-image.tsx` (default share card). `robots` uses `/business/` and `/business$` so public `/businesses/…` stays open, and allows `/api/media/` so images can be read.
+- **Production needs `NEXT_PUBLIC_SITE_URL`** set to the real address, or canonical links, the sitemap and share cards use the local one.

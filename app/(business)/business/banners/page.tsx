@@ -10,7 +10,7 @@ import { bannerService } from "@/services/banner/banner.service";
 import { BannersTable } from "./components/banners-table";
 import { BANNERS_COPY } from "./constant/banner.constant";
 
-export const metadata: Metadata = { title: "Banners — kuzu business" };
+export const metadata: Metadata = { title: "Banners — Nook business" };
 
 export default async function BannersPage() {
   const user = await requireRole("BUSINESS_OWNER");

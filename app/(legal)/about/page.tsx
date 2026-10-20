@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+
+import { pageMetadata } from "@/lib/seo/metadata";
 import Link from "next/link";
 
 import { Container } from "@/components/shared/container";
@@ -9,10 +11,7 @@ import { AboutStats } from "./components/about-stats";
 import { AboutSteps } from "./components/about-steps";
 import { ABOUT_COPY } from "./constant/about.constant";
 
-export const metadata: Metadata = {
-  title: "About — kuzu",
-  description: "kuzu helps people in Bhutan find deals, events and new places, and helps local businesses tell them about it.",
-};
+export const metadata: Metadata = pageMetadata({ title: "About", description: "Nook helps people in Bhutan find deals, events and new places, and helps local businesses tell them about it.", path: "/about" });
 
 // The totals change as businesses join, so this page is built per request.
 export const dynamic = "force-dynamic";

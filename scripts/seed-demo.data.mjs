@@ -2,7 +2,7 @@
 // data always looks current: "ends today", "this weekend" and so on.
 
 export const DEMO_PASSWORD = "Demo-pass-123";
-export const DEMO_EMAIL_DOMAIN = "demo.kuzu.test";
+export const DEMO_EMAIL_DOMAIN = "demo.nook.test";
 
 export const CATEGORIES = ["Festival", "Food", "Cafés", "Fashion", "Phones", "Stays", "Wellness", "Events", "Kids", "Home", "Services"];
 

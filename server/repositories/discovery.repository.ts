@@ -2,7 +2,7 @@ import type { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
 
 const withBusiness = {
-  business: { select: { id: true, name: true, slug: true, town: true, dzongkhag: true, logoKey: true, hours: true, phone: true, website: true, addressLine1: true, status: true } },
+  business: { select: { id: true, name: true, slug: true, town: true, dzongkhag: true, logoKey: true, hours: true, phone: true, website: true, addressLine1: true, addressLine2: true, postalCode: true, status: true } },
   category: { select: { name: true } },
 } satisfies Prisma.PromotionInclude;
 
@@ -20,6 +20,15 @@ export const livePromotionWhere = (today: Date): Prisma.PromotionWhereInput => (
 });
 
 export const discoveryRepository = {
+  /** Every address a search engine may list: live promotions and visible businesses. */
+  async sitemapRows(today: Date) {
+    const [promotions, businesses] = await Promise.all([
+      db.promotion.findMany({ where: livePromotionWhere(today), select: { slug: true, type: true, updatedAt: true }, orderBy: { updatedAt: "desc" }, take: 5000 }),
+      db.business.findMany({ where: { status: { not: "SUSPENDED" }, owner: { status: "ACTIVE" } }, select: { slug: true, updatedAt: true }, orderBy: { updatedAt: "desc" }, take: 5000 }),
+    ]);
+    return { promotions, businesses };
+  },
+
   livePromotions: (today: Date, extra: Prisma.PromotionWhereInput, take: number, orderBy: Prisma.PromotionOrderByWithRelationInput[]) =>
     db.promotion.findMany({ where: { AND: [livePromotionWhere(today), extra] }, include: withBusiness, orderBy, take }),
 
@@ -77,7 +86,7 @@ export const discoveryRepository = {
       },
     }),
 
-  /** Totals for the About page: what visitors can actually find on kuzu today. */
+  /** Totals for the About page: what visitors can actually find on Nook today. */
   async siteCounts(today: Date) {
     const live = livePromotionWhere(today);
     const [businesses, verified, deals, events] = await Promise.all([

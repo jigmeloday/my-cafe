@@ -26,7 +26,7 @@ export interface Role {
  *   team: "Operations",
  *   location: "Thimphu",
  *   type: "Full-time",
- *   summary: "Help businesses get the most out of kuzu.",
+ *   summary: "Help businesses get the most out of Nook.",
  *   doing: ["Welcome new businesses and help them set up", "Review reports and verification requests"],
  *   looking: ["Clear, friendly writing in English and Dzongkha", "Calm judgement when things are unclear"],
  * }

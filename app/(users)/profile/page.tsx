@@ -14,7 +14,7 @@ import { OVERVIEW_COPY } from "./constant/profile.constant";
 import { getEngagement } from "./utils/engagement.server";
 import { getCompletion, getSummary } from "./utils/profile.utils";
 
-export const metadata: Metadata = { title: "Overview — kuzu" };
+export const metadata: Metadata = { title: "Overview — Nook" };
 
 export default async function OverviewPage() {
   const profile = await getCurrentProfile();

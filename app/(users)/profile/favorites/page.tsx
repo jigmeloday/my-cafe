@@ -7,7 +7,7 @@ import { SavedOffers } from "../components/saved-offers";
 import { ProfileSection } from "../components/profile-section";
 import { PROFILE_COPY } from "../constant/profile.constant";
 
-export const metadata: Metadata = { title: "Favorites — kuzu" };
+export const metadata: Metadata = { title: "Favorites — Nook" };
 
 export default async function FavoritesPage() {
   // The layout checks this too, but a page must not rely on that.

@@ -1,7 +1,14 @@
+import type { Metadata } from "next";
+
+import { NO_INDEX } from "@/lib/seo/metadata";
 import { ADMIN_NAV } from "@/components/admin/constant/admin-nav.constant";
 import { AdminHeader } from "@/components/admin/header";
 import { guardArea } from "@/lib/session";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
+
+
+// Accounts and dashboards are private, so search engines are asked to leave them out.
+export const metadata: Metadata = NO_INDEX;
 
 export default async function AdminLayout({
   children,

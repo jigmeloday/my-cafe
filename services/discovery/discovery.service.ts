@@ -148,6 +148,15 @@ function buildDetail(p: LivePromotion, related: LivePromotion[], today: Date, no
       cta: p.ctaType === "VISIT_WEBSITE" && p.ctaUrl ? { label: CTA_TYPE_LABELS.VISIT_WEBSITE, href: p.ctaUrl } : p.ctaType === "CONTACT_BUSINESS" && b.phone ? { label: CTA_TYPE_LABELS.CONTACT_BUSINESS, href: `tel:${b.phone.replace(/\s/g, "")}` } : undefined,
       shopLines: lines,
       shopLogo: b.logoKey ? mediaUrl(b.logoKey) : undefined,
+      seo: {
+        description: p.description || `${p.title} at ${b.name}${b.town ? `, ${b.town}` : ""}.`,
+        startsAt: p.startsAt?.toISOString().slice(0, 10),
+        endsAt: p.endsAt?.toISOString().slice(0, 10),
+        place: where,
+        street: [b.addressLine1, b.addressLine2].filter(Boolean).join(", ") || undefined,
+        town: b.town || undefined,
+        dzongkhag: b.dzongkhag || undefined,
+      },
     };
 }
 
@@ -249,6 +258,12 @@ export interface CategoryPage {
 }
 
 export const discoveryService = {
+  /** Everything a search engine may list, for the sitemap. */
+  async sitemap(now = new Date()) {
+    const [rows, categories] = await Promise.all([repo.sitemapRows(bhutanToday(now)), this.categories(now)]);
+    return { ...rows, categories };
+  },
+
   /** Categories that have something live in them, most to least, for browsing. */
   async categories(now = new Date()): Promise<CategoryLink[]> {
     const rows = await repo.categoriesWithCounts(bhutanToday(now));
@@ -392,7 +407,7 @@ export const discoveryService = {
     };
   },
 
-  /** How much there is to find on kuzu right now, for the About page. */
+  /** How much there is to find on Nook right now, for the About page. */
   siteStats: (now = new Date()) => repo.siteCounts(bhutanToday(now)),
 
   /** Every live deal (anything but an event), tagged for the Deals page filters. */

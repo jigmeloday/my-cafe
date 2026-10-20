@@ -1,7 +1,14 @@
+import type { Metadata } from "next";
+
+import { NO_INDEX } from "@/lib/seo/metadata";
 import { BusinessHeader } from "@/components/business/header";
 import { BUSINESS_NAV } from "@/components/business/constant/business-nav.constant";
 import { guardArea } from "@/lib/session";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
+
+
+// Accounts and dashboards are private, so search engines are asked to leave them out.
+export const metadata: Metadata = NO_INDEX;
 
 export default async function BusinessLayout({
   children,

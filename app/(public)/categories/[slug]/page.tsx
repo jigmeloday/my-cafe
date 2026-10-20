@@ -7,6 +7,7 @@ import { PromotionCard } from "@/components/public/promotion-card";
 import { PROMOTION_GRID } from "@/components/public/constant/promotion.constant";
 import { Container } from "@/components/shared/container";
 import { EmptyState } from "@/components/shared/empty-state";
+import { NO_INDEX, pageMetadata } from "@/lib/seo/metadata";
 import { discoveryService } from "@/services/discovery/discovery.service";
 
 // New promotions appear as soon as they are published, so this page is built per request.
@@ -15,7 +16,9 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata({ params }: PageProps<"/categories/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const page = await discoveryService.categoryPage(slug);
-  return { title: page ? `${page.name} — kuzu` : "Category not found — kuzu" };
+  return page
+    ? pageMetadata({ title: `${page.name} in Bhutan`, description: `Deals, events and places in ${page.name} from local businesses in Bhutan.`, path: `/categories/${slug}` })
+    : { title: "Category not found — Nook", ...NO_INDEX };
 }
 
 const GROUPS = [

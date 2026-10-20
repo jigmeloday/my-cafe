@@ -1,15 +1,13 @@
 import type { Metadata } from "next";
 
 import { PromotionExplorer } from "@/components/public/promotion-explorer";
+import { pageMetadata } from "@/lib/seo/metadata";
 import { Container } from "@/components/shared/container";
 import { discoveryService } from "@/services/discovery/discovery.service";
 
 import { EVENT_FILTERS, EVENTS_COPY } from "./constant/events.constant";
 
-export const metadata: Metadata = {
-  title: `${EVENTS_COPY.title} — kuzu`,
-  description: EVENTS_COPY.description,
-};
+export const metadata: Metadata = pageMetadata({ title: EVENTS_COPY.title, description: EVENTS_COPY.description, path: "/events" });
 
 // New promotions appear as soon as they are published, so this page is built per request.
 export const dynamic = "force-dynamic";

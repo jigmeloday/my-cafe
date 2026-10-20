@@ -27,7 +27,7 @@ export const SEARCH_DELAY_MS = 400;
 
 export const BUSINESSES_COPY = {
   title: "Businesses",
-  subtitle: "Check new businesses and keep kuzu trustworthy.",
+  subtitle: "Check new businesses and keep Nook trustworthy.",
   searchPlaceholder: "Search by business, owner, email or town",
   searchHint: "Try several words, e.g. \"druk pizza\".",
   emptyTitle: "No businesses match",

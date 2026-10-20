@@ -9,23 +9,23 @@ const { company, contactEmail } = LEGAL;
 export const TERMS: LegalDocument = {
   title: "Terms and Conditions",
   intro:
-    "These are the rules for using kuzu. We have tried to write them in plain words. By creating an account or using kuzu you agree to them, so please read them.",
+    "These are the rules for using Nook. We have tried to write them in plain words. By creating an account or using Nook you agree to them, so please read them.",
   sections: [
     {
       id: "about",
-      title: "About kuzu",
+      title: "About Nook",
       blocks: [
-        { p: `kuzu is a website run by ${company} ("kuzu", "we", "us"). It helps people in Bhutan find deals, events and new places, and it helps businesses tell people about them.` },
-        { p: "kuzu is for discovery only. You can't buy, sell or book anything on kuzu. Any deal you take up is between you and the business." },
+        { p: `Nook is a website run by ${company} ("Nook", "we", "us"). It helps people in Bhutan find deals, events and new places, and it helps businesses tell people about them.` },
+        { p: "Nook is for discovery only. You can't buy, sell or book anything on Nook. Any deal you take up is between you and the business." },
       ],
     },
     {
       id: "using",
-      title: "Using kuzu",
+      title: "Using Nook",
       blocks: [
         { p: `You must be at least ${LEGAL.minAge} years old to have an account, or have a parent or guardian's permission. Business accounts must be opened by someone who is allowed to act for the business.` },
         { p: "You may browse the public pages without an account. You need an account to save promotions, follow places, report ads or run a business page." },
-        { p: "You agree to use kuzu lawfully and to follow these terms and our Privacy Policy." },
+        { p: "You agree to use Nook lawfully and to follow these terms and our Privacy Policy." },
       ],
     },
     {
@@ -53,14 +53,14 @@ export const TERMS: LegalDocument = {
       id: "businesses",
       title: "For businesses",
       blocks: [
-        { p: "If you post on kuzu you promise that:" },
+        { p: "If you post on Nook you promise that:" },
         { ul: [
           "what you post is true, not misleading, and clear about price, dates and conditions;",
           "you will honour the offers you publish while they are live, and end them when they are over;",
           "you own, or are allowed to use, the photos, names and text you upload;",
           "you follow the laws of Bhutan, including those on advertising, consumer protection and the goods or services you offer.",
         ] },
-        { p: "You can choose to verify your business by sending your ID and trade licence. Being verified shows a Verified badge. It means we checked the documents you sent. It is not a promise about the quality of your business, and it does not mean kuzu recommends you." },
+        { p: "You can choose to verify your business by sending your ID and trade licence. Being verified shows a Verified badge. It means we checked the documents you sent. It is not a promise about the quality of your business, and it does not mean Nook recommends you." },
       ],
     },
     {
@@ -83,7 +83,7 @@ export const TERMS: LegalDocument = {
       id: "content",
       title: "What you post",
       blocks: [
-        { p: "You keep ownership of what you post. You give us permission to store it, show it on kuzu and in search, and make copies as needed to run the service. This permission ends when you delete the content, except for copies that we must keep for a short time for security or the law." },
+        { p: "You keep ownership of what you post. You give us permission to store it, show it on Nook and in search, and make copies as needed to run the service. This permission ends when you delete the content, except for copies that we must keep for a short time for security or the law." },
         { p: "You must not post anything that:" },
         { ul: [
           "is false, misleading, or a scam;",
@@ -107,11 +107,11 @@ export const TERMS: LegalDocument = {
       title: "Things you must not do",
       blocks: [
         { ul: [
-          "Try to break into kuzu, test its security without our written permission, or get around its limits and protections.",
-          "Use bots, scrapers or other tools to copy large parts of kuzu.",
+          "Try to break into Nook, test its security without our written permission, or get around its limits and protections.",
+          "Use bots, scrapers or other tools to copy large parts of Nook.",
           "Upload viruses or anything meant to harm the service or other people.",
           "Pretend to be someone else, or fake a business or an identity document.",
-          "Use kuzu to send unwanted messages.",
+          "Use Nook to send unwanted messages.",
         ] },
       ],
     },
@@ -119,26 +119,26 @@ export const TERMS: LegalDocument = {
       id: "suspension",
       title: "Suspension and ending",
       blocks: [
-        { p: "We may suspend or close an account, or remove content, if you break these terms, if the law requires it, or to protect other people. Where we can, we will tell you why. You can stop using kuzu at any time." },
+        { p: "We may suspend or close an account, or remove content, if you break these terms, if the law requires it, or to protect other people. Where we can, we will tell you why. You can stop using Nook at any time." },
       ],
     },
     {
       id: "links",
       title: "Other websites",
-      blocks: [{ p: "kuzu may link to websites run by businesses or others. We don't control them and are not responsible for them." }],
+      blocks: [{ p: "Nook may link to websites run by businesses or others. We don't control them and are not responsible for them." }],
     },
     {
       id: "liability",
       title: "Our responsibility",
       blocks: [
-        { p: "We work to keep kuzu running and accurate, but we provide it \"as it is\". It may sometimes be unavailable or contain mistakes." },
-        { p: "To the extent the law allows, kuzu is not responsible for what businesses post, for deals you take up with them, or for losses that come from using the service. Nothing in these terms removes any right you have under the law that can't be removed." },
+        { p: "We work to keep Nook running and accurate, but we provide it \"as it is\". It may sometimes be unavailable or contain mistakes." },
+        { p: "To the extent the law allows, Nook is not responsible for what businesses post, for deals you take up with them, or for losses that come from using the service. Nothing in these terms removes any right you have under the law that can't be removed." },
       ],
     },
     {
       id: "changes",
       title: "Changes to these terms",
-      blocks: [{ p: "We may update these terms. The date at the top shows when they last changed. If a change is important we will tell you, for example by email or on the site. If you keep using kuzu after a change, you accept the new terms." }],
+      blocks: [{ p: "We may update these terms. The date at the top shows when they last changed. If a change is important we will tell you, for example by email or on the site. If you keep using Nook after a change, you accept the new terms." }],
     },
     {
       id: "law",

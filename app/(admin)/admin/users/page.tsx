@@ -12,7 +12,7 @@ import { UsersToolbar } from "./components/users-toolbar";
 import { USERS_COPY } from "./constant/user.constant";
 import { parseUserQuery, usersHref } from "./utils/user-url.utils";
 
-export const metadata: Metadata = { title: "Users — kuzu admin" };
+export const metadata: Metadata = { title: "Users — Nook admin" };
 
 export default async function AdminUsersPage({ searchParams }: PageProps<"/admin/users">) {
   // The layout also checks this, but a page must not rely on that: it runs its own query.

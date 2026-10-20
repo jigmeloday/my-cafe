@@ -64,7 +64,7 @@ enum KycStatus {
   REJECTED
 }
 
-/// Whether someone at kuzu has dealt with a message from the Contact page.
+/// Whether someone at Nook has dealt with a message from the Contact page.
 enum MessageStatus {
   OPEN
   DONE

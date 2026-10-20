@@ -9,7 +9,7 @@ import { getOwnBusiness } from "@/services/business/own-business";
 import { BusinessProfileView } from "@/app/(public)/businesses/components/business-profile-view";
 import { getBusinessProfile } from "@/app/(public)/businesses/utils/business.server";
 
-export const metadata: Metadata = { title: "Preview your page — kuzu business" };
+export const metadata: Metadata = { title: "Preview your page — Nook business" };
 
 /** How your public page looks to customers, shown inside the dashboard (business owners don't browse the public site). */
 export default async function PreviewPage() {

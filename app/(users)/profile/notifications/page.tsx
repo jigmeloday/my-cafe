@@ -7,7 +7,7 @@ import { NotificationList } from "../components/notification-list";
 import { ProfileSection } from "../components/profile-section";
 import { PROFILE_COPY } from "../constant/profile.constant";
 
-export const metadata: Metadata = { title: "Notifications — kuzu" };
+export const metadata: Metadata = { title: "Notifications — Nook" };
 
 export default async function NotificationsPage() {
   // The layout checks this too, but a page must not rely on that.

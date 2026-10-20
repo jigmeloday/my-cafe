@@ -12,7 +12,7 @@ export const BANNERS_COPY = {
   newSubtitle: "Add an image and a headline, choose where it leads and how long it runs.",
   back: "Banners",
   emptyTitle: "No banners yet",
-  emptyDescription: "Create your first banner to be seen by everyone who opens kuzu.",
+  emptyDescription: "Create your first banner to be seen by everyone who opens Nook.",
   submit: "Pay & create banner",
   imageHint: "Wide, about 1600 × 600. JPG, PNG or WebP, up to 5 MB.",
   businessPage: "My business page",

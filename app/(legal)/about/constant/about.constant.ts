@@ -8,16 +8,16 @@ export interface AboutStep {
 
 export const ABOUT_COPY = {
   title: "Find what's on in Bhutan",
-  lead: "kuzu is where people discover deals, events and new places near them, and where local businesses tell them about it.",
+  lead: "Nook is where people discover deals, events and new places near them, and where local businesses tell them about it.",
   story: [
     "Good things happen every day in Thimphu, Paro, Punakha and beyond: a new café opens, a weaver has a sale, a festival is coming. Most of it is shared on notice boards and by word of mouth, so a lot of people miss it.",
-    "kuzu puts it all in one place. People can look around, save what they like and follow the places they care about. Businesses of every size can reach them, for free to start with.",
+    "Nook puts it all in one place. People can look around, save what they like and follow the places they care about. Businesses of every size can reach them, for free to start with.",
   ],
   customersTitle: "For people looking around",
   customers: [
     { icon: Search, title: "Look around", text: "Browse deals, events and new places, or search by what, where and when." },
     { icon: Heart, title: "Save and follow", text: "Save promotions you like and follow places, so you don't miss what's next." },
-    { icon: CalendarDays, title: "Go and enjoy", text: "Check the details, then visit. kuzu is for discovery: deals are made with the business directly." },
+    { icon: CalendarDays, title: "Go and enjoy", text: "Check the details, then visit. Nook is for discovery: deals are made with the business directly." },
   ] satisfies AboutStep[],
   businessesTitle: "For businesses",
   businesses: [
@@ -35,7 +35,7 @@ export const ABOUT_COPY = {
     "Your information is yours. We don't sell it, and businesses only see totals, never who you are.",
     "Plain and simple. No hidden fees: you see the price in coins before you pay.",
   ],
-  statsTitle: "kuzu today",
+  statsTitle: "Nook today",
   ctaTitle: "Come and have a look",
   contactTitle: "Get in touch",
 };

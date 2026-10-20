@@ -6,7 +6,7 @@ import { categoryService } from "@/services/category/category.service";
 import { CategoryManager } from "./components/category-manager";
 import { CATEGORIES_COPY } from "./constant/category.constant";
 
-export const metadata: Metadata = { title: "Categories — kuzu admin" };
+export const metadata: Metadata = { title: "Categories — Nook admin" };
 
 export default async function AdminCategoriesPage() {
   await requireRole("ADMIN");

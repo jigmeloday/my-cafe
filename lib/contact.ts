@@ -1,6 +1,6 @@
-/** What a message to kuzu can be about. Shared by the Contact form and the admin inbox. */
+/** What a message to Nook can be about. Shared by the Contact form and the admin inbox. */
 export const CONTACT_TOPICS = [
-  { id: "question", label: "A question about kuzu", text: "How something works, or an idea for making it better." },
+  { id: "question", label: "A question about Nook", text: "How something works, or an idea for making it better." },
   { id: "business", label: "My business account or coins", text: "Adding coins, a banner, a featured place, or an account problem." },
   { id: "verification", label: "Verification", text: "Your documents, a rejected request, or your Verified badge." },
   { id: "account", label: "My account", text: "Logging in, a suspended account, or a forgotten password." },

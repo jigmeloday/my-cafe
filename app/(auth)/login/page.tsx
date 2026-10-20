@@ -7,7 +7,7 @@ import { guardArea } from "@/lib/session";
 import { LoginForm } from "./components/login-form";
 import { LOGIN_COPY } from "./constant/login.constant";
 
-export const metadata: Metadata = { title: "Log in — kuzu" };
+export const metadata: Metadata = { title: "Log in — Nook" };
 
 export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   // Already signed in: go to your own area instead.

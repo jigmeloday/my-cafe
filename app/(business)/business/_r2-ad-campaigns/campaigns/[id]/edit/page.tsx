@@ -7,7 +7,7 @@ import { CAMPAIGNS_COPY } from "../../constant/campaign.constant";
 import { findCampaign } from "../../constant/campaigns.data";
 import { toFormValues } from "../../utils/campaign.utils";
 
-export const metadata: Metadata = { title: "Edit campaign — kuzu business" };
+export const metadata: Metadata = { title: "Edit campaign — Nook business" };
 
 export default async function EditCampaignPage({
   params,

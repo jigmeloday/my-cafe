@@ -9,7 +9,7 @@ import { RecentBusinesses } from "./components/recent-businesses";
 import { StatsGrid } from "./components/stats-grid";
 import { DASHBOARD_COPY } from "./constant/dashboard.constant";
 
-export const metadata: Metadata = { title: "Overview — kuzu admin" };
+export const metadata: Metadata = { title: "Overview — Nook admin" };
 
 export default async function AdminDashboardPage() {
   // The layout checks this too, but a page must not rely on that.

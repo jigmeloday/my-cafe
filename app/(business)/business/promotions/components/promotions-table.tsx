@@ -67,7 +67,7 @@ export function PromotionsTable({ items, onResult }: PromotionsTableProps) {
               </td>
               <td className="px-4 py-3">
                 {item.removed ? (
-                  <StatusBadge tone="danger">Removed by kuzu</StatusBadge>
+                  <StatusBadge tone="danger">Removed by Nook</StatusBadge>
                 ) : (
                   <StatusBadge tone={STATUS_TONES[item.status]}>
                     {STATUS_LABELS[item.status]}

@@ -10,7 +10,7 @@ import { RecentActivity } from "./components/recent-activity";
 import { WALLET_COPY } from "./constant/wallet.constant";
 import { recentTransactions } from "./utils/wallet.utils";
 
-export const metadata: Metadata = { title: "Wallet — kuzu business" };
+export const metadata: Metadata = { title: "Wallet — Nook business" };
 
 export default async function WalletPage() {
   const user = await requireRole("BUSINESS_OWNER");

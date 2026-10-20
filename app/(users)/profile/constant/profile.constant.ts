@@ -72,7 +72,7 @@ export const PROFILE_COPY = {
   personalDescription: "Used to personalise your account and birthday offers.",
   contactTitle: "Contact details",
   contactDescription:
-    "How places and kuzu can reach you. Your email can't be changed here.",
+    "How places and Nook can reach you. Your email can't be changed here.",
   addressTitle: "Address",
   addressDescription: "Used to show offers and events near you.",
   channelsTitle: "How we reach you",

@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { ResetPasswordForm } from "./components/reset-password-form";
 import { RESET_COPY } from "./constant/reset-password.constant";
 
-export const metadata: Metadata = { title: "Reset password — kuzu" };
+export const metadata: Metadata = { title: "Reset password — Nook" };
 
 export default async function ResetPasswordPage({ searchParams }: PageProps<"/reset-password">) {
   // Already signed in: go to your own area instead.

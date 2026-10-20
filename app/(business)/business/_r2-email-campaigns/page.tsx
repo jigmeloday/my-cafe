@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { CampaignsExplorer } from "./components/campaigns-explorer";
 import { EMAIL_COPY } from "./constant/email-campaign.constant";
 
-export const metadata: Metadata = { title: "Campaigns — kuzu business" };
+export const metadata: Metadata = { title: "Campaigns — Nook business" };
 
 export default function CampaignsPage() {
   return (

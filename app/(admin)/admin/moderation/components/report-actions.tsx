@@ -53,7 +53,7 @@ export function ReportActions({ report, onResult }: ReportActionsProps) {
         open={confirmRemove}
         onOpenChange={setConfirmRemove}
         title={MODERATION_COPY.removeTitle}
-        description={`“${report.title}” will be taken off kuzu and ${report.businessName} is told why. Coins already paid are not refunded.`}
+        description={`“${report.title}” will be taken off Nook and ${report.businessName} is told why. Coins already paid are not refunded.`}
         confirmLabel={MODERATION_COPY.removeConfirm}
         cancelLabel="Cancel"
         onConfirm={() => decide("REMOVED")}

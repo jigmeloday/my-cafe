@@ -7,7 +7,7 @@ import type { AreaGroup } from "@/services/discovery/discovery.service";
 
 import { AreaTabs } from "./area-tabs";
 
-/** Where kuzu's businesses are, by dzongkhag and town. Each town links to a search for that place. */
+/** Where Nook's businesses are, by dzongkhag and town. Each town links to a search for that place. */
 export function ExploreAreas({ areas }: { areas: AreaGroup[] }) {
   const [tab, setTab] = useState(areas[0]?.name ?? "");
   const active = areas.find((a) => a.name === tab) ?? areas[0];
