@@ -10,7 +10,7 @@ type Env = Record<string, string | undefined>;
 type Fetch = (url: string, init: RequestInit) => Promise<Pick<Response, "ok" | "status" | "text">>;
 
 const RESEND_URL = "https://api.resend.com/emails";
-const DEFAULT_FROM = "kuzu <onboarding@resend.dev>";
+const DEFAULT_FROM = "Nook <onboarding@resend.dev>";
 
 /** Which way emails go out: "resend" when a key is set, "console" while developing, or "missing" in production without one. */
 export function emailMode(env: Env = process.env): "resend" | "console" | "missing" {

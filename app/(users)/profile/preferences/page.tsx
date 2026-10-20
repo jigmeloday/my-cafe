@@ -7,7 +7,7 @@ import { InterestsPicker } from "../components/interests-picker";
 import { PreferencesForm } from "../components/preferences-form";
 import { PROFILE_COPY } from "../constant/profile.constant";
 
-export const metadata: Metadata = { title: "Preferences — kuzu" };
+export const metadata: Metadata = { title: "Preferences — Nook" };
 
 export default async function PreferencesPage() {
   const profile = await getCurrentProfile();

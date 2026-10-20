@@ -7,13 +7,13 @@ const { company, contactEmail } = LEGAL;
 export const PRIVACY: LegalDocument = {
   title: "Privacy Policy",
   intro:
-    "This explains what information kuzu keeps about you, why, who can see it, and the choices you have. We only collect what we need to run kuzu, and we don't sell your personal information.",
+    "This explains what information Nook keeps about you, why, who can see it, and the choices you have. We only collect what we need to run Nook, and we don't sell your personal information.",
   sections: [
     {
       id: "who",
       title: "Who we are",
       blocks: [
-        { p: `kuzu is run by ${company}, ${LEGAL.address}. We are responsible for the information described here. You can reach us at ${contactEmail}.` },
+        { p: `Nook is run by ${company}, ${LEGAL.address}. We are responsible for the information described here. You can reach us at ${contactEmail}.` },
       ],
     },
     {
@@ -30,7 +30,7 @@ export const PRIVACY: LegalDocument = {
           "If you apply for a job with us: what you send, such as your CV and contact details. We use it only to consider you for a role.",
           "If you choose to verify your business: your name as on your ID, your ID number, your trade licence number, and photos or PDFs of your ID, licence and shop.",
         ] },
-        { p: "Information we collect as you use kuzu:" },
+        { p: "Information we collect as you use Nook:" },
         { ul: [
           "Views and clicks on promotions and banners. These are counted without your name or account, together with the page you came from (for example the home page).",
           "Technical details, such as your IP address and browser, which are kept with your sign-in session and used for security. Failed sign-in attempts are recorded briefly so we can stop people guessing passwords.",
@@ -43,11 +43,11 @@ export const PRIVACY: LegalDocument = {
       title: "How we use it",
       blocks: [
         { ul: [
-          "To run kuzu: create and protect your account, show promotions and places, and let businesses and customers use their dashboards.",
+          "To run Nook: create and protect your account, show promotions and places, and let businesses and customers use their dashboards.",
           "To send you account emails, such as confirming your email address and security messages.",
           "To send you updates about places you follow or promotions, only in the ways you chose in your notification settings. We only send promotional messages to people who agreed to them, and you can change your mind at any time.",
           "To make suggestions that suit your interests, if you allow personalisation in your settings.",
-          "To keep kuzu safe: stop fraud, spam and abuse, review reports, and check that businesses are real.",
+          "To keep Nook safe: stop fraud, spam and abuse, review reports, and check that businesses are real.",
           "To count how ads perform, so businesses can see how many people viewed and clicked.",
           "To follow the law and to answer lawful requests.",
         ] },
@@ -59,8 +59,8 @@ export const PRIVACY: LegalDocument = {
       blocks: [
         { p: "Public: the information a business puts on its page and promotions is visible to everyone. Your own name and profile are not shown to other customers or businesses." },
         { p: "Businesses you follow see only totals and groups, such as how many followers they have, which areas they live in, which interests are common, and how many agreed to emails. They never see your name, email or phone." },
-        { p: "Our team: a small number of kuzu admins can see account details when they need to, for example to help you, review a report or stop abuse." },
-        { p: "Service providers who help us run kuzu, and who may only use your information for that purpose:" },
+        { p: "Our team: a small number of Nook admins can see account details when they need to, for example to help you, review a report or stop abuse." },
+        { p: "Service providers who help us run Nook, and who may only use your information for that purpose:" },
         { ul: [
           "our database and file storage provider (Neon);",
           "our email provider (Resend), which sends our emails;",
@@ -77,7 +77,7 @@ export const PRIVACY: LegalDocument = {
         { p: "Your ID and licence are the most sensitive information we hold, so we handle them with extra care:" },
         { ul: [
           "They are kept in private storage that is not reachable from the public website.",
-          "Only kuzu admins who review verifications can open them. The business owner's own page and every other customer or business can't.",
+          "Only Nook admins who review verifications can open them. The business owner's own page and every other customer or business can't.",
           "Every time an admin opens a document, it is written to a log.",
           "We use them to check your business and for nothing else. They are never shown on your page.",
           "We keep them while your business account exists, and for a short time afterwards where needed for security or the law. You can ask us to delete them (see Your choices).",
@@ -138,7 +138,7 @@ export const PRIVACY: LegalDocument = {
       id: "children",
       title: "Children",
       blocks: [
-        { p: `kuzu is not meant for children under ${LEGAL.minAge} without a parent or guardian's permission. If you believe a child has given us information without permission, contact us and we will delete it.` },
+        { p: `Nook is not meant for children under ${LEGAL.minAge} without a parent or guardian's permission. If you believe a child has given us information without permission, contact us and we will delete it.` },
       ],
     },
     {

@@ -8,7 +8,7 @@ import { AuthCard } from "@/components/auth/auth-card";
 import { ResendVerification } from "./components/resend-verification";
 import { VERIFY_COPY } from "./constant/verify-email.constant";
 
-export const metadata: Metadata = { title: "Verify your email — kuzu" };
+export const metadata: Metadata = { title: "Verify your email — Nook" };
 
 export default async function VerifyEmailPage({ searchParams }: PageProps<"/verify-email">) {
   const { email: raw } = await searchParams;

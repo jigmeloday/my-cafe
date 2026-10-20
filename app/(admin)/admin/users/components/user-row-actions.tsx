@@ -76,7 +76,7 @@ export function UserRowActions({ item, isSelf, onResult }: UserRowActionsProps) 
         open={confirm === "delete"}
         onOpenChange={(open) => !open && setConfirm(null)}
         title="Delete this user?"
-        description={`${item.name} (${item.email}) and everything they saved will be permanently deleted. This can't be undone. If you only want to stop them using kuzu, suspend them instead.`}
+        description={`${item.name} (${item.email}) and everything they saved will be permanently deleted. This can't be undone. If you only want to stop them using Nook, suspend them instead.`}
         confirmLabel="Delete permanently"
         cancelLabel="Cancel"
         onConfirm={() => run(deleteUserAction, item.id)}

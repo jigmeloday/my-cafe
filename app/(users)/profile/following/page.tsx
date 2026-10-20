@@ -7,7 +7,7 @@ import { FollowingList } from "../components/following-list";
 import { ProfileSection } from "../components/profile-section";
 import { PROFILE_COPY } from "../constant/profile.constant";
 
-export const metadata: Metadata = { title: "Following — kuzu" };
+export const metadata: Metadata = { title: "Following — Nook" };
 
 export default async function FollowingPage() {
   // The layout checks this too, but a page must not rely on that.

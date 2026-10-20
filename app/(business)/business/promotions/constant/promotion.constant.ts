@@ -73,7 +73,7 @@ export const PROMOTIONS_COPY = {
   create: "Create promotion",
   searchPlaceholder: "Search promotions",
   firstTitle: "No promotions yet",
-  firstDescription: "Create your first promotion to show it on kuzu.",
+  firstDescription: "Create your first promotion to show it on Nook.",
   emptyTitle: "No promotions match",
   emptyDescription:
     "Try a different search or filter, or create a new promotion.",

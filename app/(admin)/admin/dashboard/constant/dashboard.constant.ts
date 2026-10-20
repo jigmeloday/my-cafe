@@ -14,7 +14,7 @@ export const COIN_METRICS: ChartMetric[] = [
 
 export const DASHBOARD_COPY = {
   title: "Overview",
-  subtitle: "How kuzu is doing.",
+  subtitle: "How Nook is doing.",
   signupsTitle: "Sign-ups, last 30 days",
   coinsTitle: "Coin activity, last 30 days",
   attentionTitle: "Needs your attention",

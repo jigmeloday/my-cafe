@@ -12,14 +12,14 @@ export interface Notice {
   at: string;
 }
 
-/** Messages from kuzu about the business's ads (warnings, removals). Shows nothing when there are none. */
+/** Messages from Nook about the business's ads (warnings, removals). Shows nothing when there are none. */
 export function NoticesCard({ notices }: { notices: Notice[] }) {
   if (notices.length === 0) return null;
 
   return (
     <section aria-labelledby="notices" className="space-y-3 rounded-xl border border-gold/40 bg-gold/10 p-4 sm:p-5">
       <h2 id="notices" className="flex items-center gap-2">
-        <TriangleAlert className="size-5 text-[#8a6212]" /> Messages from kuzu
+        <TriangleAlert className="size-5 text-[#8a6212]" /> Messages from Nook
       </h2>
       <ul className="divide-y divide-gold/30">
         {notices.map((n) => (

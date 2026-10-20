@@ -66,7 +66,7 @@ export const reportRepository = {
     });
   },
 
-  /** Notices from kuzu to a business owner, newest first. */
+  /** Notices from Nook to a business owner, newest first. */
   noticesFor: (userId: string, since: Date) =>
     db.notification.findMany({ where: { userId, createdAt: { gte: since } }, orderBy: { createdAt: "desc" }, take: 5 }),
 };

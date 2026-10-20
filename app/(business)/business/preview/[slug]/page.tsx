@@ -5,7 +5,7 @@ import { DetailPage } from "@/components/public/detail/detail-page";
 import { requireRole } from "@/lib/session";
 import { discoveryService } from "@/services/discovery/discovery.service";
 
-export const metadata: Metadata = { title: "Preview a promotion — kuzu business" };
+export const metadata: Metadata = { title: "Preview a promotion — Nook business" };
 
 /** How one of your promotions looks to customers, inside the dashboard (drafts too). */
 export default async function PreviewPromotionPage({ params }: { params: Promise<{ slug: string }> }) {

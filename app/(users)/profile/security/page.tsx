@@ -6,7 +6,7 @@ import { ChangePasswordForm } from "../components/change-password-form";
 import { DeleteAccount } from "../components/delete-account";
 import { PROFILE_COPY } from "../constant/profile.constant";
 
-export const metadata: Metadata = { title: "Security — kuzu" };
+export const metadata: Metadata = { title: "Security — Nook" };
 
 export default async function SecurityPage() {
   // The layout checks this too, but a page must not rely on that.

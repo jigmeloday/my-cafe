@@ -5,7 +5,7 @@ import { CampaignForm } from "../components/campaign-form";
 import { CAMPAIGNS_COPY, NEW_CAMPAIGN } from "../constant/campaign.constant";
 import { publishedPromotionOptions } from "../utils/campaign.utils";
 
-export const metadata: Metadata = { title: "New campaign — kuzu business" };
+export const metadata: Metadata = { title: "New campaign — Nook business" };
 
 export default async function NewCampaignPage({
   searchParams,

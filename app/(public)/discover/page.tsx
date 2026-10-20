@@ -1,15 +1,13 @@
 import type { Metadata } from "next";
 
 import { PromotionExplorer } from "@/components/public/promotion-explorer";
+import { pageMetadata } from "@/lib/seo/metadata";
 import { Container } from "@/components/shared/container";
 import { discoveryService } from "@/services/discovery/discovery.service";
 
 import { DISCOVER_COPY, PLACE_FILTERS } from "./constant/discover.constant";
 
-export const metadata: Metadata = {
-  title: `${DISCOVER_COPY.title} — kuzu`,
-  description: DISCOVER_COPY.description,
-};
+export const metadata: Metadata = pageMetadata({ title: DISCOVER_COPY.title, description: DISCOVER_COPY.description, path: "/discover" });
 
 // New promotions appear as soon as they are published, so this page is built per request.
 export const dynamic = "force-dynamic";

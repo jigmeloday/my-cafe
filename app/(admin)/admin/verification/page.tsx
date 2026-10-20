@@ -8,7 +8,7 @@ import { formatDateTime } from "@/lib/formatters/date";
 import { requireRole } from "@/lib/session";
 import { kycService } from "@/services/kyc/kyc.service";
 
-export const metadata: Metadata = { title: "Verification — kuzu admin" };
+export const metadata: Metadata = { title: "Verification — Nook admin" };
 
 const TONE: Record<string, { label: string; tone: StatusTone }> = {
   PENDING: { label: "Waiting", tone: "warning" },

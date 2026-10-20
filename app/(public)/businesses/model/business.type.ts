@@ -47,6 +47,8 @@ export interface BusinessProfile {
   products?: string[];
   /** Photos aren't stored yet, so real businesses don't show the placeholder gallery. */
   showGallery?: boolean;
+  /** Plain facts for search engines. */
+  seo?: { phone?: string; website?: string; street?: string; town?: string; dzongkhag?: string; postalCode?: string; sameAs: string[] };
   /** True when the signed-in person owns this business. */
   isOwner?: boolean;
   /** Stored images (real businesses only). */

@@ -41,7 +41,7 @@ export const CHANNEL_OPTIONS: SwitchOption[] = [
   {
     name: "channels.push",
     label: "In-app",
-    description: "Notifications inside kuzu.",
+    description: "Notifications inside Nook.",
   },
 ];
 
@@ -83,6 +83,6 @@ export const PRIVACY_OPTIONS: SwitchOption[] = [
   {
     name: "marketingConsent",
     label: "Promotional messages",
-    description: "Allow kuzu to send offers and news from partner businesses.",
+    description: "Allow Nook to send offers and news from partner businesses.",
   },
 ];

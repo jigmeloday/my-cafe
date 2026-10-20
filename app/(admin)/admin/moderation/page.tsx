@@ -5,7 +5,7 @@ import { reportService } from "@/services/report/report.service";
 import { ReportsExplorer } from "./components/reports-explorer";
 import { MODERATION_COPY } from "./constant/report.constant";
 
-export const metadata: Metadata = { title: "Moderation — kuzu admin" };
+export const metadata: Metadata = { title: "Moderation — Nook admin" };
 
 export default async function ModerationPage() {
   // The layout checks this too, but a page must not rely on that.

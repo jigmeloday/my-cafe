@@ -4,7 +4,7 @@ export const VERIFY_COPY = {
   title: "Check your email",
   sentTo: "We sent a verification link to",
   steps: [
-    "Open the email from kuzu.",
+    "Open the email from Nook.",
     "Press “Verify my email”.",
     "You'll be signed in and taken to your account.",
   ],

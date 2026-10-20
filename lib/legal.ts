@@ -1,5 +1,5 @@
 /**
- * Who is behind kuzu, for the Terms and Privacy pages. Fill these in before launch: they are the only places the
+ * Who is behind Nook, for the Terms and Privacy pages. Fill these in before launch: they are the only places the
  * pages name the company and how to reach it. Change `updated` whenever the wording of either page changes.
  */
 export const LEGAL = {

@@ -12,7 +12,7 @@ import { WalletsToolbar } from "./components/wallets-toolbar";
 import { WALLETS_COPY } from "./constant/wallet.constant";
 import { parseWalletQuery, walletsHref } from "./utils/wallet-url.utils";
 
-export const metadata: Metadata = { title: "Wallets — kuzu admin" };
+export const metadata: Metadata = { title: "Wallets — Nook admin" };
 
 export default async function AdminWalletsPage({ searchParams }: PageProps<"/admin/wallets">) {
   // The layout also checks this, but a page must not rely on that: it runs its own query.

@@ -45,7 +45,7 @@ export const SEARCH_DELAY_MS = 400;
 
 export const USERS_COPY = {
   title: "Users",
-  subtitle: "Everyone with a kuzu account.",
+  subtitle: "Everyone with a Nook account.",
   searchPlaceholder: "Search by name, email or phone",
   searchHint: "Try several words, e.g. \"wangmo pema\", or a phone number.",
   emptyTitle: "No users match",

@@ -12,7 +12,7 @@ import { BusinessesToolbar } from "./components/businesses-toolbar";
 import { BUSINESSES_COPY } from "./constant/business.constant";
 import { businessesHref, parseBusinessQuery } from "./utils/business-url.utils";
 
-export const metadata: Metadata = { title: "Businesses — kuzu admin" };
+export const metadata: Metadata = { title: "Businesses — Nook admin" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminBusinessesPage({ searchParams }: PageProps<"/admin/businesses">) {

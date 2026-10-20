@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { PromotionsExplorer } from "./components/promotions-explorer";
 import { PROMOTIONS_COPY } from "./constant/promotion.constant";
 
-export const metadata: Metadata = { title: "Promotions — kuzu business" };
+export const metadata: Metadata = { title: "Promotions — Nook business" };
 
 export default async function PromotionsPage() {
   const items = await getCurrentPromotions();

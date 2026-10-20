@@ -47,7 +47,7 @@ export function KycUpload({ kind, label, hint, required, onChange, error }: KycU
         {name ? <CircleCheck className="size-5 shrink-0 text-success" /> : <FileText className="size-5 shrink-0 text-muted-foreground" />}
         <div className="min-w-0 flex-1 text-sm">
           {name ? <p className="truncate font-medium">{name}</p> : <p className="text-muted-foreground">{hint}</p>}
-          {name && <p className="text-xs text-muted-foreground">Uploaded. Only the kuzu review team can open it.</p>}
+          {name && <p className="text-xs text-muted-foreground">Uploaded. Only the Nook review team can open it.</p>}
         </div>
         <Button type="button" variant="secondary" size="sm" disabled={busy} onClick={() => input.current?.click()}>
           <Upload /> {busy ? "Uploading…" : name ? "Replace" : "Choose file"}

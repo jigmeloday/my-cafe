@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist_Mono, Figtree } from "next/font/google";
 import "./globals.css";
 import { EngagementProvider } from "@/components/engagement/engagement-provider";
+import { SEO, siteUrl } from "@/lib/seo/site";
 
 const figtree = Figtree({
   variable: "--font-figtree",
@@ -14,9 +15,18 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "kuzu",
-  description: "Discover deals, events and new places near you.",
+  metadataBase: new URL(siteUrl()),
+  title: `${SEO.name} — ${SEO.tagline}`,
+  description: SEO.description,
+  applicationName: SEO.name,
+  keywords: ["Bhutan", "deals in Bhutan", "events in Bhutan", "Thimphu", "local businesses", "new places", "things to do in Bhutan"],
+  alternates: { canonical: "./" },
+  openGraph: { type: "website", siteName: SEO.name, locale: "en_US", title: `${SEO.name} — ${SEO.tagline}`, description: SEO.description, images: [SEO.defaultImage] },
+  twitter: { card: "summary_large_image", title: `${SEO.name} — ${SEO.tagline}`, description: SEO.description, images: [SEO.defaultImage] },
+  formatDetection: { telephone: false },
 };
+
+export const viewport: Viewport = { themeColor: SEO.themeColor };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (

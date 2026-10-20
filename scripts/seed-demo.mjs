@@ -3,7 +3,7 @@
 //
 // It creates fictional businesses with promotions and events, customers who follow and save them, wallets with
 // coin history, and a month of views and clicks. Everything it creates is labelled "demo" (ids start with
-// "demo-", emails end in @demo.kuzu.test), and only that is ever touched: real accounts are left alone.
+// "demo-", emails end in @demo.nook.test), and only that is ever touched: real accounts are left alone.
 // Running it again replaces the demo content with a fresh copy. Demo accounts all use the password below.
 import { randomBytes } from "node:crypto";
 
@@ -91,7 +91,7 @@ async function main() {
 
     const categoryId = await ensureCategories();
     const passwordHash = await hashPassword(DEMO_PASSWORD);
-    const random = rng("kuzu-demo");
+    const random = rng("nook-demo");
     const pick = (list) => list[Math.floor(random() * list.length)];
 
     // People ----------------------------------------------------------------------------------------------

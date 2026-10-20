@@ -12,7 +12,7 @@ export async function generateMetadata({
 }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
   return {
-    title: `${findEmailCampaign(id)?.name ?? "Campaign"} — kuzu business`,
+    title: `${findEmailCampaign(id)?.name ?? "Campaign"} — Nook business`,
   };
 }
 

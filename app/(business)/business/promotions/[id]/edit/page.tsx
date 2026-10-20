@@ -11,7 +11,7 @@ import { FormPageHeader } from "../../components/form-page-header";
 import { PromotionForm } from "../../components/promotion-form";
 import { PROMOTIONS_COPY } from "../../constant/promotion.constant";
 
-export const metadata: Metadata = { title: "Edit promotion — kuzu business" };
+export const metadata: Metadata = { title: "Edit promotion — Nook business" };
 
 export default async function EditPromotionPage({
   params,

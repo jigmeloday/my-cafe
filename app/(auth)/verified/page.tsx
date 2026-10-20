@@ -7,7 +7,7 @@ import { getCurrentUser, HOME_BY_ROLE } from "@/lib/session";
 import { ResendByEmail } from "./components/resend-by-email";
 import { EXPIRED_CODES, PROBLEM_COPY } from "./constant/verified.constant";
 
-export const metadata: Metadata = { title: "Email verification — kuzu" };
+export const metadata: Metadata = { title: "Email verification — Nook" };
 
 /** Where the link in the verification email lands. */
 export default async function VerifiedPage({ searchParams }: PageProps<"/verified">) {

@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+
+import { pageMetadata } from "@/lib/seo/metadata";
 import Link from "next/link";
 
 import { Container } from "@/components/shared/container";
@@ -8,10 +10,7 @@ import { LEGAL } from "@/lib/legal";
 import { RoleCard } from "./components/role-card";
 import { CAREERS_COPY, OPEN_ROLES } from "./constant/careers.constant";
 
-export const metadata: Metadata = {
-  title: "Careers — kuzu",
-  description: "Help us build the easiest way to find what's on in Bhutan.",
-};
+export const metadata: Metadata = pageMetadata({ title: "Careers", description: "Help us build the easiest way to find what's on in Bhutan.", path: "/careers" });
 
 const canEmail = !LEGAL.contactEmail.startsWith("[");
 

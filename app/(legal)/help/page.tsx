@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+
+import { pageMetadata } from "@/lib/seo/metadata";
 import Link from "next/link";
 
 import { Container } from "@/components/shared/container";
@@ -7,10 +9,7 @@ import { Button } from "@/components/ui/button";
 import { FaqList } from "./components/faq-list";
 import { FAQ_TOPICS, HELP_COPY } from "./constant/help.constant";
 
-export const metadata: Metadata = {
-  title: "Help centre — kuzu",
-  description: "Answers to common questions about using kuzu, for customers and businesses.",
-};
+export const metadata: Metadata = pageMetadata({ title: "Help centre", description: "Answers to common questions about using Nook, for customers and businesses.", path: "/help" });
 
 export default function HelpPage() {
   return (

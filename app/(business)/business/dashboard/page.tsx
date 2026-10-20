@@ -13,7 +13,7 @@ import { StatsGrid } from "./components/stats-grid";
 import { FOLLOWER_DAYS } from "./constant/dashboard.constant";
 import { clicksByPromotion, getSummary, performancePoints } from "./utils/dashboard.utils";
 
-export const metadata: Metadata = { title: "Overview — kuzu business" };
+export const metadata: Metadata = { title: "Overview — Nook business" };
 
 export default async function DashboardPage() {
   const user = await requireRole("BUSINESS_OWNER");

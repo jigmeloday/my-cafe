@@ -7,7 +7,7 @@ import { AuthCard } from "@/components/auth/auth-card";
 import { RegisterForm } from "./components/register-form";
 import { REGISTER_COPY } from "./constant/register.constant";
 
-export const metadata: Metadata = { title: "Create account — kuzu" };
+export const metadata: Metadata = { title: "Create account — Nook" };
 
 export default async function RegisterPage() {
   // Already signed in: go to your own area instead.

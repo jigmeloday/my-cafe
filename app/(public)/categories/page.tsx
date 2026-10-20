@@ -3,9 +3,10 @@ import Link from "next/link";
 
 import { Container } from "@/components/shared/container";
 import { EmptyState } from "@/components/shared/empty-state";
+import { pageMetadata } from "@/lib/seo/metadata";
 import { discoveryService } from "@/services/discovery/discovery.service";
 
-export const metadata: Metadata = { title: "Browse by category — kuzu", description: "Find deals, events and places by what they're about." };
+export const metadata: Metadata = pageMetadata({ title: "Browse by category", description: "Find deals, events and places in Bhutan by what they're about: food, music, culture, shopping and more.", path: "/categories" });
 export const dynamic = "force-dynamic";
 
 export default async function CategoriesPage() {

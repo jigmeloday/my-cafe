@@ -4,7 +4,7 @@ export interface EmailContent {
   html: string;
 }
 
-export const APP_NAME = "kuzu";
+export const APP_NAME = "Nook";
 
 /** Names and addresses come from people, so they are escaped before going into HTML. */
 export const escapeHtml = (value: string) =>

@@ -35,6 +35,17 @@ export interface DetailCta {
   href: string;
 }
 
+/** Plain facts about a promotion for search engines (dates are like "2026-11-01"). */
+export interface DetailSeo {
+  description: string;
+  startsAt?: string;
+  endsAt?: string;
+  place: string;
+  street?: string;
+  town?: string;
+  dzongkhag?: string;
+}
+
 export interface DetailData {
   kind: DetailKind;
   slug: string;
@@ -51,6 +62,7 @@ export interface DetailData {
   cta?: DetailCta;
   shopLines?: ShopLine[];
   shopLogo?: string;
+  seo?: DetailSeo;
   /** Overrides the "back" link (used by the owner's preview, which must stay inside the dashboard). */
   back?: { label: string; href: string };
 }

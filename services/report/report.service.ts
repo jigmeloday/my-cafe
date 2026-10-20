@@ -88,7 +88,7 @@ export const reportService = {
     return { ok: true, message: "Thank you. We'll review this ad." };
   },
 
-  /** Messages from kuzu to a business owner (warnings, removals) from the last 30 days, newest first. */
+  /** Messages from Nook to a business owner (warnings, removals) from the last 30 days, newest first. */
   async noticesFor(ownerId: string, now = new Date()) {
     const rows = await reportRepository.noticesFor(ownerId, new Date(now.getTime() - 30 * 86_400_000));
     return rows.map((n) => ({ id: n.id, title: n.title, description: n.description, href: n.href, at: toBhutan(n.createdAt) }));

@@ -6,7 +6,7 @@ import { walletService } from "@/services/wallet/wallet.service";
 import { TransactionsExplorer } from "./components/transactions-explorer";
 import { TRANSACTIONS_COPY } from "./constant/transactions.constant";
 
-export const metadata: Metadata = { title: "Transactions — kuzu business" };
+export const metadata: Metadata = { title: "Transactions — Nook business" };
 
 export default async function TransactionsPage() {
   const user = await requireRole("BUSINESS_OWNER");

@@ -14,7 +14,7 @@ import {
 
 import type { CategoryItem, FooterColumn, NavLink } from "../model/site.type";
 
-export const SITE_NAME = "kuzu";
+export const SITE_NAME = "Nook";
 export const SITE_LOCALE = "English (BT)";
 export const SITE_CURRENCY = "Nu. BTN";
 

@@ -12,7 +12,7 @@ import { kycService } from "@/services/kyc/kyc.service";
 import { KycForm } from "./components/kyc-form";
 import { KYC_COPY } from "./constant/kyc.constant";
 
-export const metadata: Metadata = { title: "Verification — kuzu business" };
+export const metadata: Metadata = { title: "Verification — Nook business" };
 
 export default async function VerificationPage() {
   const user = await requireRole("BUSINESS_OWNER");

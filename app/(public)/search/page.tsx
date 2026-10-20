@@ -6,10 +6,11 @@ import { PROMOTION_GRID } from "@/components/public/constant/promotion.constant"
 import { Container } from "@/components/shared/container";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Button } from "@/components/ui/button";
+import { pageMetadata } from "@/lib/seo/metadata";
 import { parseWhen, WHEN_OPTIONS } from "@/lib/search-when";
 import { searchService } from "@/services/search/search.service";
 
-export const metadata: Metadata = { title: "Search — kuzu" };
+export const metadata: Metadata = pageMetadata({ title: "Search", path: "/search", noindex: true });
 // Results depend on what was typed and on today's date.
 export const dynamic = "force-dynamic";
 
@@ -35,7 +36,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
   return (
     <Container className="space-y-10 py-8 sm:py-10">
       <header className="space-y-2">
-        <h1>{searching ? "Search results" : "Search kuzu"}</h1>
+        <h1>{searching ? "Search results" : "Search Nook"}</h1>
         <p className="max-w-2xl text-muted-foreground">
           {searching
             ? results.total > 0

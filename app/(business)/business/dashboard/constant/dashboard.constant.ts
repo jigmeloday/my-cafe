@@ -1,6 +1,6 @@
 export const DASHBOARD_COPY = {
   title: "Overview",
-  subtitle: "How your business is doing on kuzu.",
+  subtitle: "How your business is doing on Nook.",
   createPromotion: "Create promotion",
   // Used by the parked email campaigns card (Release 2).
   campaignsTitle: "Recent campaigns",
