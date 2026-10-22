@@ -1,4 +1,6 @@
+import { KYC_RETENTION_DAYS } from "@/lib/kyc";
 import { LEGAL } from "@/lib/legal";
+import { ANALYTICS_RETENTION_DAYS } from "@/lib/track-events";
 
 import type { LegalDocument } from "./legal.type";
 
@@ -13,7 +15,7 @@ export const PRIVACY: LegalDocument = {
       id: "who",
       title: "Who we are",
       blocks: [
-        { p: `Nook is run by ${company}, ${LEGAL.address}. We are responsible for the information described here. You can reach us at ${contactEmail}.` },
+        { p: `Nook is based in ${LEGAL.address}. We are responsible for the information described here. You can reach us at ${contactEmail}.` },
       ],
     },
     {
@@ -32,7 +34,8 @@ export const PRIVACY: LegalDocument = {
         ] },
         { p: "Information we collect as you use Nook:" },
         { ul: [
-          "Views and clicks on promotions and banners. These are counted without your name or account, together with the page you came from (for example the home page).",
+          "Views and clicks on promotions and banners, visits to a business's page and clicks on its phone, email, website and social links, and the pages you open on Nook. These are counted without your name or account, together with the page you came from (for example the home page).",
+          "To count different people, we make a one-way code from your address and browser together with a secret and today's date. It can't be turned back into either, it is different tomorrow, and it is not stored in your browser. We don't keep your address for this.",
           "Technical details, such as your IP address and browser, which are kept with your sign-in session and used for security. Failed sign-in attempts are recorded briefly so we can stop people guessing passwords.",
           "A cookie that keeps you signed in (see Cookies below).",
         ] },
@@ -91,7 +94,8 @@ export const PRIVACY: LegalDocument = {
           "Only Nook admins who review verifications can open them. The business owner's own page and every other customer or business can't.",
           "Every time an admin opens a document, it is written to a log.",
           "We use them to check your business and for nothing else. They are never shown on your page.",
-          "We keep them while your business account exists, and for a short time afterwards where needed for security or the law. You can ask us to delete them (see Your choices).",
+          `Once we have decided on your request (approved or sent back), we delete the files and the ID and licence numbers after ${KYC_RETENTION_DAYS} days. We keep only the decision, who made it and when. If you send new documents later, the same applies to them.`,
+          "You can ask us to delete them sooner (see Your choices), unless the law requires us to keep them.",
         ] },
       ],
     },
@@ -99,7 +103,7 @@ export const PRIVACY: LegalDocument = {
       id: "cookies",
       title: "Cookies",
       blocks: [
-        { p: "We use one essential cookie to keep you signed in. It can't be read by scripts on the page and is sent only over a secure connection on the live site. We don't use advertising cookies or third-party trackers. If we add any in future, we will say so here and ask you first where the law requires it. You can block or delete cookies in your browser, but you won't be able to stay signed in." },
+        { p: "We use one essential cookie to keep you signed in. It can't be read by scripts on the page and is sent only over a secure connection on the live site. We count visitors without cookies (see above). We don't use advertising cookies or third-party trackers. If we add any in future, we will say so here and ask you first where the law requires it. You can block or delete cookies in your browser, but you won't be able to stay signed in." },
       ],
     },
     {
@@ -128,7 +132,7 @@ export const PRIVACY: LegalDocument = {
           "Job applications: kept only as long as needed to consider you. Ask us to delete yours at any time.",
           "Admin logs: kept for security and accountability.",
           "Failed sign-in records: about a day.",
-          "View and click counts: kept as totals; they don't identify anyone.",
+          `Visit and click records: the one-way visitor codes are deleted after ${ANALYTICS_RETENTION_DAYS} days. We keep only the totals, which don't identify anyone.`,
         ] },
       ],
     },
@@ -138,7 +142,7 @@ export const PRIVACY: LegalDocument = {
       blocks: [
         { ul: [
           "See and change your details and notification settings in your profile.",
-          "Turn promotional messages and personalisation off at any time.",
+          "Turn promotional messages and personalisation off at any time, in your profile or with the Unsubscribe link in every promotional email. It works without signing in.",
           "Delete your customer account in your profile settings. A business owner should remove their business first, or contact us.",
           `Ask us for a copy of your information, to correct it, or to delete it, by writing to ${contactEmail}. We will answer within a reasonable time, and we may need to check it is really you.`,
         ] },

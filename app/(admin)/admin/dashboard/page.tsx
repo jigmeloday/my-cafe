@@ -7,6 +7,7 @@ import { AttentionCard } from "./components/attention-card";
 import { DashboardCharts } from "./components/dashboard-charts";
 import { RecentBusinesses } from "./components/recent-businesses";
 import { StatsGrid } from "./components/stats-grid";
+import { TrafficSection } from "./components/traffic-section";
 import { DASHBOARD_COPY } from "./constant/dashboard.constant";
 
 export const metadata: Metadata = { title: "Overview — Nook admin" };
@@ -23,6 +24,7 @@ export default async function AdminDashboardPage() {
         <p className="text-sm text-muted-foreground">{DASHBOARD_COPY.subtitle}</p>
       </header>
       <StatsGrid overview={overview} />
+      <TrafficSection overview={overview} />
       <DashboardCharts days={overview.days} />
       <div className="grid gap-4 lg:grid-cols-2">
         <AttentionCard overview={overview} />

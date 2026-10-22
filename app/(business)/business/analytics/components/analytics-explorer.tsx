@@ -10,11 +10,12 @@ import { DEFAULT_RANGE, RANGES, TABS } from "../constant/analytics.constant";
 import { AudienceTab } from "./audience-tab";
 import { OverviewTab } from "./overview-tab";
 import { PostsTab } from "./posts-tab";
+import { ProfileTab } from "./profile-tab";
 
 export function AnalyticsExplorer({ analytics }: { analytics: BusinessAnalytics }) {
   const [rangeId, setRangeId] = useState(DEFAULT_RANGE);
   const range = RANGES.find((r) => r.id === rangeId)?.days ?? 14;
-  const { data, metas, audience, coins } = analytics;
+  const { data, profile, metas, audience, coins } = analytics;
 
   return (
     <div className="space-y-4">
@@ -29,6 +30,9 @@ export function AnalyticsExplorer({ analytics }: { analytics: BusinessAnalytics 
         </TabsList>
         <TabsContent value="overview">
           <OverviewTab data={data} range={range} coins={coins} />
+        </TabsContent>
+        <TabsContent value="profile">
+          <ProfileTab profile={profile} range={range} />
         </TabsContent>
         <TabsContent value="posts">
           <PostsTab data={data} range={range} metas={metas} />

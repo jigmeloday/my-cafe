@@ -7,7 +7,9 @@ import { SectionCard } from "@/components/business/section-card";
 import { ANALYTICS_COPY, METRICS } from "../constant/analytics.constant";
 import type { Dataset, RangeDays } from "../model/analytics.type";
 import {
+  previousReach,
   rangeDays,
+  rangeReach,
   rangeTotals,
   previousTotals,
   sourceRows,
@@ -27,7 +29,7 @@ export function OverviewTab({ data, range, coins }: TabProps) {
 
   return (
     <div className="space-y-4">
-      <AnalyticsStats current={totals} previous={previousTotals(data, range)} />
+      <AnalyticsStats current={totals} previous={previousTotals(data, range)} reach={{ current: rangeReach(data, range), previous: previousReach(data, range) }} />
       <div className="grid gap-4 lg:grid-cols-[1fr_20rem]">
         <PerformanceChart
           title={ANALYTICS_COPY.chartTitle}

@@ -15,11 +15,17 @@ export interface OverviewDay {
   businesses: number;
   coinsAdded: number;
   coinsSpent: number;
+  /** Pages opened on the public site that day. */
+  visits: number;
+  /** Different people who opened them (a person is one code a day). */
+  visitors: number;
 }
 
 export interface Overview {
   /** Oldest first, OVERVIEW_DAYS long. */
   days: OverviewDay[];
+  /** Pages opened per part of the site in the last 30 days, most visited first. */
+  sections: { section: string; visits: number }[];
   totals: Awaited<ReturnType<typeof repo.totals>>;
   openReports: number;
   newest: { id: string; name: string; town: string; dzongkhag: string; status: "PENDING" | "VERIFIED" | "SUSPENDED"; joined: string }[];
@@ -32,17 +38,21 @@ export function fillDays(
   users: { day: string; count: number }[],
   businesses: { day: string; count: number }[],
   coins: { day: string; added: number; spent: number }[],
+  traffic: { day: string; visits: number; visitors: number }[] = [],
 ): OverviewDay[] {
   const byDay = <T extends { day: string }>(rows: T[]) => new Map(rows.map((r) => [r.day, r]));
   const u = byDay(users);
   const b = byDay(businesses);
   const c = byDay(coins);
+  const t = byDay(traffic);
   return lastDays(endDate, count).map(({ date, label }) => ({
     label,
     users: u.get(date)?.count ?? 0,
     businesses: b.get(date)?.count ?? 0,
     coinsAdded: c.get(date)?.added ?? 0,
     coinsSpent: c.get(date)?.spent ?? 0,
+    visits: t.get(date)?.visits ?? 0,
+    visitors: t.get(date)?.visitors ?? 0,
   }));
 }
 
@@ -54,17 +64,21 @@ export const adminOverviewService = {
     const since = new Date(Date.parse(`${startDay}T00:00:00Z`) - BHUTAN);
     const todayDate = new Date(`${today}T00:00:00Z`);
 
-    const [users, businesses, coins, totals, newest, openReports] = await Promise.all([
+    const monthAgo = new Date(Date.parse(`${addDays(today, -29)}T00:00:00Z`) - BHUTAN);
+    const [users, businesses, coins, totals, newest, openReports, traffic, sections] = await Promise.all([
       repo.newUsersPerDay(since),
       repo.newBusinessesPerDay(since),
       repo.coinsPerDay(since),
       repo.totals(todayDate),
       repo.newestBusinesses(5),
       reportService.list("OPEN"),
+      repo.trafficPerDay(since),
+      repo.trafficBySection(monthAgo),
     ]);
 
     return {
-      days: fillDays(today, OVERVIEW_DAYS, users, businesses, coins),
+      days: fillDays(today, OVERVIEW_DAYS, users, businesses, coins, traffic),
+      sections,
       totals,
       openReports: openReports.length,
       newest: newest.map((b) => ({ id: b.id, name: b.name, town: b.town, dzongkhag: b.dzongkhag, status: b.status, joined: bhutanDay(b.createdAt) })),

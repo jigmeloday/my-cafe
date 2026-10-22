@@ -1,8 +1,8 @@
-import type { ChartPoint } from "@/components/business/charts/model/chart.type";
+import type { BarItem, ChartPoint } from "@/components/business/charts/model/chart.type";
 import { formatNumber } from "@/lib/formatters/number";
 import type { Overview, OverviewDay } from "@/services/admin/admin-overview.service";
 
-import { PERIOD_DAYS } from "../constant/dashboard.constant";
+import { PERIOD_DAYS, SECTION_LABELS } from "../constant/dashboard.constant";
 import type { AttentionItem } from "../model/dashboard.type";
 
 const sum = (days: OverviewDay[], pick: (d: OverviewDay) => number) => days.reduce((t, d) => t + pick(d), 0);
@@ -43,3 +43,23 @@ export function attentionItems({ totals, openReports }: Pick<Overview, "totals" 
     { id: "suspended-users", label: "Suspended users", count: totals.suspendedUsers, href: "/admin/users" },
   ];
 }
+
+export const trafficPoints = (days: OverviewDay[]): ChartPoint[] =>
+  periods(days).current.map((d) => ({ label: d.label, values: { visitors: d.visitors, visits: d.visits } }));
+
+/** The four numbers at the top of the traffic section. */
+export function trafficSummary(days: OverviewDay[]) {
+  const { current, previous } = periods(days);
+  const today = days.at(-1);
+  const visitors = sum(current, (d) => d.visitors);
+  const visits = sum(current, (d) => d.visits);
+  return [
+    { label: "Visitors today", value: formatNumber(today?.visitors ?? 0), hint: `${formatNumber(today?.visits ?? 0)} pages opened` },
+    { label: "Visitors", value: formatNumber(visitors), delta: change(visitors, sum(previous, (d) => d.visitors)), hint: "last 30 days" },
+    { label: "Pages opened", value: formatNumber(visits), delta: change(visits, sum(previous, (d) => d.visits)), hint: "last 30 days" },
+    { label: "Pages per visitor", value: visitors === 0 ? "0" : (visits / visitors).toFixed(1), hint: "last 30 days" },
+  ];
+}
+
+export const sectionRows = (sections: Overview["sections"]): BarItem[] =>
+  sections.map(({ section, visits }) => ({ id: section, label: SECTION_LABELS[section] ?? section, value: visits }));

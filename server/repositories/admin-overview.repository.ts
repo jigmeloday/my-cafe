@@ -42,6 +42,21 @@ export const adminOverviewRepository = {
     return rows.map((r) => ({ day: r.day, added: Number(r.added ?? 0), spent: Number(r.spent ?? 0) }));
   },
 
+  /** Pages opened on the public site, and different people who opened them, per Bhutan day. */
+  async trafficPerDay(since: Date): Promise<{ day: string; visits: number; visitors: number }[]> {
+    const rows = await db.$queryRaw<{ day: string; visits: bigint; visitors: bigint }[]>(Prisma.sql`
+      select to_char(("createdAt" + interval '6 hours')::date, 'YYYY-MM-DD') as day,
+             count(*) as visits, count(distinct visitor) as visitors
+      from "SiteVisit" where "createdAt" >= ${since} group by 1`);
+    return rows.map((r) => ({ day: r.day, visits: Number(r.visits), visitors: Number(r.visitors) }));
+  },
+
+  /** Pages opened per part of the site since `since`, most visited first. */
+  async trafficBySection(since: Date): Promise<{ section: string; visits: number }[]> {
+    const rows = await db.siteVisit.groupBy({ by: ["section"], where: { createdAt: { gte: since } }, _count: { _all: true } });
+    return rows.map((r) => ({ section: r.section, visits: r._count._all })).sort((a, b) => b.visits - a.visits);
+  },
+
   /** Everything counted in one go. `today` is a Bhutan date at midnight UTC. */
   async totals(today: Date) {
     const [users, businesses, livePromotions, runningBanners, pendingVerifications, suspendedBusinesses, suspendedUsers, openMessages] = await Promise.all([

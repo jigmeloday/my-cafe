@@ -13,6 +13,7 @@ export const LIMITS = {
   forgotPerIp: { max: 8, windowMs: 60 * MINUTE },
   forgotPerEmail: { max: 3, windowMs: 60 * MINUTE },
   resetPerIp: { max: 10, windowMs: 60 * MINUTE },
+  unsubscribePerIp: { max: 30, windowMs: 60 * MINUTE },
   contactPerIp: { max: 5, windowMs: 60 * MINUTE },
   contactPerEmail: { max: 3, windowMs: 24 * 60 * MINUTE },
 } as const;

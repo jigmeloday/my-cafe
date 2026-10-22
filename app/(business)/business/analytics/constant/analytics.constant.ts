@@ -12,6 +12,7 @@ export const DEFAULT_RANGE = "14";
 
 export const TABS = [
   { id: "overview", label: "Overview" },
+  { id: "profile", label: "Profile" },
   { id: "posts", label: "Posts" },
   { id: "audience", label: "Audience" },
 ];
@@ -36,6 +37,20 @@ export const SOURCES = [
 ];
 export const OTHER_SOURCE = "other";
 
+export const PROFILE_METRICS: ChartMetric[] = [
+  { id: "visits", label: "Visits", kind: "number" },
+  { id: "visitors", label: "Visitors", kind: "number" },
+  { id: "clicks", label: "Link clicks", kind: "number" },
+];
+
+/** What each kind of click on the business's page means, in words a business owner would use. */
+export const CLICK_LABELS: Record<string, string> = {
+  CALL: "Phone",
+  EMAIL: "Email",
+  WEBSITE: "Website",
+  SOCIAL: "Facebook, Instagram, TikTok",
+};
+
 export const EMAIL_METRICS: ChartMetric[] = [
   { id: "open", label: "Open rate", kind: "permille" },
   { id: "click", label: "Click rate", kind: "permille" },
@@ -44,7 +59,7 @@ export const EMAIL_METRICS: ChartMetric[] = [
 
 export const ANALYTICS_COPY = {
   title: "Analytics",
-  subtitle: "How people find and click on your promotions.",
+  subtitle: "How people find your page and click on your promotions.",
   vsPrevious: "vs previous period",
   chartTitle: "Performance",
   sourcesTitle: "Where clicks come from",
@@ -61,6 +76,14 @@ export const ANALYTICS_COPY = {
   locationsTitle: "Where your followers live",
   interestsTitle: "What your followers like",
   reachTitle: "Who you can email",
+  reachLabel: "People reached",
+  reachHint: "Different people who viewed or clicked your promotions",
+  profileChartTitle: "Your page",
+  profileHint: "Your business page is the one with your name, hours and contact details.",
+  profileClicksTitle: "What people clicked",
+  profileSourcesTitle: "Where visits come from",
+  noProfileClicks: "Nobody has clicked your contact links yet.",
+  visitorsNote: "A visitor is counted once a day, so someone who comes back on another day counts again. We never store who they are.",
   coinsTitle: "Where your coins went",
   noCoins: "You haven't spent any coins yet.",
 };
