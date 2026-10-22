@@ -6,8 +6,6 @@ export const BANNER_DAYS = ["3", "7", "14"] as const;
 export const bannerSchema = z.object({
   title: z.string().trim().min(3, "Enter a headline").max(60, "Keep it under 60 characters"),
   description: z.string().trim().max(100, "Keep it under 100 characters"),
-  /** A promotion of yours to open when the banner is clicked, or "" for your business page. */
-  promotionId: z.string().max(100),
   /** The uploaded image's file key. */
   imageKey: z.string().min(1, "Add a banner image").max(200),
   /** First day it shows, "YYYY-MM-DD". */

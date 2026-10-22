@@ -51,7 +51,7 @@ export function BannerPreview({ businessName, title, description, imageUrl }: Ba
           </div>
         </div>
       </div>
-      <p className="text-xs text-muted-foreground">Shown wide at the top of the home page. On a phone the text sits under the image. Your whole image is always shown; if its shape differs, the spare space is filled with a soft blur.</p>
+      <p className="text-xs text-muted-foreground">Shown wide at the top of the home page. Clicking it opens your business page. On a phone the text sits under the image. Your whole image is always shown; if its shape differs, the spare space is filled with a soft blur.</p>
     </div>
   );
 }

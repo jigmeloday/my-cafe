@@ -30,10 +30,6 @@ export const bannerRepository = {
       include: withBusiness,
     }),
 
-  /** The owner's own live promotion, for linking a banner to it. */
-  findOwnPublished: (id: string, ownerId: string) =>
-    db.promotion.findFirst({ where: { id, status: "PUBLISHED", business: { ownerId } }, select: { id: true } }),
-
   /** Saves the banner and takes its price from the wallet in one transaction: both happen, or neither. */
   create: (data: { businessId: string; promotionId: string | null; title: string; description: string; imageKey: string; startsAt: Date; endsAt: Date; coins: number }) =>
     db.$transaction(async (tx) => {

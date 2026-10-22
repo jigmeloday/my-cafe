@@ -64,17 +64,15 @@ export const bannerService = {
 
     const business = await businessService.ensure(owner);
     if (business.status === "SUSPENDED") return { ok: false, error: "Your business is suspended, so you can't create banners right now. Please contact us." };
-    // The image must be a file this business uploaded, and the promotion must be this business's own live one.
+    // The image must be a file this business uploaded.
     if (!keyBelongsTo(input.imageKey, business.id)) return { ok: false, error: "That image isn't valid. Remove it and add it again." };
-    if (input.promotionId && !(await bannerRepository.findOwnPublished(input.promotionId, owner.id))) {
-      return { ok: false, error: "Choose one of your live promotions, or your business page." };
-    }
 
     const days = Number(input.days);
     try {
       await bannerRepository.create({
         businessId: business.id,
-        promotionId: input.promotionId || null,
+        // A banner opens the business page, never a single promotion. (Older banners may still point at one.)
+        promotionId: null,
         title: input.title,
         description: input.description,
         imageKey: input.imageKey,

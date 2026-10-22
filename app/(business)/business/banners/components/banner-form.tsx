@@ -23,14 +23,10 @@ import { BannerPreview } from "./banner-preview";
 
 interface BannerFormProps {
   businessName: string;
-  /** The owner's live promotions a banner can open. */
-  promotions: { value: string; label: string }[];
   balance: number;
 }
 
-const NONE = "none";
-
-export function BannerForm({ businessName, promotions, balance }: BannerFormProps) {
+export function BannerForm({ businessName, balance }: BannerFormProps) {
   // The picture stays on this device until the banner is saved, so a picture that is changed or removed costs no storage.
   const [file, setFile] = useState<File | null>(null);
   const imageUrl = useMemo(() => (file ? URL.createObjectURL(file) : null), [file]);
@@ -46,12 +42,12 @@ export function BannerForm({ businessName, promotions, balance }: BannerFormProp
       } catch (error) {
         return { ok: false, error: error instanceof Error ? error.message : "The upload failed. Please try again." };
       }
-      const outcome = await createBannerAction({ ...values, imageKey: key, promotionId: values.promotionId === NONE ? "" : values.promotionId });
+      const outcome = await createBannerAction({ ...values, imageKey: key });
       // Not saved (for example not enough coins): don't leave the sent picture behind.
       if (!outcome.ok) await discardUploads("banner", [key]);
       return outcome;
     },
-    { title: "", description: "", promotionId: NONE, imageKey: "", startDate: todayIso(), days: "7" as const },
+    { title: "", description: "", imageKey: "", startDate: todayIso(), days: "7" as const },
   );
   const {
     register,
@@ -87,15 +83,6 @@ export function BannerForm({ businessName, promotions, balance }: BannerFormProp
             <Input label="Headline" error={errors.title?.message} maxLength={60} {...register("title")} />
             <Input label="Short text (optional)" hint={`${description?.length ?? 0}/100`} error={errors.description?.message} maxLength={100} {...register("description")} />
           </div>
-        </SectionCard>
-        <SectionCard title="Where it leads" description="What opens when someone clicks the banner.">
-          <SelectField
-            control={control}
-            name="promotionId"
-            label="Opens"
-            options={[{ value: NONE, label: BANNERS_COPY.businessPage }, ...promotions]}
-            error={errors.promotionId?.message}
-          />
         </SectionCard>
         <SectionCard title="When it runs">
           <div className="grid gap-4 sm:grid-cols-2">
