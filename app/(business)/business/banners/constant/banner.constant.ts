@@ -16,7 +16,6 @@ export const BANNERS_COPY = {
   submit: "Pay & create banner",
   imageHint: "Wide works best: 2100 × 800 pixels. JPG, PNG or WebP, up to 5 MB.",
   imageRatioNote: "This picture isn't wide, so it will show with blurred space at the sides. For the best result use a wide image, about 2100 × 800.",
-  businessPage: "My business page",
 };
 
 export const STATUS_LABELS: Record<BannerStatus, string> = { scheduled: "Scheduled", active: "Running", ended: "Ended" };

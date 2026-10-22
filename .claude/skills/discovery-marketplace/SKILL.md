@@ -136,7 +136,7 @@ Public: useful, curious, modern, local, visual, trustworthy — lead with "Disco
 ## Landing page and promotion pages (live on the database)
 
 - The home page (`app/(public)/page.tsx`) and `/promotions/[slug]` read real promotions through `services/discovery/discovery.service.ts` → `server/repositories/discovery.repository.ts`. A promotion is **visible** when it is PUBLISHED, hasn't ended (an end date lasts through that day, Bhutan time) and its business and owner aren't suspended. Not-yet-started promotions are hidden from lists but open by direct link.
-- Rows: **Popular offers** (most clicks in 14 days, newest among ties; "Popular" badge only if clicked), **Just opened** (newest businesses), **Happening soon** (EVENT promotions, soonest first). Empty rows are hidden. The hero shows up to 4 of the same promotions (paid banners don't exist yet, so nothing is "Sponsored").
+- Rows: **Popular offers** (most clicks in 14 days, newest among ties; "Popular" badge only if clicked), **Just opened** (newest businesses), **Happening soon** (EVENT promotions, soonest first). Empty rows are hidden. The hero is for paid banners only (see Banners).
 - All real cards link to `/promotions/<slug>`, whatever the type. `/promotions/[slug]` tries the database first, then the sample deals, so the old sample links still work.
 - **Counting:** the detail page sends a VIEW (`TrackView`) and its main button sends a CLICK (`TrackedCta`) to `/api/track`, with the visitor's source taken from the page they came from (`lib/track-client.ts`).
 - Still sample data: `/deals`, `/discover`, `/events`, search, and the sample businesses/events pages.
@@ -148,10 +148,10 @@ Public: useful, curious, modern, local, visual, trustworthy — lead with "Disco
 
 ## Banners (live on the database, separate from promotions)
 
-- **Promotions and banners are separate.** A promotion costs `COIN_COSTS.publishPerDay` per day it runs (see `lib/listing.ts`). Banners have their own section: `/business/banners` (list with status, views, clicks) and `/business/banners/new` (image, headline, short text, where it leads, first day, 3/7/14 days). Email and top-rank extras don't exist (email is Release 2).
+- **Promotions and banners are separate.** A promotion costs `COIN_COSTS.publishPerDay` per day it runs (see `lib/listing.ts`). Banners have their own section: `/business/banners` (list with status, views, clicks) and `/business/banners/new` (image, headline, short text, first day, 3/7/14 days; it always opens the business page). Email and top-rank extras don't exist (email is Release 2).
 - **Paying:** a banner costs `days × COIN_COSTS.bannerPerDay` coins, taken from the wallet in the same transaction that saves it (`bannerRepository.create` → `walletRepository.spend`, type `BANNER`). Not enough coins means nothing is saved.
-- **Rules:** start today or later (Bhutan date); the image must be a file this business uploaded (`kind: "banner"` on `/api/business/media`); a linked promotion must be the owner's own PUBLISHED one; otherwise the banner opens the business page.
-- **Showing:** `discoveryService.landing()` puts running banners (start ≤ today ≤ end, business and owner not suspended) first in the home hero, marked Sponsored; promotions fill the rest. Banners can't be edited or refunded yet.
+- **Rules:** start today or later (Bhutan date); the image must be a file this business uploaded (`kind: "banner"` on `/api/business/media`); a banner never links to a promotion: it always opens the business page (older banners may still point at one).
+- **Showing:** `discoveryService.landing()` puts running banners (start ≤ today ≤ end, business and owner not suspended) in the home hero, marked Sponsored, and nothing else: promotions never appear there, and with no banner running the hero is left out. Banners can't be edited or refunded yet.
 - **Counting:** `HeroSlide` sends a VIEW when half the banner is visible and a CLICK on its button, to `POST /api/track` with `{ bannerId, type }`; only a running banner counts (`BannerEvent`).
 
 ## Featuring a promotion (paid, limited places)

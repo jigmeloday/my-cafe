@@ -45,20 +45,6 @@ export function toCard(p: LivePromotion, today: Date, badge?: string): Promotion
   };
 }
 
-export function toSlide(p: LivePromotion): HeroSlideData {
-  const where = [p.business.name, p.business.town || p.business.dzongkhag].filter(Boolean).join(" · ");
-  return {
-    id: p.id,
-    eyebrow: TYPE_LABELS[p.type],
-    title: p.title,
-    description: [p.discount, where].filter(Boolean).join(" — "),
-    cta: "View offer",
-    href: href(p.slug, p.type),
-    imageLabel: p.title,
-    imageUrl: p.photos[0] ? mediaUrl(p.photos[0]) : undefined,
-  };
-}
-
 type ActiveBanner = Awaited<ReturnType<typeof bannerRepository.active>>[number];
 
 /** A paid banner as a hero slide. It opens the linked promotion, or the business's page. */
@@ -104,7 +90,6 @@ const POPULAR_WINDOW_DAYS = 14;
 const SECTION_SIZE = 6;
 /** The most items a list page loads. Filtering happens in the browser, so this keeps the page light. */
 const LIST_LIMIT = 120;
-const HERO_SIZE = 4;
 /** How many paid banners the home page shows at once. Raise it as more businesses buy banners. */
 export const BANNER_SLOTS = 4;
 
@@ -382,17 +367,17 @@ export const discoveryService = {
     const ranked = [...candidates].sort((a, b) => (clicks.get(b.id) ?? 0) - (clicks.get(a.id) ?? 0));
     const popular = ranked.slice(0, SECTION_SIZE).map((p) => toCard(p, today, (clicks.get(p.id) ?? 0) > 0 ? "Popular" : undefined));
 
-    // Paid banners come first, marked as sponsored. They are shuffled on every visit, and when more are running
-    // than there are slots, which ones appear is random too, so every advertiser gets the first slot and a
-    // place at all about equally often. Promotions fill the rest.
-    const banners = shuffle(await bannerRepository.active(today), random).slice(0, BANNER_SLOTS).map(toBannerSlide);
-    const heroSource = [...events.slice(0, 1), ...ranked].filter((p, i, all) => all.findIndex((q) => q.id === p.id) === i);
+    // The top of the home page is for paid banners only, marked as sponsored. Promotions never appear there: they
+    // have the rows below. Banners are shuffled on every visit, and when more are running than there are slots,
+    // which ones appear is random too, so every advertiser gets the first slot and a place at all about equally
+    // often. With no banner running, the top is left out.
+    const hero = shuffle(await bannerRepository.active(today), random).slice(0, BANNER_SLOTS).map(toBannerSlide);
     // Featured places are limited per day. The row shows a few at a time and rotates, so every business
     // featured today appears about equally often.
     const featured = shuffle(featuredNow, random).slice(0, FEATURED_ROW_SIZE).map((p) => toCard(p, today, "Featured"));
     return {
       featured,
-      hero: [...banners, ...heroSource.slice(0, Math.max(HERO_SIZE - banners.length, 1)).map(toSlide)],
+      hero,
       popular,
       newPlaces: businesses.map((b) => ({
         id: b.id,
