@@ -1,7 +1,8 @@
 import { bannerCost } from "@/lib/coins";
 import { formatCoins } from "@/lib/formatters/number";
 import { ANNOUNCEMENT, keyBelongsTo, mediaUrl } from "@/lib/media";
-import type { AdminBannerInput, BannerInput } from "@/lib/validations/banner.schema";
+import { storage } from "@/lib/storage";
+import { MAX_BANNER_DAYS, type AdminBannerInput, type BannerEditInput, type BannerInput } from "@/lib/validations/banner.schema";
 import { bannerRepository } from "@/server/repositories/banner.repository";
 import { InsufficientCoinsError } from "@/server/repositories/wallet.repository";
 import { businessRepository } from "@/server/repositories/business.repository";
@@ -59,6 +60,7 @@ async function toRows(rows: BannerRecord[], now: Date): Promise<BannerRow[]> {
       days: Math.round((b.endsAt.getTime() - b.startsAt.getTime()) / DAY_MS) + 1,
       coins: b.coins,
       status: b.removedAt ? "removed" : statusOf(b.startsAt, b.endsAt, today),
+      removed: b.removedAt !== null,
       views: totals.get(b.id)?.views ?? 0,
       clicks: totals.get(b.id)?.clicks ?? 0,
   }));

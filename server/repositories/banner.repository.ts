@@ -82,8 +82,11 @@ export const bannerRepository = {
     db.business.findMany({ where: { status: { not: "SUSPENDED" } }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
 
   /** One of the owner's banners with its business, or null. */
-  findOwned: (id: string, ownerId: string) =>
-    db.banner.findFirst({ where: { id, business: { ownerId } }, include: { business: { select: { id: true, name: true, status: true } } } }),
+  findOwned: async (id: string, ownerId: string) => {
+    const banner = await db.banner.findFirst({ where: { id, business: { ownerId } }, include: { business: { select: { id: true, name: true, status: true } } } });
+    // Only a business's own banner can match, so it always has a business.
+    return banner?.business ? { ...banner, business: banner.business } : null;
+  },
 
   /**
    * Saves the changes to a banner, takes the price of any added days from the wallet, and records the edit, all in
