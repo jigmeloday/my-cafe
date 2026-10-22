@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 
 import { ReportButton } from "@/components/public/report-button";
+import { ShareButton } from "@/components/shared/share-button";
 import { FavoriteButton } from "@/components/shared/favorite-button";
 
 import { DETAIL_KINDS } from "../constant/detail.constant";
@@ -39,6 +40,7 @@ export function DetailHeader({ detail }: { detail: DetailData }) {
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-1">
+          <ShareButton path={`/${detail.kind === "event" ? "events" : "promotions"}/${detail.slug}`} title={detail.title} story={{ kind: "promotion", slug: detail.slug }} track={{ promotionId: detail.promotionId }} />
           {detail.promotionId && <ReportButton promotionId={detail.promotionId} />}
           <FavoriteButton href={`/${detail.kind === "event" ? "events" : "promotions"}/${detail.slug}`} className="border" />
         </div>

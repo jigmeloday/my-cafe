@@ -25,7 +25,7 @@ export function buildProfileData(
 ): ProfileData {
   const labels = lastDays(endDate, count);
   const index = new Map(labels.map((d, i) => [d.date, i]));
-  const days: ProfileDay[] = labels.map((d) => ({ ...d, visits: 0, visitors: 0, clicks: 0 }));
+  const days: ProfileDay[] = labels.map((d) => ({ ...d, visits: 0, visitors: 0, clicks: 0, shares: 0 }));
   const clicks: ProfileData["clicks"] = Object.fromEntries(CLICK_EVENT_TYPES.map((type) => [type, labels.map(() => 0)]));
   const sources: ProfileData["sources"] = Object.fromEntries(SOURCES.map((s) => [s.id, labels.map(() => 0)]));
 
@@ -35,6 +35,8 @@ export function buildProfileData(
     if (e.type === "VIEW") {
       days[i].visits += e.count;
       sources[SOURCE_IDS.includes(e.source) ? e.source : OTHER_SOURCE][i] += e.count;
+    } else if (e.type === "SHARE") {
+      days[i].shares += e.count;
     } else if (clicks[e.type]) {
       days[i].clicks += e.count;
       clicks[e.type][i] += e.count;
@@ -51,15 +53,16 @@ export const profileTotals = (data: ProfileData, range: RangeDays) => ({
   visits: sum(lastN(data.days, range).map((d) => d.visits)),
   visitors: sum(lastN(data.days, range).map((d) => d.visitors)),
   clicks: sum(lastN(data.days, range).map((d) => d.clicks)),
+  shares: sum(lastN(data.days, range).map((d) => d.shares)),
 });
 
 export const previousProfileTotals = (data: ProfileData, range: RangeDays) => {
   const before = data.days.slice(-range * 2, -range);
-  return { visits: sum(before.map((d) => d.visits)), visitors: sum(before.map((d) => d.visitors)), clicks: sum(before.map((d) => d.clicks)) };
+  return { visits: sum(before.map((d) => d.visits)), visitors: sum(before.map((d) => d.visitors)), clicks: sum(before.map((d) => d.clicks)), shares: sum(before.map((d) => d.shares)) };
 };
 
 export const profilePoints = (data: ProfileData, range: RangeDays): ChartPoint[] =>
-  lastN(data.days, range).map(({ label, visits, visitors, clicks }) => ({ label, values: { visits, visitors, clicks } }));
+  lastN(data.days, range).map(({ label, visits, visitors, clicks, shares }) => ({ label, values: { visits, visitors, clicks, shares } }));
 
 /** Which link people clicked, biggest first. Kinds nobody clicked are left out. */
 export const clickRows = (data: ProfileData, range: RangeDays): BarItem[] =>

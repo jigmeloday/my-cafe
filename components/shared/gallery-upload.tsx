@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Plus, X } from "lucide-react";
 
 import { validateImage } from "@/lib/files";
@@ -15,6 +15,8 @@ interface GalleryUploadProps {
   onRemove?: (id: string) => Promise<void>;
   /** With no `onUpload`, each chosen file is kept here (not sent) so the form can send it on save. `id` matches `onRemove`. */
   onPick?: (id: string, file: File) => void;
+  /** Called with the photos shown, now and whenever they change, so a preview can use the first one. */
+  onItemsChange?: (items: GalleryItem[]) => void;
 }
 
 export interface GalleryItem {
@@ -22,11 +24,14 @@ export interface GalleryItem {
   url: string;
 }
 
-export function GalleryUpload({ label, max = 8, initial = [], onUpload, onRemove, onPick }: GalleryUploadProps) {
+export function GalleryUpload({ label, max = 8, initial = [], onUpload, onRemove, onPick, onItemsChange }: GalleryUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [items, setItems] = useState<GalleryItem[]>(initial);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const report = useRef(onItemsChange);
+  report.current = onItemsChange;
+  useEffect(() => report.current?.(items), [items]);
 
   const add = async (files: FileList | null) => {
     if (!files) return;

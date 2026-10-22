@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist_Mono, Figtree } from "next/font/google";
 import "./globals.css";
+import { SessionSync } from "@/components/auth/session-sync";
 import { EngagementProvider } from "@/components/engagement/engagement-provider";
 import { SEO, siteUrl } from "@/lib/seo/site";
 
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${figtree.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <SessionSync />
         <EngagementProvider>{children}</EngagementProvider>
       </body>
     </html>

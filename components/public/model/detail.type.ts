@@ -33,6 +33,8 @@ export interface DetailCta {
   label: string;
   /** Where the button goes. Opened in a new tab when it leaves the site. */
   href: string;
+  /** True when the button opens a WhatsApp chat, so its clicks are counted as chats. */
+  chat?: boolean;
 }
 
 /** Plain facts about a promotion for search engines (dates are like "2026-11-01"). */

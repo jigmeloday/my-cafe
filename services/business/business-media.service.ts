@@ -1,6 +1,7 @@
 import { randomBytes } from "node:crypto";
 
 import { keyBelongsTo, MAX_GALLERY, type MediaKind } from "@/lib/media";
+import { optimizeImage } from "@/lib/optimize-image";
 import { storage } from "@/lib/storage";
 import { businessRepository } from "@/server/repositories/business.repository";
 import { mediaRepository } from "@/server/repositories/media.repository";
@@ -19,8 +20,10 @@ export const businessMediaService = {
     }
 
     // A fresh name every time, so a replaced image never shows from an old cache.
-    const key = `business/${business.id}/${kind}-${randomBytes(8).toString("hex")}.${image.ext}`;
-    await storage.put(key, bytes, image.mime);
+    const optimized = await optimizeImage(bytes).catch(() => null);
+    const stored = optimized ?? { bytes, image };
+    const key = `business/${business.id}/${kind}-${randomBytes(8).toString("hex")}.${stored.image.ext}`;
+    await storage.put(key, stored.bytes, stored.image.mime);
 
     // Promotion photos and banner images are only files here. The promotion or banner keeps the key when it is saved.
     if (kind === "promotion" || kind === "banner") return { ok: true, key };

@@ -1,4 +1,4 @@
-import type { BusinessEventType, SiteSection } from "@/lib/track-events";
+import type { BusinessEventType, PromotionEventKind, SiteSection } from "@/lib/track-events";
 import { currentVisitor } from "@/lib/visitor";
 import { analyticsRepository as repo } from "@/server/repositories/analytics.repository";
 
@@ -21,7 +21,7 @@ const allowed = (isView: boolean, recent: (since: Date) => Promise<number>) =>
  * looking at their own page isn't an audience. Every method answers whether something was counted.
  */
 export const trackingService = {
-  async promotion(input: { promotionId: string; type: "VIEW" | "CLICK"; source: string }, viewerId: string | null): Promise<boolean> {
+  async promotion(input: { promotionId: string; type: PromotionEventKind; source: string }, viewerId: string | null): Promise<boolean> {
     const visitor = await currentVisitor();
     if (!visitor || !(await repo.isCountable(input.promotionId, viewerId))) return false;
     if (!(await allowed(input.type === "VIEW", (since) => repo.recentPromotionEvents(input.promotionId, input.type, visitor, since)))) return false;

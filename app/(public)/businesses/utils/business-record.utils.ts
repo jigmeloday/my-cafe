@@ -17,6 +17,8 @@ const toHours = (value: unknown): BusinessHours[] =>
     hours: closed ? BUSINESS_COPY.closed : `${formatTime(open)} – ${formatTime(close)}`,
   }));
 
+const mapsUrl = (query: string) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+
 const socialLabel = { facebook: "Facebook", instagram: "Instagram", tiktok: "TikTok" } as const;
 
 function toContacts(b: Business): BusinessContact[] {
@@ -24,7 +26,8 @@ function toContacts(b: Business): BusinessContact[] {
   const lines: BusinessContact[] = [];
   if (b.phone) lines.push({ key: "phone", icon: CONTACT_ICONS.phone, text: b.phone, href: `tel:${b.phone.replace(/\s/g, "")}` });
   if (b.email) lines.push({ key: "email", icon: CONTACT_ICONS.email, text: b.email, href: `mailto:${b.email}` });
-  if (address) lines.push({ key: "address", icon: CONTACT_ICONS.address, text: address });
+  // A pasted map link wins; otherwise a street address (a physical store) opens a maps search. Online-only shops stay plain text.
+  if (address) lines.push({ key: "address", icon: CONTACT_ICONS.address, text: address, href: b.mapUrl || (b.addressLine1 ? mapsUrl(`${b.name}, ${address}`) : undefined) });
   if (b.website) lines.push({ key: "website", icon: CONTACT_ICONS.website, text: b.website.replace(/^https?:\/\//, ""), href: b.website });
   for (const key of ["facebook", "instagram", "tiktok"] as const) {
     if (b[key]) lines.push({ key, icon: CONTACT_ICONS.social, text: socialLabel[key], href: b[key] });

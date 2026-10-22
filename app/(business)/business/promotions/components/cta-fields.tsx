@@ -25,6 +25,9 @@ export function CtaFields({ form }: { form: UseFormReturn<PromotionInput> }) {
         options={CTA_OPTIONS}
         error={errors.ctaType?.message}
       />
+      {(watch("ctaType") === "WHATSAPP" || watch("ctaType") === "CONTACT_BUSINESS") && (
+        <p className="self-end pb-2 text-sm text-muted-foreground">Uses the phone number on your business profile.</p>
+      )}
       {watch("ctaType") === "VISIT_WEBSITE" && (
         <Input label="Website link" error={errors.ctaUrl?.message} type="url" inputMode="url" placeholder="https://" {...register("ctaUrl")} />
       )}

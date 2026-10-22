@@ -23,6 +23,7 @@ const CTA_LABELS: Record<(typeof CTA_TYPES)[number], string> = {
   VIEW_OFFER: "View offer",
   VISIT_WEBSITE: "Visit website",
   CONTACT_BUSINESS: "Contact business",
+  WHATSAPP: "Chat on WhatsApp",
 };
 
 export const STATUS_LABELS: Record<

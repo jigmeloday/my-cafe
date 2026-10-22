@@ -4,8 +4,8 @@ import { PerformanceChart } from "@/components/business/charts/performance-chart
 import type { BarItem } from "@/components/business/charts/model/chart.type";
 import { SectionCard } from "@/components/business/section-card";
 
-import { ANALYTICS_COPY, METRICS } from "../constant/analytics.constant";
-import type { Dataset, RangeDays } from "../model/analytics.type";
+import { ANALYTICS_COPY, BANNER_METRICS, METRICS } from "../constant/analytics.constant";
+import type { BannerDay, Dataset, RangeDays } from "../model/analytics.type";
 import {
   previousReach,
   rangeDays,
@@ -15,16 +15,18 @@ import {
   sourceRows,
   toPoints,
 } from "../utils/dataset.utils";
+import { bannerPoints } from "../utils/banner.utils";
 import { AnalyticsStats } from "./analytics-stats";
 import { CoinsCard } from "./coins-card";
 
 interface TabProps {
   data: Dataset;
+  banners: BannerDay[];
   range: RangeDays;
   coins: BarItem[];
 }
 
-export function OverviewTab({ data, range, coins }: TabProps) {
+export function OverviewTab({ data, banners, range, coins }: TabProps) {
   const totals = rangeTotals(data, range);
 
   return (
@@ -40,6 +42,7 @@ export function OverviewTab({ data, range, coins }: TabProps) {
           <BreakdownList rows={sourceRows(data, range)} />
         </SectionCard>
       </div>
+      <PerformanceChart title={ANALYTICS_COPY.bannerChartTitle} points={bannerPoints(banners, range)} metrics={BANNER_METRICS} />
       <div className="grid gap-4 md:grid-cols-2">
         <SectionCard title={ANALYTICS_COPY.funnelTitle}>
           <FunnelChart

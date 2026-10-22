@@ -61,6 +61,7 @@ export const CTA_TYPES = [
   "VIEW_OFFER",
   "VISIT_WEBSITE",
   "CONTACT_BUSINESS",
+  "WHATSAPP",
 ] as const;
 
 export const CAMPAIGN_DESTINATIONS = [

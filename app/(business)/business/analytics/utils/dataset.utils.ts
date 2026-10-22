@@ -1,5 +1,6 @@
 import type { BarItem, ChartPoint } from "@/components/business/charts/model/chart.type";
 
+import type { PromotionEventKind } from "@/lib/track-events";
 import { OTHER_SOURCE, SOURCES } from "../constant/analytics.constant";
 import type {
   Dataset,
@@ -13,7 +14,7 @@ import { emptyTotals, lastDays, sum, totalsOf } from "./analytics.utils";
 
 export interface EventCount {
   promotionId: string;
-  type: "VIEW" | "CLICK";
+  type: PromotionEventKind;
   source: string;
   /** "YYYY-MM-DD" */
   day: string;
@@ -41,7 +42,7 @@ export function buildDataset(
 ): Dataset {
   const labels = lastDays(endDate, count);
   const index = new Map(labels.map((d, i) => [d.date, i]));
-  const blank = (): DayStats[] => labels.map((d) => ({ ...d, views: 0, clicks: 0, saves: 0 }));
+  const blank = (): DayStats[] => labels.map((d) => ({ ...d, views: 0, clicks: 0, saves: 0, shares: 0, chats: 0 }));
 
   const days = blank();
   const promotions: Dataset["promotions"] = Object.fromEntries(promotionIds.map((id) => [id, blank()]));
@@ -51,7 +52,7 @@ export function buildDataset(
     const i = index.get(e.day);
     const own = promotions[e.promotionId];
     if (i === undefined || !own) continue;
-    const field = e.type === "VIEW" ? "views" : "clicks";
+    const field = e.type === "VIEW" ? "views" : e.type === "SHARE" ? "shares" : e.type === "WHATSAPP" ? "chats" : "clicks";
     own[i][field] += e.count;
     days[i][field] += e.count;
     if (e.type === "CLICK") sources[SOURCE_IDS.includes(e.source) ? e.source : OTHER_SOURCE][i] += e.count;
@@ -89,7 +90,7 @@ export function promotionRows(data: Dataset, range: RangeDays, metas: PromotionM
 }
 
 export const toPoints = (days: DayStats[]): ChartPoint[] =>
-  days.map(({ label, views, clicks, saves }) => ({ label, values: { views, clicks, saves } }));
+  days.map(({ label, views, clicks, saves, shares, chats }) => ({ label, values: { views, clicks, saves, shares, chats } }));
 
 export const promotionPoints = (data: Dataset, id: string, range: RangeDays): ChartPoint[] =>
   toPoints(lastN(data.promotions[id] ?? [], range));

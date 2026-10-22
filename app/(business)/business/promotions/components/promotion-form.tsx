@@ -54,6 +54,7 @@ export function PromotionForm({ initial, categories, id, balance, availability, 
   // New photos stay on this device until the promotion is saved, so one that is removed costs no storage.
   const chosen = useRef(new Map<string, File>());
   const [chosenCount, setChosenCount] = useState(0);
+  const [coverUrl, setCoverUrl] = useState<string | undefined>(initial.photos[0] ? mediaUrl(initial.photos[0]) : undefined);
   const { form, submit, result, pending } = useActionForm(
     promotionSchema,
     async (values) => {
@@ -110,6 +111,7 @@ export function PromotionForm({ initial, categories, id, balance, availability, 
             label="Photos"
             max={MAX_PHOTOS}
             initial={initial.photos.map((key) => ({ id: key, url: mediaUrl(key) }))}
+            onItemsChange={(items) => setCoverUrl(items[0]?.url)}
             onPick={(photoId, file) => {
               chosen.current.set(photoId, file);
               setChosenCount(chosen.current.size);
@@ -155,7 +157,7 @@ export function PromotionForm({ initial, categories, id, balance, availability, 
           </Button>
         </div>
       </div>
-      <PromotionPreview control={form.control} />
+      <PromotionPreview control={form.control} imageUrl={coverUrl} />
     </form>
   );
 }

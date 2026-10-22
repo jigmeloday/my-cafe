@@ -10,8 +10,11 @@ import { formatDateRange } from "../utils/promotion.utils";
 
 export function PromotionPreview({
   control,
+  imageUrl,
 }: {
   control: Control<PromotionInput>;
+  /** The first photo, saved or just chosen on this device. */
+  imageUrl?: string;
 }) {
   const [title, type, discount, location, startDate, endDate] = useWatch({
     control,
@@ -38,6 +41,7 @@ export function PromotionPreview({
           ],
           highlight: discount || "Offer",
           href: "#",
+          imageUrl,
         }}
       />
     </aside>
