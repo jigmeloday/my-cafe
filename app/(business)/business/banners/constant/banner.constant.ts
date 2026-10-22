@@ -13,6 +13,11 @@ export const BANNERS_COPY = {
   editTitle: "Edit banner",
   editSubtitle: "Change the picture, headline or text for free. You can add days at the end; the days you already paid for stay as they are.",
   edit: "Edit",
+  delete: "Delete",
+  deleteTitle: "Delete this banner?",
+  deleteConfirm: "Delete banner",
+  deleteBody: (title: string, running: boolean) =>
+    `“${title}” will be deleted${running ? " and stop showing on the home page right away" : ""}, along with its views and clicks. The days you paid for are not refunded.`,
   removedByNook: "Removed by Nook",
   save: "Save changes",
   savePaid: "Pay & save changes",

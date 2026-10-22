@@ -36,3 +36,17 @@ export async function updateBannerAction(id: string, input: BannerEditInput): Pr
   revalidatePath("/business", "layout");
   redirect("/business/banners");
 }
+
+/** Deletes one of the owner's banners. The days already paid for are not refunded. */
+export async function deleteBannerAction(id: string): Promise<ActionResult> {
+  const user = await getCurrentUser();
+  if (!user || user.role !== "BUSINESS_OWNER") return { ok: false, error: "Please log in with a business account." };
+  if (!id) return { ok: false, error: "Missing banner." };
+
+  const result = await bannerService.remove(user, id);
+  if (result.ok) {
+    revalidatePath("/business/banners");
+    revalidatePath("/business", "layout");
+  }
+  return result;
+}

@@ -59,6 +59,16 @@ export const bannerRepository = {
       await tx.auditLog.create({ data: audit });
     }),
 
+  /** How many reports have been sent about a banner. */
+  reportCount: (bannerId: string) => db.report.count({ where: { bannerId } }),
+
+  /** Deletes a banner, and its views and clicks with it, and records it, in one transaction. */
+  remove: (id: string, audit: { actorId: string; actorEmail: string; action: string; targetId: string; targetLabel: string }) =>
+    db.$transaction(async (tx) => {
+      await tx.banner.delete({ where: { id } });
+      await tx.auditLog.create({ data: audit });
+    }),
+
   /** Counts a banner showing or being clicked. Only for a banner that is running today. */
   async recordEvent(bannerId: string, type: "VIEW" | "CLICK", today: Date) {
     const running = await db.banner.count({ where: { id: bannerId, removedAt: null, startsAt: { lte: today }, endsAt: { gte: today } } });

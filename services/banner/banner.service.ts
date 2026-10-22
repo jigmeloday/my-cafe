@@ -114,6 +114,25 @@ export const bannerService = {
     return { ok: true };
   },
 
+  /**
+   * Deletes one of the owner's banners. Nothing is refunded. A banner Nook took down, or one that has been
+   * reported, stays on record: deleting it would erase what a report was about.
+   */
+  async remove(owner: Owner, id: string): Promise<Result> {
+    const banner = await bannerRepository.findOwned(id, owner.id);
+    if (!banner) return { ok: false, error: "We couldn't find that banner." };
+    if (banner.removedAt) return { ok: false, error: "Nook took this banner down after a report, so it stays on record and can't be deleted." };
+    if (banner.business.status === "SUSPENDED") return { ok: false, error: "Your business is suspended, so you can't change banners right now. Please contact us." };
+    if ((await bannerRepository.reportCount(id)) > 0) {
+      return { ok: false, error: "This banner has been reported, so it has to stay on record until it ends. Contact us if it needs to come down sooner." };
+    }
+
+    await bannerRepository.remove(id, { actorId: owner.id, actorEmail: owner.email, action: "banner.delete", targetId: id, targetLabel: `Banner "${banner.title}" deleted` });
+    // The picture belonged only to this banner.
+    await storage.remove(banner.imageKey);
+    return { ok: true };
+  },
+
   /** Creates a banner and pays for it from the wallet. Nothing is charged unless the banner is saved. */
   async create(owner: Owner, input: BannerInput, now = new Date()): Promise<Result> {
     const today = bhutanToday(now);
