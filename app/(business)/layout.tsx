@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 
 import { NO_INDEX } from "@/lib/seo/metadata";
-import { BusinessHeader } from "@/components/business/header";
-import { BUSINESS_NAV } from "@/components/business/constant/business-nav.constant";
+import { BusinessShell } from "@/components/business/business-shell";
 import { guardArea } from "@/lib/session";
-import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 
 
 // Accounts and dashboards are private, so search engines are asked to leave them out.
@@ -17,13 +15,5 @@ export default async function BusinessLayout({
 }) {
   await guardArea("business");
 
-  return (
-    <div className="flex min-h-screen bg-muted/40">
-      <DashboardSidebar items={BUSINESS_NAV} label="Business dashboard" />
-      <div className="flex min-w-0 flex-1 flex-col">
-        <BusinessHeader />
-        <main className="w-full flex-1 px-4 py-4 sm:py-6">{children}</main>
-      </div>
-    </div>
-  );
+  return <BusinessShell>{children}</BusinessShell>;
 }

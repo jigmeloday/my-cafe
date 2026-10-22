@@ -68,5 +68,8 @@ export const reportRepository = {
 
   /** Notices from Nook to a business owner, newest first. */
   noticesFor: (userId: string, since: Date) =>
-    db.notification.findMany({ where: { userId, createdAt: { gte: since } }, orderBy: { createdAt: "desc" }, take: 5 }),
+    db.notification.findMany({ where: { userId, readAt: null, createdAt: { gte: since } }, orderBy: { createdAt: "desc" }, take: 5 }),
+
+  /** Closing a message marks it read, so it doesn't come back. Only the person it was sent to can close it. */
+  dismissNotice: (userId: string, id: string) => db.notification.updateMany({ where: { id, userId, readAt: null }, data: { readAt: new Date() } }),
 };

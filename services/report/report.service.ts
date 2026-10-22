@@ -94,6 +94,12 @@ export const reportService = {
     return rows.map((n) => ({ id: n.id, title: n.title, description: n.description, href: n.href, at: toBhutan(n.createdAt) }));
   },
 
+  /** The owner closes one of their messages from Nook. */
+  async dismissNotice(ownerId: string, id: string): Promise<Result> {
+    await reportRepository.dismissNotice(ownerId, id);
+    return { ok: true, message: "Closed." };
+  },
+
   async list(status: "OPEN" | "RESOLVED" | "ALL"): Promise<ReportItem[]> {
     return groupReports(await reportRepository.list(status));
   },

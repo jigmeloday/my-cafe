@@ -17,11 +17,13 @@ import {
 import { authClient } from "@/lib/auth-client";
 
 import { SIGNED_IN_MENU, USER_MENU } from "./constant/site.constant";
+import type { HeaderUser } from "./model/header-user.type";
 
-export function UserMenu() {
+export function UserMenu({ initialUser }: { initialUser: HeaderUser | null }) {
   const router = useRouter();
   const { data } = authClient.useSession();
-  const user = data?.user;
+  // The browser's answer when it has one; until then, what the server already knows.
+  const user: HeaderUser | undefined = data?.user ?? initialUser ?? undefined;
   const account = user ? (SIGNED_IN_MENU.accounts[user.role] ?? SIGNED_IN_MENU.account) : SIGNED_IN_MENU.account;
   const dashboard = user ? SIGNED_IN_MENU.dashboards[user.role] : undefined;
 

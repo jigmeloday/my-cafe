@@ -6,9 +6,10 @@ import { Brand } from "./brand";
 import { CreateAccountButton } from "./create-account-button";
 import { MainNav } from "./main-nav";
 import { SearchBar } from "./search-bar";
+import type { HeaderUser } from "./model/header-user.type";
 import { UserMenu } from "./user-menu";
 
-export function SiteHeader() {
+export function SiteHeader({ user }: { user: HeaderUser | null }) {
   return (
     <header className="sticky top-0 z-40 border-b bg-surface">
       <Container className="flex flex-wrap items-center gap-x-6 gap-y-3 py-3 lg:flex-nowrap">
@@ -20,8 +21,8 @@ export function SiteHeader() {
           </Suspense>
         </div>
         <div className="order-2 ml-auto flex items-center gap-2 lg:order-0">
-          <CreateAccountButton />
-          <UserMenu />
+          <CreateAccountButton signedIn={user !== null} />
+          <UserMenu initialUser={user} />
         </div>
       </Container>
     </header>
