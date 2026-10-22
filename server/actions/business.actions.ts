@@ -8,15 +8,16 @@ import {
   businessContactSchema,
   businessGeneralSchema,
   businessHoursSchema,
+  businessLocationSchema,
   businessOfferingsSchema,
   businessSocialSchema,
   type BusinessContactInput,
   type BusinessGeneralInput,
   type BusinessHoursInput,
+  type BusinessLocationInput,
   type BusinessOfferingsInput,
   type BusinessSocialInput,
 } from "@/lib/validations/business.schema";
-import { addressSchema, type AddressInput } from "@/lib/validations/profile.schema";
 import { businessService, type Owner } from "@/services/business/business.service";
 
 import type { ActionResult } from "./action.type";
@@ -49,8 +50,8 @@ export async function updateBusinessContactAction(input: BusinessContactInput): 
   return save(businessContactSchema, input, (id, d) => businessService.saveContact(id, d));
 }
 
-export async function updateBusinessLocationAction(input: AddressInput): Promise<ActionResult> {
-  return save(addressSchema, input, (id, d) => businessService.saveLocation(id, d));
+export async function updateBusinessLocationAction(input: BusinessLocationInput): Promise<ActionResult> {
+  return save(businessLocationSchema, input, (id, d) => businessService.saveLocation(id, d));
 }
 
 export async function updateBusinessSocialAction(input: BusinessSocialInput): Promise<ActionResult> {

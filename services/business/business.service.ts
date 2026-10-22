@@ -4,6 +4,7 @@ import type {
   BusinessContactInput,
   BusinessGeneralInput,
   BusinessHoursInput,
+  BusinessLocationInput,
   BusinessOfferingsInput,
   BusinessSocialInput,
 } from "@/lib/validations/business.schema";
@@ -79,6 +80,7 @@ export const businessService = {
           town: b?.town ?? "",
           dzongkhag: (b?.dzongkhag ?? "") as Dzongkhag,
           postalCode: b?.postalCode ?? "",
+          mapUrl: b?.mapUrl ?? "",
         },
         social: { facebook: b?.facebook ?? "", instagram: b?.instagram ?? "", tiktok: b?.tiktok ?? "" },
         hours: { hours: readHours(b?.hours) },
@@ -109,13 +111,14 @@ export const businessService = {
     return this.saveInto(owner, input);
   },
 
-  async saveLocation(owner: Owner, a: AddressInput) {
+  async saveLocation(owner: Owner, a: BusinessLocationInput) {
     return this.saveInto(owner, {
       addressLine1: a.line1,
       addressLine2: a.line2,
       town: a.town,
       dzongkhag: a.dzongkhag,
       postalCode: a.postalCode,
+      mapUrl: a.mapUrl,
     });
   },
 

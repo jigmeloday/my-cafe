@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { isValidPhone } from "@/lib/phone";
+import { addressSchema } from "@/lib/validations/profile.schema";
 
 const link = z
   .string()
@@ -72,6 +73,17 @@ export const businessOfferingsSchema = z.object({
   products: z.array(listItem).max(20, "Add up to 20 products"),
 });
 
+const GOOGLE_MAPS_LINK = /^https:\/\/((www\.|maps\.)?google\.[a-z.]+\/maps|maps\.app\.goo\.gl|goo\.gl\/maps)(\/|\?|$)\S*$/i;
+
+/** The address, plus an optional pinned Google Maps link so customers find the shop. */
+export const businessLocationSchema = addressSchema.extend({
+  mapUrl: z
+    .string()
+    .trim()
+    .refine((v) => v === "" || GOOGLE_MAPS_LINK.test(v), "Paste a Google Maps link (use Share → Copy link)"),
+});
+
+export type BusinessLocationInput = z.infer<typeof businessLocationSchema>;
 export type BusinessGeneralInput = z.infer<typeof businessGeneralSchema>;
 export type BusinessContactInput = z.infer<typeof businessContactSchema>;
 export type BusinessSocialInput = z.infer<typeof businessSocialSchema>;

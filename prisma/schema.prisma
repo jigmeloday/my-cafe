@@ -191,6 +191,7 @@ model Business {
   town             String            @default("")
   dzongkhag        String            @default("")
   postalCode       String            @default("")
+  mapUrl           String            @default("")
   facebook         String            @default("")
   instagram        String            @default("")
   tiktok           String            @default("")
