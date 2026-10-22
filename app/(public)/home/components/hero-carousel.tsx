@@ -22,8 +22,8 @@ export function HeroCarousel({ slides }: { slides: HeroSlideData[] }) {
           ref={ref}
           className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto"
         >
-          {slides.map((slide) => (
-            <HeroSlide key={slide.id} slide={slide} />
+          {slides.map((slide, i) => (
+            <HeroSlide key={slide.id} slide={slide} active={i === index} />
           ))}
         </div>
         {canPrev && (

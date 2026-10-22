@@ -8,10 +8,11 @@ import { Button } from "@/components/ui/button";
 import { BannerImage } from "@/components/shared/banner-image";
 import { ImagePlaceholder } from "@/components/shared/image-placeholder";
 import { trackBanner } from "@/lib/track-client";
+import { cn } from "@/lib/utils";
 
 import type { HeroSlideData } from "../model/home.type";
 
-export function HeroSlide({ slide }: { slide: HeroSlideData }) {
+export function HeroSlide({ slide, active = true }: { slide: HeroSlideData; active?: boolean }) {
   const ref = useRef<HTMLElement>(null);
   const { bannerId } = slide;
 
@@ -33,7 +34,13 @@ export function HeroSlide({ slide }: { slide: HeroSlideData }) {
 
   return (
     // On a phone the picture sits above its text; from a tablet up the text card sits over the picture's corner.
-    <article ref={ref} className="relative w-[92%] shrink-0 snap-start overflow-hidden rounded-3xl bg-surface max-sm:border md:w-[88%]">
+    <article
+      ref={ref}
+      className={cn(
+        "relative w-full shrink-0 snap-start overflow-hidden rounded-3xl bg-surface transition-[opacity,transform] duration-700 ease-out max-sm:border sm:w-[92%] md:w-[88%]",
+        !active && "scale-[0.97] opacity-60",
+      )}
+    >
       {slide.imageUrl ? (
         <BannerImage src={slide.imageUrl} className="aspect-16/10 sm:aspect-16/9 md:aspect-21/8" />
       ) : (

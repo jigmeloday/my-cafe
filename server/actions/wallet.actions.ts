@@ -18,7 +18,7 @@ export async function buyCoinsAction({ coins }: { coins: number }): Promise<Acti
   if (problem) return { ok: false, error: problem };
 
   const provider = getPaymentProvider();
-  if (!provider) return { ok: false, error: "Payments aren't connected yet. Buying coins is coming soon." };
+  if (!provider) return { ok: false, error: "Online payment isn't available yet. Please contact our support team to buy coins." };
 
   const business = await businessService.ensure(user);
   const { url } = await provider.createCheckout({

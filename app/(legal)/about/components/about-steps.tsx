@@ -1,27 +1,31 @@
-import type { AboutStep } from "../constant/about.constant";
+import type { AboutStep } from "../model/about.type";
 
 interface AboutStepsProps {
-  id: string;
   title: string;
   steps: AboutStep[];
 }
 
-/** A heading and a row of short, icon-led points. */
-export function AboutSteps({ id, title, steps }: AboutStepsProps) {
+/** A short, numbered way through: one card per step. */
+export function AboutSteps({ title, steps }: AboutStepsProps) {
   return (
-    <section aria-labelledby={id} className="space-y-5">
-      <h2 id={id}>{title}</h2>
-      <ul className="grid gap-4 sm:grid-cols-3">
-        {steps.map(({ icon: Icon, title: heading, text }) => (
-          <li key={heading} className="space-y-3 rounded-2xl border bg-surface p-5">
-            <span className="grid size-10 place-items-center rounded-full bg-maroon-soft text-primary">
+    <div className="space-y-4">
+      <h3>{title}</h3>
+      <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+        {steps.map(({ icon: Icon, title: heading, text }, i) => (
+          <li key={heading} className="flex gap-4 rounded-2xl border bg-surface p-4">
+            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-maroon-soft text-primary">
               <Icon className="size-5" />
             </span>
-            <h3>{heading}</h3>
-            <p className="text-sm text-muted-foreground">{text}</p>
+            <div className="min-w-0 space-y-1">
+              <p className="font-semibold">
+                <span className="mr-2 text-primary tabular-nums">{i + 1}.</span>
+                {heading}
+              </p>
+              <p className="text-sm text-muted-foreground">{text}</p>
+            </div>
           </li>
         ))}
-      </ul>
-    </section>
+      </ol>
+    </div>
   );
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { requireRole } from "@/lib/session";
+import { getPaymentProvider } from "@/services/payment/payment.provider";
 import { walletService } from "@/services/wallet/wallet.service";
 
 import { BalanceCard } from "./components/balance-card";
@@ -32,7 +33,7 @@ export default async function WalletPage() {
           <h2 id="buy-coins">{WALLET_COPY.buyTitle}</h2>
           <p className="text-sm text-muted-foreground">{WALLET_COPY.buyHint}</p>
         </div>
-        <CoinPurchase />
+        <CoinPurchase paymentsConnected={getPaymentProvider() !== null} />
       </section>
       <section aria-labelledby="coin-uses" className="space-y-3">
         <h2 id="coin-uses">{WALLET_COPY.usesTitle}</h2>

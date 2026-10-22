@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { smoothScrollTo } from "@/lib/smooth-scroll";
+
 const EDGE = 4;
 
 export function useScrollRow<T extends HTMLElement>() {
@@ -36,11 +38,10 @@ export function useScrollRow<T extends HTMLElement>() {
     };
   }, [update]);
 
-  const scrollBy = (dir: 1 | -1) =>
-    ref.current?.scrollBy({
-      left: dir * ref.current.clientWidth * 0.9,
-      behavior: "smooth",
-    });
+  const scrollBy = (dir: 1 | -1) => {
+    const el = ref.current;
+    if (el) smoothScrollTo(el, el.scrollLeft + dir * el.clientWidth * 0.9, 700);
+  };
 
   return {
     ref,

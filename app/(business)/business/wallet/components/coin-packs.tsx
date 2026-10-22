@@ -8,11 +8,12 @@ import { formatNumber } from "@/lib/formatters/number";
 import { WALLET_COPY } from "../constant/wallet.constant";
 
 interface CoinPacksProps {
-  onBuy: (coins: number) => void;
-  pending: boolean;
+  /** Leave out to show the packs as a price list, with nothing to press. */
+  onBuy?: (coins: number) => void;
+  pending?: boolean;
 }
 
-export function CoinPacks({ onBuy, pending }: CoinPacksProps) {
+export function CoinPacks({ onBuy, pending = false }: CoinPacksProps) {
   return (
     <ul className="grid grid-cols-2 gap-3 lg:grid-cols-4">
       {COIN_PACKS.map((pack, index) => {
@@ -37,14 +38,18 @@ export function CoinPacks({ onBuy, pending }: CoinPacksProps) {
                 {saving > 0 ? `Save ${saving}%` : "coins"}
               </p>
             </div>
-            <Button
-              variant="secondary"
-              disabled={pending}
-              onClick={() => onBuy(pack.coins)}
-              className="mt-auto"
-            >
-              {WALLET_COPY.buy} · {formatMoney(pack.priceMinor)}
-            </Button>
+            {onBuy ? (
+              <Button
+                variant="secondary"
+                disabled={pending}
+                onClick={() => onBuy(pack.coins)}
+                className="mt-auto"
+              >
+                {WALLET_COPY.buy} · {formatMoney(pack.priceMinor)}
+              </Button>
+            ) : (
+              <p className="mt-auto font-semibold tabular-nums">{formatMoney(pack.priceMinor)}</p>
+            )}
           </li>
         );
       })}

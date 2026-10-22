@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from "react";
 
+import { smoothScrollTo } from "@/lib/smooth-scroll";
+
 type Options = { count: number; intervalMs?: number };
 
 const TOUCH_PAUSE_MS = 8000;
@@ -13,7 +15,7 @@ const TOUCH_PAUSE_MS = 8000;
  */
 export function useAutoSwap<T extends HTMLElement>(
   ref: React.RefObject<T | null>,
-  { count, intervalMs = 5000 }: Options,
+  { count, intervalMs = 8000 }: Options,
 ) {
   const pausedUntil = useRef(0);
   const holds = useRef(0);
@@ -29,7 +31,7 @@ export function useAutoSwap<T extends HTMLElement>(
       const origin = el.getBoundingClientRect().left;
       const offsets = slides.map((s) => s.getBoundingClientRect().left - origin + el.scrollLeft);
       const current = offsets.reduce((best, x, i) => (Math.abs(x - el.scrollLeft) < Math.abs(offsets[best] - el.scrollLeft) ? i : best), 0);
-      el.scrollTo({ left: offsets[(current + 1) % slides.length], behavior: "smooth" });
+      smoothScrollTo(el, offsets[(current + 1) % slides.length]);
     }, intervalMs);
 
     return () => clearInterval(timer);
