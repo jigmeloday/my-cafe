@@ -1,7 +1,6 @@
 import { randomBytes } from "node:crypto";
 
 import { ANNOUNCEMENT, keyBelongsTo, MAX_GALLERY, type MediaKind } from "@/lib/media";
-import { optimizeImage } from "@/lib/optimize-image";
 import { storage } from "@/lib/storage";
 import { businessRepository } from "@/server/repositories/business.repository";
 import { mediaRepository } from "@/server/repositories/media.repository";
@@ -11,12 +10,10 @@ import { businessService, type Owner } from "./business.service";
 type Result = { ok: true } | { ok: false; error: string };
 type Image = { ext: string; mime: string };
 
-/** Saves a picture under a fresh name, so a replaced image never shows from an old cache. */
+/** Saves a picture (already made small by the upload route) under a fresh name, so a replaced image never shows from an old cache. */
 async function storeImage(businessId: string, kind: MediaKind, bytes: Uint8Array, image: Image) {
-  const optimized = await optimizeImage(bytes).catch(() => null);
-  const stored = optimized ?? { bytes, image };
-  const key = `business/${businessId}/${kind}-${randomBytes(8).toString("hex")}.${stored.image.ext}`;
-  await storage.put(key, stored.bytes, stored.image.mime);
+  const key = `business/${businessId}/${kind}-${randomBytes(8).toString("hex")}.${image.ext}`;
+  await storage.put(key, bytes, image.mime);
   return key;
 }
 
