@@ -7,7 +7,7 @@ export const LEGAL = {
   address: "[Street address], Thimphu, Bhutan",
   contactEmail: "[contact email]",
   /** "YYYY-MM-DD": shown as "Last updated". */
-  updated: "2026-10-19",
+  updated: "2026-10-22",
   /** Customers younger than this need a parent or guardian's permission. */
   minAge: 16,
 } as const;

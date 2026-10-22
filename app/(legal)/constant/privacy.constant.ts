@@ -54,6 +54,17 @@ export const PRIVACY: LegalDocument = {
       ],
     },
     {
+      id: "why",
+      title: "Why we are allowed to use it",
+      blocks: [
+        { ul: [
+          "Because you asked for it: to give you an account, a business page or a service you use.",
+          "Because you agreed: for promotional messages and personalisation. You can withdraw your agreement at any time and it won't affect the past.",
+          "Because it is needed to keep Nook safe, to count how ads perform, and to follow the law.",
+        ] },
+      ],
+    },
+    {
       id: "share",
       title: "Who can see your information",
       blocks: [
@@ -67,7 +78,7 @@ export const PRIVACY: LegalDocument = {
           "our hosting provider;",
           "a payment provider, once buying coins is switched on.",
         ] },
-        { p: "We do not sell your personal information or give it to advertisers. We may share information when the law requires it." },
+        { p: "We do not sell your personal information or give it to advertisers. If Nook is ever sold or merged with another business, your information may move with it, and we will tell you first. We may share information when the law requires it." },
       ],
     },
     {
@@ -88,7 +99,7 @@ export const PRIVACY: LegalDocument = {
       id: "cookies",
       title: "Cookies",
       blocks: [
-        { p: "We use one essential cookie to keep you signed in. It can't be read by scripts on the page and is sent only over a secure connection on the live site. We don't use advertising cookies or third-party trackers." },
+        { p: "We use one essential cookie to keep you signed in. It can't be read by scripts on the page and is sent only over a secure connection on the live site. We don't use advertising cookies or third-party trackers. If we add any in future, we will say so here and ask you first where the law requires it. You can block or delete cookies in your browser, but you won't be able to stay signed in." },
       ],
     },
     {
@@ -112,7 +123,7 @@ export const PRIVACY: LegalDocument = {
         { ul: [
           "Your account and profile: until you delete your account. Your saved promotions, follows, notifications and reports are deleted with it.",
           "Business information: while the business account exists.",
-          "Coin and wallet history: kept for our records, as it shows what a business paid for.",
+          "Coin and wallet history: kept for our records and for accounting, tax and legal reasons, even after the business account is closed, as it shows what a business paid for.",
           "Contact messages: kept while we deal with your request, and for a short time after. Ask us to delete yours at any time.",
           "Job applications: kept only as long as needed to consider you. Ask us to delete yours at any time.",
           "Admin logs: kept for security and accountability.",
@@ -132,6 +143,13 @@ export const PRIVACY: LegalDocument = {
           `Ask us for a copy of your information, to correct it, or to delete it, by writing to ${contactEmail}. We will answer within a reasonable time, and we may need to check it is really you.`,
         ] },
         { p: "If you are unhappy with how we handled your information, please tell us first so we can put it right." },
+      ],
+    },
+    {
+      id: "breach",
+      title: "If something goes wrong",
+      blocks: [
+        { p: "If your information is lost or seen by someone who shouldn't see it, we will find out what happened, stop it, and tell the people affected and the authorities as the law requires, as soon as we reasonably can. We will say what happened, what information was involved, and what you can do." },
       ],
     },
     {
