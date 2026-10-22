@@ -3,29 +3,29 @@
  * All prices live here so they are easy to change. These are sample values.
  */
 export const COIN_COSTS = {
-  /** Charged once when a promotion goes live (not for later edits). */
-  publish: 50,
+  /** Per day a promotion stays live, from its start date to its end date. Paid when it goes live. */
+  publishPerDay: 10,
   /** Per follower who will receive the email. */
   emailPerRecipient: 1,
   /** Per day a promotion is shown in the homepage banner. */
-  bannerPerDay: 200,
+  bannerPerDay: 100,
   /** Per day a promotion is featured in the home page's "Featured" row. Paid on top of the publish fee. */
-  featuredPerDay: 100,
+  featuredPerDay: 50,
 } as const;
 
 /** Days a placement can run. "0" means not selected. Strings so they work as form select values. */
 export const PLACEMENT_DAYS = ["0", "3", "7", "14"] as const;
 
 /**
- * Price per 1,000 coins, in the display currency's minor units, by amount bought.
+ * Price per 1,000 coins, in the display currency's minor units (chhertum: 100 = Nu. 1), by amount bought.
  * Buying more coins costs less per coin. Packs and custom amounts share these tiers,
  * so a custom 500 coins costs exactly the same as the 500 pack. Sample values.
  */
 const PRICE_TIERS = [
-  { minCoins: 5000, per1000Minor: 3500 },
-  { minCoins: 1000, per1000Minor: 4000 },
-  { minCoins: 500, per1000Minor: 4500 },
-  { minCoins: 0, per1000Minor: 5000 },
+  { minCoins: 5000, per1000Minor: 70_000 },
+  { minCoins: 1000, per1000Minor: 80_000 },
+  { minCoins: 500, per1000Minor: 90_000 },
+  { minCoins: 0, per1000Minor: 100_000 },
 ] as const;
 
 const BASE_PER_1000 = PRICE_TIERS[PRICE_TIERS.length - 1].per1000Minor;

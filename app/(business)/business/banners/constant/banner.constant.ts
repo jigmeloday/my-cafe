@@ -21,7 +21,7 @@ export const BANNERS_COPY = {
 export const STATUS_LABELS: Record<BannerStatus, string> = { scheduled: "Scheduled", active: "Running", ended: "Ended" };
 export const STATUS_TONES: Record<BannerStatus, StatusTone> = { scheduled: "info", active: "success", ended: "neutral" };
 
-/** "7 days · 1,400 coins" */
+/** "7 days · 700 coins" */
 export const DAY_OPTIONS = BANNER_DAYS.map((days) => ({
   value: days,
   label: `${days} days · ${(Number(days) * COIN_COSTS.bannerPerDay).toLocaleString("en")} coins`,

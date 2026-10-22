@@ -7,6 +7,7 @@ import { FormMessage } from "@/components/shared/form-message";
 import { GalleryUpload } from "@/components/shared/gallery-upload";
 import { Button } from "@/components/ui/button";
 import { COIN_COSTS } from "@/lib/coins";
+import { extensionCost, listingCost, listingDays } from "@/lib/listing";
 import { mediaUrl } from "@/lib/media";
 import { uploadBusinessImage } from "@/lib/upload-client";
 import { scrollToFirstProblem } from "@/lib/scroll";
@@ -50,8 +51,6 @@ interface PromotionFormProps {
 }
 
 export function PromotionForm({ initial, categories, id, balance, availability, bookings = [] }: PromotionFormProps) {
-  // Going live costs coins once; changing something already live is free.
-  const publishFee = id && initial.status === "PUBLISHED" ? 0 : COIN_COSTS.publish;
   const { form, submit, result, pending } = useActionForm(
     promotionSchema,
     (values) => savePromotionAction(values, id),
@@ -61,8 +60,17 @@ export function PromotionForm({ initial, categories, id, balance, availability, 
   useEffect(() => {
     if (result && !result.ok) scrollToFirstProblem();
   }, [result]);
-  const [featureDays] = useWatch({ control: form.control, name: ["featureDays"] });
+  const [featureDays, startDate, endDate] = useWatch({ control: form.control, name: ["featureDays", "startDate", "endDate"] });
+  // Every day it runs is paid when it goes live. A live promotion only pays for days added to its end.
+  const isLive = Boolean(id) && initial.status === "PUBLISHED";
+  const runDays = startDate && endDate ? listingDays(startDate, endDate, todayIso()) : 0;
+  const publishFee = isLive ? (initial.endDate && endDate ? extensionCost(initial.endDate, endDate) : 0) : listingCost(runDays);
+  const publishNote = isLive
+    ? undefined
+    : runDays > 0 ? PUBLISH_COPY.perDay(runDays, COIN_COSTS.publishPerDay) : undefined;
   const featuredFee = featuredPrice(Number(featureDays));
+  // Publishing needs the coins up front; saving a draft is free, so only the publish button waits on them.
+  const cantAfford = publishFee + featuredFee > balance;
   const setStatus = (status: PromotionInput["status"]) => () =>
     form.setValue("status", status, { shouldDirty: true });
 
@@ -110,7 +118,7 @@ export function PromotionForm({ initial, categories, id, balance, availability, 
           title={PUBLISH_COPY.title}
           description={PUBLISH_COPY.description}
         >
-          <PublishCost balance={balance} publishFee={publishFee} featuredFee={featuredFee} />
+          <PublishCost balance={balance} publishFee={publishFee} publishNote={publishNote} featuredFee={featuredFee} />
         </SectionCard>
         <div className="flex flex-wrap gap-2">
           <Button
@@ -123,7 +131,7 @@ export function PromotionForm({ initial, categories, id, balance, availability, 
           </Button>
           <Button
             type="submit"
-            disabled={pending}
+            disabled={pending || cantAfford}
             onClick={setStatus("PUBLISHED")}
           >
             {pending ? "Saving…" : PROMOTIONS_COPY.publish}

@@ -1,16 +1,19 @@
 import { DEFAULT_CURRENCY } from "@/lib/constants";
 
-/** Formats an integer amount in minor units (e.g. 1050 -> "$10.50"). Display only. */
+/** The sign shown before an amount. Intl has no short form for the ngultrum, so it is spelled out here. */
+export const currencySymbol = (currency: string = DEFAULT_CURRENCY): string =>
+  currency === "BTN"
+    ? "Nu."
+    : new Intl.NumberFormat("en", { style: "currency", currency }).formatToParts(0).find((part) => part.type === "currency")?.value ?? currency;
+
+/** Formats an integer amount in minor units (e.g. 125000 -> "Nu. 1,250"). Display only. */
 export function formatMoney(
   minor: number,
   currency: string = DEFAULT_CURRENCY,
 ): string {
-  const formatter = new Intl.NumberFormat("en", {
-    style: "currency",
-    currency,
-  });
-  const digits = formatter.resolvedOptions().maximumFractionDigits ?? 2;
-  return formatter.format(minor / 10 ** digits);
+  const amount = new Intl.NumberFormat("en", { minimumFractionDigits: minor % 100 === 0 ? 0 : 2, maximumFractionDigits: 2 }).format(minor / 100);
+  const symbol = currencySymbol(currency);
+  return symbol.length > 1 ? `${symbol} ${amount}` : `${symbol}${amount}`;
 }
 
 export const MONEY_PATTERN = /^\d{1,7}(\.\d{1,2})?$/;

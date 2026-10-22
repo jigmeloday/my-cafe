@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { CTA_TYPES, PROMOTION_TYPES } from "@/lib/constants";
 import { daysOfRun, FEATURE_CHOICES } from "@/lib/featured";
+import { listingDays, MAX_LISTING_DAYS } from "@/lib/listing";
 
 export const PUBLISHABLE = ["DRAFT", "PUBLISHED"] as const;
 
@@ -55,6 +56,9 @@ export const promotionSchema = z
     if (!v.discount) add("discount", "Add the offer, e.g. 20% off");
     if (!v.category) add("category", "Pick a category before publishing");
     if (!v.startDate) add("startDate", "Add a start date before publishing");
+    if (!v.endDate) add("endDate", "Add an end date before publishing");
+    else if (v.startDate && listingDays(v.startDate, v.endDate, v.startDate) > MAX_LISTING_DAYS)
+      add("endDate", `A promotion can run for up to ${MAX_LISTING_DAYS} days at a time`);
     if (v.ctaType === "VISIT_WEBSITE" && !v.ctaUrl)
       add("ctaUrl", "Add the website link");
   });

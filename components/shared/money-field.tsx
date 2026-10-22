@@ -1,4 +1,4 @@
-import { DEFAULT_CURRENCY } from "@/lib/constants";
+import { currencySymbol } from "@/lib/formatters/currency";
 import { Input } from "@/components/ui/input";
 
 import { Field } from "./field";
@@ -10,10 +10,7 @@ interface MoneyFieldProps extends React.ComponentProps<"input"> {
   error?: string;
 }
 
-const SYMBOL =
-  new Intl.NumberFormat("en", { style: "currency", currency: DEFAULT_CURRENCY })
-    .formatToParts(0)
-    .find((part) => part.type === "currency")?.value ?? "$";
+const SYMBOL = currencySymbol();
 
 export function MoneyField({
   id,

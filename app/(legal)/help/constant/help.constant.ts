@@ -1,4 +1,5 @@
-import { COIN_COSTS } from "@/lib/coins";
+import { COIN_COSTS, coinPriceMinor } from "@/lib/coins";
+import { formatMoney } from "@/lib/formatters/currency";
 import { FEATURED_SLOTS_PER_DAY } from "@/lib/featured";
 
 export interface Faq {
@@ -58,15 +59,16 @@ export const FAQ_TOPICS: FaqTopic[] = [
     title: "For businesses",
     faqs: [
       { q: "How do I list my business?", a: "Create an account and choose “I own a business”. Fill in your business profile, then publish a promotion or event from your dashboard." },
-      { q: "What does it cost to publish?", a: `Publishing a promotion costs ${COIN_COSTS.publish} coins, once. Saving a draft and editing a live promotion are free.` },
-      { q: "How do I get coins?", a: "Buying coins online isn't available yet. For now we add coins to your wallet for you: write to us and tell us the name of your business." },
+      { q: "What does it cost to publish?", a: `A promotion costs ${COIN_COSTS.publishPerDay} coins for each day it runs, from its start date to its end date, paid when it goes live. Saving a draft is free. Moving the end date of a live promotion later costs coins for the extra days only.` },
+      { q: "Can I get coins back if I end a promotion early?", a: "No. You pay for every day up front, so ending a promotion or banner early, deleting it, or having it taken down by us for breaking the rules does not return any coins. If we charge you by mistake, we will put the coins back." },
+      { q: "How do I get coins?", a: `Coins are priced in Nu.: ${formatMoney(coinPriceMinor(100))} for 100 coins, and bigger amounts cost less per coin. Buying coins online isn't available yet. For now we add coins to your wallet for you: write to us and tell us the name of your business.` },
       { q: "How do banners work?", a: `A banner shows your image at the top of the home page. It costs ${COIN_COSTS.bannerPerDay} coins a day, for 3, 7 or 14 days, paid when you create it. Banners rotate in a random order, so no business keeps the first spot.` },
-      { q: "How do I feature a promotion?", a: `When you publish, or later on a live promotion, choose how many days to feature it. It costs ${COIN_COSTS.featuredPerDay} coins a day on top of publishing. Only ${FEATURED_SLOTS_PER_DAY} promotions can be featured on any one day, so busy days can sell out.` },
+      { q: "How do I feature a promotion?", a: `When you publish, or later on a live promotion, choose how many days to feature it. It costs ${COIN_COSTS.featuredPerDay} coins a day on top of the daily price. Only ${FEATURED_SLOTS_PER_DAY} promotions can be featured on any one day, so busy days can sell out.` },
       { q: "How do I get the Verified badge?", a: "Open Verification in your dashboard and send your ID and trade licence. We review them, usually within a few days, and tell you the result. If something needs fixing we say what, and you can send them again." },
       { q: "Are my documents safe?", a: "Yes. They are kept in private storage, only our review team can open them, every opening is logged, and they are never shown on your page." },
       { q: "Why can't I see the public site as a business owner?", a: "Business accounts stay in the dashboard. To see how your page looks to customers, use Preview public page." },
       { q: "How do I see how my promotions are doing?", a: "Overview and Analytics in your dashboard show views, clicks, saves and your followers, as totals. Days follow Bhutan time." },
-      { q: "My promotion or banner was removed", a: "Ads can be removed after reports if they break the rules. You'll see a message on your Overview. Coins already spent aren't refunded. If you think it was a mistake, write to us." },
+      { q: "My promotion or banner was removed", a: "Ads can be removed after reports if they break the rules. You'll see a message on your Overview. Coins already spent aren't refunded, even for days that were still left. If you think it was a mistake, write to us." },
     ],
   },
   {

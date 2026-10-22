@@ -1,5 +1,6 @@
-import { COIN_COSTS } from "@/lib/coins";
+import { COIN_COSTS, coinPriceMinor } from "@/lib/coins";
 import { FEATURED_SLOTS_PER_DAY } from "@/lib/featured";
+import { formatMoney } from "@/lib/formatters/currency";
 import { LEGAL } from "@/lib/legal";
 
 import type { LegalDocument } from "./legal.type";
@@ -69,14 +70,21 @@ export const TERMS: LegalDocument = {
       blocks: [
         { p: "Businesses pay for some things with coins, which are prepaid credits in your business wallet." },
         { ul: [
-          `Publishing a promotion costs ${COIN_COSTS.publish} coins, once. Saving a draft and editing a live promotion are free.`,
-          `A homepage banner costs ${COIN_COSTS.bannerPerDay} coins for each day it runs. Featuring a promotion in the Featured row costs ${COIN_COSTS.featuredPerDay} coins a day, on top of publishing. Prices can change; the price you see when you confirm is the price you pay.`,
+          `A promotion costs ${COIN_COSTS.publishPerDay} coins for each day it runs, from its start date to its end date, paid when it goes live. Saving a draft is free, and so is editing a live promotion, except that moving its end date later costs coins for the extra days.`,
+          `A homepage banner costs ${COIN_COSTS.bannerPerDay} coins for each day it runs. Featuring a promotion in the Featured row costs ${COIN_COSTS.featuredPerDay} coins a day, on top of the daily price. Prices can change; the price you see when you confirm is the price you pay.`,
           `Featured places are limited to ${FEATURED_SLOTS_PER_DAY} promotions a day. When a day is full it is sold out.`,
+          `Coins are bought with Bhutanese ngultrum (Nu.). A small purchase costs ${formatMoney(coinPriceMinor(100))} for 100 coins, and bigger amounts cost less for each coin. You always see the exact price in Nu. before you pay.`,
           "Coins are not money. They have no cash value, can't be exchanged for cash and can't be transferred to someone else.",
         ] },
         { p: "Banners and featured promotions are shown in a rotating, random order. We don't promise a position, a number of views or clicks, or any result from an ad. Views and clicks are counted to show you how it went." },
-        { p: "Coins you have spent are not refunded, including when an ad is taken down after a report or when you cancel. If we make a mistake, such as charging you twice, we will put the coins back." },
-        { p: "Buying coins will be done through a payment provider. When it is switched on, we will explain the prices and any extra terms at the time you pay." },
+        { p: "Coins you have spent are not refunded. This includes when:" },
+        { ul: [
+          "you end a promotion or banner before its end date, or delete it, and the days you paid for are not used;",
+          "we take a promotion, banner or featured place down, after a report or because it breaks these terms or the law;",
+          "we suspend or close your business or account.",
+        ] },
+        { p: "The days you paid for are used up whether or not the ad is shown, so nothing is returned for the unused days. If we make a mistake, such as charging you twice, we will put the coins back." },
+        { p: "Buying coins will be done through a payment provider. When it is switched on, we will explain any extra terms at the time you pay." },
       ],
     },
     {
@@ -99,7 +107,7 @@ export const TERMS: LegalDocument = {
       title: "Reports and removals",
       blocks: [
         { p: "Anyone with an account can report a promotion, event or banner. An admin reviews reports and can dismiss them, warn the business, or take the ad down. The person who reported is not named to the business." },
-        { p: "A removed promotion or banner can't be republished. If you think we got it wrong, contact us and we will look again." },
+        { p: "A removed promotion or banner can't be republished, and the coins you spent on it are not refunded, even for days that were still left. If you think we got it wrong, contact us and we will look again." },
       ],
     },
     {
@@ -119,7 +127,7 @@ export const TERMS: LegalDocument = {
       id: "suspension",
       title: "Suspension and ending",
       blocks: [
-        { p: "We may suspend or close an account, or remove content, if you break these terms, if the law requires it, or to protect other people. Where we can, we will tell you why. You can stop using Nook at any time." },
+        { p: "We may suspend or close an account, or remove content, if you break these terms, if the law requires it, or to protect other people. Where we can, we will tell you why. Coins you have spent, and coins left in your wallet when we close an account because you broke these terms, are not refunded. You can stop using Nook at any time." },
       ],
     },
     {
