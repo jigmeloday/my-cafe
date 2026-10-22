@@ -32,6 +32,8 @@ export const SECTION_LABELS: Record<string, string> = {
 export const DASHBOARD_COPY = {
   title: "Overview",
   subtitle: "How Nook is doing.",
+  membersTitle: "Customers and businesses",
+  membersHint: "Everyone on the site right now.",
   signupsTitle: "Sign-ups, last 30 days",
   coinsTitle: "Coin activity, last 30 days",
   trafficTitle: "Visitors, last 30 days",

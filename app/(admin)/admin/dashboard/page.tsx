@@ -4,6 +4,7 @@ import { requireRole } from "@/lib/session";
 import { adminOverviewService } from "@/services/admin/admin-overview.service";
 
 import { AttentionCard } from "./components/attention-card";
+import { MembersPie } from "./components/members-pie";
 import { DashboardCharts } from "./components/dashboard-charts";
 import { RecentBusinesses } from "./components/recent-businesses";
 import { StatsGrid } from "./components/stats-grid";
@@ -26,7 +27,8 @@ export default async function AdminDashboardPage() {
       <StatsGrid overview={overview} />
       <TrafficSection overview={overview} />
       <DashboardCharts days={overview.days} />
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-4 lg:grid-cols-3">
+        <MembersPie totals={overview.totals} />
         <AttentionCard overview={overview} />
         <RecentBusinesses businesses={overview.newest} />
       </div>
