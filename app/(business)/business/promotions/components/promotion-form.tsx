@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { SectionCard } from "@/components/business/section-card";
 import { FormMessage } from "@/components/shared/form-message";
@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { COIN_COSTS } from "@/lib/coins";
 import { extensionCost, listingCost, listingDays } from "@/lib/listing";
 import { mediaUrl } from "@/lib/media";
-import { uploadBusinessImage } from "@/lib/upload-client";
+import { discardUploads, uploadChosen } from "@/lib/pending-upload";
 import { scrollToFirstProblem } from "@/lib/scroll";
 import { useWatch } from "react-hook-form";
 
@@ -51,10 +51,25 @@ interface PromotionFormProps {
 }
 
 export function PromotionForm({ initial, categories, id, balance, availability, bookings = [] }: PromotionFormProps) {
+  // New photos stay on this device until the promotion is saved, so one that is removed costs no storage.
+  const chosen = useRef(new Map<string, File>());
+  const [chosenCount, setChosenCount] = useState(0);
   const { form, submit, result, pending } = useActionForm(
     promotionSchema,
-    (values) => savePromotionAction(values, id),
+    async (values) => {
+      let keys: string[] = [];
+      try {
+        keys = await uploadChosen("promotion", [...chosen.current.values()]);
+      } catch (error) {
+        return { ok: false, error: error instanceof Error ? error.message : "The upload failed. Please try again." };
+      }
+      const outcome = await savePromotionAction({ ...values, photos: [...values.photos, ...keys] }, id);
+      // Not saved (for example not enough coins): don't leave the sent photos behind.
+      if (!outcome.ok) await discardUploads("promotion", keys);
+      return outcome;
+    },
     { ...initial, featureStart: initial.featureStart || todayIso() },
+    { forceDirty: chosenCount > 0 },
   );
   // A failed save (like "not enough coins") can be far above the buttons: bring it into view.
   useEffect(() => {
@@ -95,13 +110,15 @@ export function PromotionForm({ initial, categories, id, balance, availability, 
             label="Photos"
             max={MAX_PHOTOS}
             initial={initial.photos.map((key) => ({ id: key, url: mediaUrl(key) }))}
-            onUpload={async (file) => {
-              const { key, url } = await uploadBusinessImage("promotion", file);
-              form.setValue("photos", [...form.getValues("photos"), key], { shouldDirty: true });
-              return { id: key, url };
+            onPick={(photoId, file) => {
+              chosen.current.set(photoId, file);
+              setChosenCount(chosen.current.size);
             }}
-            onRemove={async (key) => {
-              form.setValue("photos", form.getValues("photos").filter((k) => k !== key), { shouldDirty: true });
+            onRemove={async (photoId) => {
+              // A photo still on this device was never sent; a saved one is taken off the promotion.
+              chosen.current.delete(photoId);
+              setChosenCount(chosen.current.size);
+              form.setValue("photos", form.getValues("photos").filter((k) => k !== photoId), { shouldDirty: true });
             }}
           />
         </SectionCard>

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { BannerImage } from "@/components/shared/banner-image";
 import { ImagePlaceholder } from "@/components/shared/image-placeholder";
 
 interface BannerPreviewProps {
@@ -35,8 +36,7 @@ export function BannerPreview({ businessName, title, description, imageUrl }: Ba
       <div ref={box} className="w-full overflow-hidden rounded-2xl" style={{ height: DESIGN_HEIGHT * scale }} aria-label="Banner preview" role="img">
         <div className="relative origin-top-left overflow-hidden rounded-3xl" style={{ width: DESIGN_WIDTH, height: DESIGN_HEIGHT, transform: `scale(${scale})` }}>
           {imageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={imageUrl} alt="" className="size-full bg-muted object-cover" />
+            <BannerImage src={imageUrl} className="size-full" />
           ) : (
             <ImagePlaceholder label="Your banner image" className="size-full text-2xl" />
           )}
@@ -51,7 +51,7 @@ export function BannerPreview({ businessName, title, description, imageUrl }: Ba
           </div>
         </div>
       </div>
-      <p className="text-xs text-muted-foreground">Shown wide at the top of the home page. On a phone the text sits over the bottom of the image.</p>
+      <p className="text-xs text-muted-foreground">Shown wide at the top of the home page. On a phone the text sits under the image. Your whole image is always shown; if its shape differs, the spare space is filled with a soft blur.</p>
     </div>
   );
 }

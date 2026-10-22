@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 
 import { ReportButton } from "@/components/public/report-button";
 import { Button } from "@/components/ui/button";
+import { BannerImage } from "@/components/shared/banner-image";
 import { ImagePlaceholder } from "@/components/shared/image-placeholder";
 import { trackBanner } from "@/lib/track-client";
 
@@ -31,14 +32,14 @@ export function HeroSlide({ slide }: { slide: HeroSlideData }) {
   }, [bannerId]);
 
   return (
-    <article ref={ref} className="relative aspect-4/5 w-[92%] shrink-0 snap-start overflow-hidden rounded-3xl sm:aspect-16/9 md:aspect-21/8 md:w-[88%]">
+    // On a phone the picture sits above its text; from a tablet up the text card sits over the picture's corner.
+    <article ref={ref} className="relative w-[92%] shrink-0 snap-start overflow-hidden rounded-3xl bg-surface max-sm:border md:w-[88%]">
       {slide.imageUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={slide.imageUrl} alt="" className="size-full bg-muted object-cover" />
+        <BannerImage src={slide.imageUrl} className="aspect-16/10 sm:aspect-16/9 md:aspect-21/8" />
       ) : (
-        <ImagePlaceholder label={slide.imageLabel} className="size-full" />
+        <ImagePlaceholder label={slide.imageLabel} className="aspect-16/10 sm:aspect-16/9 md:aspect-21/8" />
       )}
-      <div className="absolute inset-x-3 bottom-3 space-y-3 rounded-2xl bg-surface p-5 shadow-xl sm:inset-x-auto sm:bottom-8 sm:left-8 sm:w-80 md:left-12">
+      <div className="space-y-3 bg-surface p-5 sm:absolute sm:bottom-8 sm:left-8 sm:w-80 sm:rounded-2xl sm:shadow-xl md:left-12">
         <div className="flex items-center justify-between text-xs">
           <span className="font-semibold text-primary">{slide.eyebrow}</span>
           {slide.sponsored && (

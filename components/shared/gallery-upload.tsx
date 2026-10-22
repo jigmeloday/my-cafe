@@ -13,6 +13,8 @@ interface GalleryUploadProps {
   /** When given, each chosen file is sent here. Resolve with the saved photo; throw to show a message. */
   onUpload?: (file: File) => Promise<GalleryItem>;
   onRemove?: (id: string) => Promise<void>;
+  /** With no `onUpload`, each chosen file is kept here (not sent) so the form can send it on save. `id` matches `onRemove`. */
+  onPick?: (id: string, file: File) => void;
 }
 
 export interface GalleryItem {
@@ -20,7 +22,7 @@ export interface GalleryItem {
   url: string;
 }
 
-export function GalleryUpload({ label, max = 8, initial = [], onUpload, onRemove }: GalleryUploadProps) {
+export function GalleryUpload({ label, max = 8, initial = [], onUpload, onRemove, onPick }: GalleryUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [items, setItems] = useState<GalleryItem[]>(initial);
   const [busy, setBusy] = useState(false);
@@ -38,6 +40,7 @@ export function GalleryUpload({ label, max = 8, initial = [], onUpload, onRemove
       }
       try {
         const photo = onUpload ? await onUpload(file) : { id: crypto.randomUUID(), url: URL.createObjectURL(file) };
+        if (!onUpload) onPick?.(photo.id, file);
         setItems((prev) => [...prev, photo]);
       } catch (e) {
         problem = e instanceof Error ? e.message : "The upload failed.";

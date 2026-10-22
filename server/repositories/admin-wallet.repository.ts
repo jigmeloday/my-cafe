@@ -18,7 +18,7 @@ export const adminWalletRepository = {
   /** Adds coins, records them in the wallet history, and notes who did it. All three happen or none do. */
   async recharge(businessId: string, coins: number, description: string, audit: AuditEntry) {
     return db.$transaction(async (tx) => {
-      const business = await tx.business.findUnique({ where: { id: businessId }, select: { name: true } });
+      const business = await tx.business.findUnique({ where: { id: businessId }, select: { name: true, owner: { select: { name: true, email: true } } } });
       if (!business) return null;
 
       const wallet = await tx.wallet.upsert({ where: { businessId }, create: { businessId }, update: {} });
@@ -27,7 +27,7 @@ export const adminWalletRepository = {
         data: { walletId: wallet.id, type: "PURCHASE", amount: coins, balanceAfter: updated.balance, description },
       });
       await tx.auditLog.create({ data: { ...audit, targetLabel: `${business.name} +${coins} coins` } });
-      return { name: business.name, balance: updated.balance };
+      return { name: business.name, balance: updated.balance, owner: business.owner };
     });
   },
 };

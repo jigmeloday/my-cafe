@@ -11,13 +11,15 @@ import type { ActionResult } from "@/server/actions/action.type";
 interface ActionFormOptions {
   /** After a successful save, empty the form again instead of keeping the values (e.g. password fields). */
   clearOnSuccess?: boolean;
+  /** True when something outside the form fields changed (like a picture waiting to be sent), so Save must still run. */
+  forceDirty?: boolean;
 }
 
 export function useActionForm<T extends FieldValues>(
   schema: ZodType<T, T>,
   action: (values: T) => Promise<ActionResult>,
   defaultValues: DefaultValues<T>,
-  { clearOnSuccess = false }: ActionFormOptions = {},
+  { clearOnSuccess = false, forceDirty = false }: ActionFormOptions = {},
 ) {
   const form = useForm<T>({
     resolver: zodResolver(schema as never),
@@ -31,7 +33,7 @@ export function useActionForm<T extends FieldValues>(
   const submit = form.handleSubmit(
     (values) => {
       // Nothing changed (for example Enter pressed in a field): don't call the server.
-      if (!dirty) return;
+      if (!dirty && !forceDirty) return;
 
       setResult(null);
       startTransition(async () => {

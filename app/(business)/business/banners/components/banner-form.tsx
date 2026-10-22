@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useWatch } from "react-hook-form";
 
 import { SectionCard } from "@/components/business/section-card";
@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { useActionForm } from "@/hooks/use-action-form";
 import { COIN_COSTS } from "@/lib/coins";
 import { todayIso } from "@/lib/formatters/date";
-import { uploadBusinessImage } from "@/lib/upload-client";
+import { discardUploads, PENDING_IMAGE, uploadChosen } from "@/lib/pending-upload";
 import { bannerSchema } from "@/lib/validations/banner.schema";
 import { createBannerAction } from "@/server/actions/banner.actions";
 
@@ -31,10 +31,26 @@ interface BannerFormProps {
 const NONE = "none";
 
 export function BannerForm({ businessName, promotions, balance }: BannerFormProps) {
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  // The picture stays on this device until the banner is saved, so a picture that is changed or removed costs no storage.
+  const [file, setFile] = useState<File | null>(null);
+  const imageUrl = useMemo(() => (file ? URL.createObjectURL(file) : null), [file]);
+  useEffect(() => () => { if (imageUrl) URL.revokeObjectURL(imageUrl); }, [imageUrl]);
+
   const { form, submit, result, pending } = useActionForm(
     bannerSchema,
-    (values) => createBannerAction({ ...values, promotionId: values.promotionId === NONE ? "" : values.promotionId }),
+    async (values) => {
+      if (!file) return { ok: false, error: "Add a banner image" };
+      let key: string;
+      try {
+        [key] = await uploadChosen("banner", [file]);
+      } catch (error) {
+        return { ok: false, error: error instanceof Error ? error.message : "The upload failed. Please try again." };
+      }
+      const outcome = await createBannerAction({ ...values, imageKey: key, promotionId: values.promotionId === NONE ? "" : values.promotionId });
+      // Not saved (for example not enough coins): don't leave the sent picture behind.
+      if (!outcome.ok) await discardUploads("banner", [key]);
+      return outcome;
+    },
     { title: "", description: "", promotionId: NONE, imageKey: "", startDate: todayIso(), days: "7" as const },
   );
   const {
@@ -55,17 +71,12 @@ export function BannerForm({ businessName, promotions, balance }: BannerFormProp
             <ImageUpload
               label="Banner image"
               hint={BANNERS_COPY.imageHint}
+              idealRatio={21 / 8}
+              ratioNote={BANNERS_COPY.imageRatioNote}
               previewClassName="aspect-[16/6] w-full max-w-md rounded-xl"
-              value={imageUrl}
-              onUpload={async (file) => {
-                const { key, url } = await uploadBusinessImage("banner", file);
-                setValue("imageKey", key, { shouldDirty: true, shouldValidate: true });
-                setImageUrl(url);
-                return url;
-              }}
-              onRemove={async () => {
-                setValue("imageKey", "", { shouldDirty: true });
-                setImageUrl(null);
+              onChoose={(chosen) => {
+                setFile(chosen);
+                setValue("imageKey", chosen ? PENDING_IMAGE : "", { shouldDirty: true, shouldValidate: true });
               }}
             />
             {errors.imageKey?.message && (

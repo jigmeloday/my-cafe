@@ -18,13 +18,13 @@ export const escapeHtml = (value: string) =>
     .replace(/'/g, "&#39;");
 
 /** Only web addresses may become links, so a bad value can never turn into script. */
-const safeUrl = (url: string) => (/^https?:\/\//i.test(url) ? escapeHtml(url) : "#");
+export const safeUrl = (url: string) => (/^https?:\/\//i.test(url) ? escapeHtml(url) : "#");
 
-const BRAND = { maroon: "#7f1d3a", maroonSoft: "#f5e8ec", gold: "#d9a441", ink: "#211a1c", muted: "#756b6e", page: "#f4efee" };
+export const BRAND = { maroon: "#7f1d3a", maroonSoft: "#f5e8ec", gold: "#d9a441", ink: "#211a1c", muted: "#756b6e", page: "#f4efee" };
 const FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif";
 
 /** Shared frame: brand header, white card, quiet footer. Tables and inline styles, because email apps ignore most CSS. */
-const layout = (title: string, body: string, preheader = "", unsubscribeUrl?: string) => `<!doctype html>
+export const layout = (title: string, body: string, preheader = "", unsubscribeUrl?: string, hero?: string) => `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>${escapeHtml(title)}</title></head>
 <body style="margin:0;padding:0;background:${BRAND.page};font-family:${FONT};color:${BRAND.ink}">
   <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent">${escapeHtml(preheader)}</div>
@@ -32,7 +32,8 @@ const layout = (title: string, body: string, preheader = "", unsubscribeUrl?: st
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px">
       <tr><td style="padding:0 4px 20px;font-size:22px;font-weight:800;letter-spacing:-0.3px;color:${BRAND.maroon}">${APP_NAME}<span style="color:${BRAND.gold}">.</span></td></tr>
       <tr><td style="background:#ffffff;border-radius:20px;border-top:4px solid ${BRAND.maroon};padding:36px 32px;font-size:16px;line-height:1.6">
-        <h1 style="font-size:24px;line-height:1.3;margin:0 0 20px;color:${BRAND.ink}">${escapeHtml(title)}</h1>
+        ${hero ?? ""}
+        <h1 style="font-size:24px;line-height:1.3;margin:0 0 20px;color:${BRAND.ink}${hero ? ";text-align:center" : ""}">${escapeHtml(title)}</h1>
         ${body}
       </td></tr>
       <tr><td style="padding:20px 8px 0;font-size:12px;line-height:1.6;color:${BRAND.muted};text-align:center">
@@ -44,13 +45,13 @@ const layout = (title: string, body: string, preheader = "", unsubscribeUrl?: st
   </td></tr></table>
 </body></html>`;
 
-const greeting = (name: string) => `<p style="margin:0 0 12px">Hi ${escapeHtml(name)},</p>`;
+export const greeting = (name: string) => `<p style="margin:0 0 12px">Hi ${escapeHtml(name)},</p>`;
 
-const note = (html: string) => `<p style="font-size:13px;line-height:1.6;color:${BRAND.muted};margin:0">${html}</p>`;
+export const note = (html: string) => `<p style="font-size:13px;line-height:1.6;color:${BRAND.muted};margin:0">${html}</p>`;
 
 /** A button that stays a button in Outlook too: the link sits inside a coloured table cell. */
-const button = (url: string, label: string) =>
-  `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:28px 0"><tr><td style="background:${BRAND.maroon};border-radius:12px"><a href="${safeUrl(url)}" style="display:inline-block;padding:14px 28px;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:12px">${escapeHtml(label)}</a></td></tr></table>`;
+export const button = (url: string, label: string, centered = false) =>
+  `<table role="presentation"${centered ? ' align="center"' : ""} cellpadding="0" cellspacing="0" style="margin:28px ${centered ? "auto" : "0"}"><tr><td style="background:${BRAND.maroon};border-radius:12px"><a href="${safeUrl(url)}" style="display:inline-block;padding:14px 28px;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:12px">${escapeHtml(label)}</a></td></tr></table>`;
 
 /** The raw link, for people whose email app hides buttons. */
 const fallbackLink = (url: string) =>
