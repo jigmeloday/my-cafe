@@ -14,3 +14,14 @@ export const bannerSchema = z.object({
 });
 
 export type BannerInput = z.infer<typeof bannerSchema>;
+
+/** The longest a banner can run in total, counting days added later. */
+export const MAX_BANNER_DAYS = 30;
+
+/** Changing a banner: its words and picture, and optionally more days at the end. Dates already running stay as they are. */
+export const bannerEditSchema = bannerSchema.pick({ title: true, description: true, imageKey: true }).extend({
+  /** Days added after the current end date. "0" adds none. Each costs `COIN_COSTS.bannerPerDay`. */
+  extraDays: z.enum(["0", ...BANNER_DAYS]),
+});
+
+export type BannerEditInput = z.infer<typeof bannerEditSchema>;
