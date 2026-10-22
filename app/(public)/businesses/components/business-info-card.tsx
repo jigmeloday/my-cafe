@@ -7,7 +7,7 @@ import { HoursList } from "./hours-list";
 
 export function BusinessInfoCard({ slug, hours, contacts }: { slug: string; hours: BusinessHours[]; contacts: BusinessContact[] }) {
   return (
-    <aside className="space-y-6 rounded-2xl border p-5 lg:sticky lg:top-24">
+    <aside className="space-y-6 rounded-2xl border p-5 lg:sticky lg:top-24 h-fit">
       <section className="space-y-3">
         <h3>{BUSINESS_COPY.hours}</h3>
         <HoursList hours={hours} />
