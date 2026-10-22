@@ -13,7 +13,7 @@ const DAY_MS = 86_400_000;
 
 type Result = { ok: true } | { ok: false; error: string };
 
-export type BannerStatus = "scheduled" | "active" | "ended" | "removed";
+export type BannerStatus = "scheduled" | "active" | "ended" | "removed" | "pending" | "rejected";
 
 export interface BannerRow {
   id: string;
@@ -32,16 +32,23 @@ export interface BannerRow {
   status: BannerStatus;
   /** Taken down by Nook after a report: it can't be edited. */
   removed: boolean;
+  /** Why Nook didn't approve it. Empty unless it was turned down. */
+  reviewNote: string;
+  /** Coins given back if the owner deletes it now: all of them while it has never been approved, otherwise none. */
+  refundable: number;
   views: number;
   clicks: number;
 }
 
 const iso = (d: Date) => d.toISOString().slice(0, 10);
 
-export function statusOf(startsAt: Date, endsAt: Date, today: Date): Exclude<BannerStatus, "removed"> {
+export function statusOf(startsAt: Date, endsAt: Date, today: Date): "scheduled" | "active" | "ended" {
   if (endsAt < today) return "ended";
   return startsAt > today ? "scheduled" : "active";
 }
+
+/** Waiting for its first check: it has never been shown, so deleting it costs the business nothing. */
+const neverApproved = (b: { review: string; reviewedAt: Date | null }) => b.review === "PENDING" && b.reviewedAt === null;
 
 type BannerRecord = Awaited<ReturnType<typeof bannerRepository.listAll>>[number];
 
@@ -59,8 +66,10 @@ async function toRows(rows: BannerRecord[], now: Date): Promise<BannerRow[]> {
       endDate: iso(b.endsAt),
       days: Math.round((b.endsAt.getTime() - b.startsAt.getTime()) / DAY_MS) + 1,
       coins: b.coins,
-      status: b.removedAt ? "removed" : statusOf(b.startsAt, b.endsAt, today),
+      status: b.removedAt ? "removed" : b.review === "PENDING" ? "pending" : b.review === "REJECTED" ? "rejected" : statusOf(b.startsAt, b.endsAt, today),
       removed: b.removedAt !== null,
+      reviewNote: b.reviewNote,
+      refundable: neverApproved(b) ? b.coins : 0,
       views: totals.get(b.id)?.views ?? 0,
       clicks: totals.get(b.id)?.clicks ?? 0,
   }));
@@ -74,7 +83,17 @@ export const bannerService = {
 
   /** Every banner on the site, for the admin. */
   async listAll(now = new Date()): Promise<BannerRow[]> {
-    return toRows(await bannerRepository.listAll(), now);
+    const rows = await toRows(await bannerRepository.listAll(), now);
+    // Banners waiting for a decision come first, oldest request first among them.
+    const waiting = rows.filter((r) => r.status === "pending").reverse();
+    return [...waiting, ...rows.filter((r) => r.status !== "pending")];
+  },
+
+  /** An admin approves a banner waiting for review, or turns it down with a reason (the coins go back to the business). */
+  async review(actor: { id: string; email: string }, id: string, decision: "APPROVED" | "REJECTED", note: string, now = new Date()): Promise<Result> {
+    if (decision === "REJECTED" && note.trim().length < 5) return { ok: false, error: "Write a short reason so the business knows what to change." };
+    const done = await bannerRepository.review(id, decision, note.trim(), bhutanToday(now), actor);
+    return done ? { ok: true } : { ok: false, error: "That banner isn't waiting for review any more." };
   },
 
   /** Businesses a banner can be made for. */
@@ -129,6 +148,7 @@ export const bannerService = {
     const banner = await bannerRepository.findOwned(id, owner.id);
     if (!banner) return { ok: false, error: "We couldn't find that banner." };
     if (banner.removedAt) return { ok: false, error: "Nook took this banner down after a report, so it can't be changed. Contact us if you think this is a mistake." };
+    if (banner.review === "REJECTED") return { ok: false, error: "Nook didn't approve this banner, so it can't be changed. Create a new banner instead." };
     if (banner.business.status === "SUSPENDED") return { ok: false, error: "Your business is suspended, so you can't change banners right now. Please contact us." };
     if (banner.endsAt < today) return { ok: false, error: "This banner has ended. Create a new one to run it again." };
     // The picture is the one it already has, or a file this business uploaded.
@@ -140,6 +160,8 @@ export const bannerService = {
     const runDays = Math.round((banner.endsAt.getTime() - banner.startsAt.getTime()) / DAY_MS) + 1;
     if (runDays + extra > MAX_BANNER_DAYS) return { ok: false, error: `A banner can run for up to ${MAX_BANNER_DAYS} days in total. It has ${runDays} now.` };
 
+    // New words or a new picture have to be checked again before they show, so the approved version can't be swapped.
+    const needsReview = input.title !== banner.title || input.description !== banner.description || input.imageKey !== banner.imageKey;
     const changes = [
       input.title !== banner.title && "headline",
       input.description !== banner.description && "text",
@@ -150,7 +172,7 @@ export const bannerService = {
       await bannerRepository.update(
         id,
         banner.business.id,
-        { title: input.title, description: input.description, imageKey: input.imageKey, endsAt: new Date(banner.endsAt.getTime() + extra * DAY_MS) },
+        { title: input.title, description: input.description, imageKey: input.imageKey, endsAt: new Date(banner.endsAt.getTime() + extra * DAY_MS), ...(needsReview ? { review: "PENDING" as const } : {}) },
         bannerCost(extra),
         // A record of what changed on a paid ad, so a swapped picture or text can be looked into.
         { actorId: owner.id, actorEmail: owner.email, action: "banner.edit", targetId: id, targetLabel: `Banner "${input.title}": ${changes.join(", ") || "no change"}` },
@@ -179,7 +201,14 @@ export const bannerService = {
       return { ok: false, error: "This banner has been reported, so it has to stay on record until it ends. Contact us if it needs to come down sooner." };
     }
 
-    await bannerRepository.remove(id, { actorId: owner.id, actorEmail: owner.email, action: "banner.delete", targetId: id, targetLabel: `Banner "${banner.title}" deleted` });
+    // A banner that was never approved was never shown, so what was paid for it goes back. (One sent for a second
+    // check after an edit has already run, so it isn't refunded.)
+    const refund = neverApproved(banner) ? { businessId: banner.business.id, coins: banner.coins, title: banner.title } : undefined;
+    await bannerRepository.remove(
+      id,
+      { actorId: owner.id, actorEmail: owner.email, action: refund ? "banner.delete.refund" : "banner.delete", targetId: id, targetLabel: `Banner "${banner.title}" deleted${refund ? `, ${refund.coins} coins refunded` : ""}` },
+      refund,
+    );
     // The picture belonged only to this banner.
     await storage.remove(banner.imageKey);
     return { ok: true };

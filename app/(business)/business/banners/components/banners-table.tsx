@@ -45,6 +45,8 @@ export function BannersTable({ items }: { items: BannerRow[] }) {
                 ) : (
                   <StatusBadge tone={STATUS_TONES[b.status]}>{STATUS_LABELS[b.status]}</StatusBadge>
                 )}
+                {b.status === "pending" && <p className="mt-1 max-w-48 text-xs whitespace-normal text-muted-foreground">{BANNERS_COPY.reviewWaiting}</p>}
+                {b.status === "rejected" && b.reviewNote && <p className="mt-1 max-w-48 text-xs whitespace-normal text-destructive">{b.reviewNote}</p>}
               </td>
               <td className="px-4 py-3 whitespace-nowrap text-muted-foreground">
                 {formatDate(b.startDate)} – {formatDate(b.endDate)}

@@ -18,7 +18,7 @@ export function BannerRowActions({ banner }: { banner: BannerRow }) {
   const [confirm, setConfirm] = useState(false);
   const [notice, setNotice] = useState<ActionResult | null>(null);
   const { run, pending } = useActionRunner(setNotice);
-  const canEdit = !banner.removed && banner.status !== "ended";
+  const canEdit = !banner.removed && banner.status !== "ended" && banner.status !== "rejected";
 
   return (
     <div className="flex flex-col items-end gap-1">
@@ -43,7 +43,7 @@ export function BannerRowActions({ banner }: { banner: BannerRow }) {
         open={confirm}
         onOpenChange={setConfirm}
         title={BANNERS_COPY.deleteTitle}
-        description={BANNERS_COPY.deleteBody(banner.title, banner.status === "active")}
+        description={BANNERS_COPY.deleteBody(banner.title, banner.status === "active", banner.refundable, banner.status === "pending" && banner.refundable === 0)}
         confirmLabel={BANNERS_COPY.deleteConfirm}
         onConfirm={() => run(deleteBannerAction, banner.id)}
       />

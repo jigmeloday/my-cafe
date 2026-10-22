@@ -3,6 +3,7 @@ import { z } from "zod";
 import { CTA_TYPES, PROMOTION_TYPES } from "@/lib/constants";
 import { daysOfRun, FEATURE_CHOICES } from "@/lib/featured";
 import { listingDays, MAX_LISTING_DAYS } from "@/lib/listing";
+import { noBlockedWords } from "@/lib/validations/clean-text";
 
 export const PUBLISHABLE = ["DRAFT", "PUBLISHED"] as const;
 
@@ -12,13 +13,14 @@ export const promotionSchema = z
       .string()
       .trim()
       .min(3, "Enter a title")
-      .max(80, "Keep it under 80 characters"),
+      .max(80, "Keep it under 80 characters")
+      .superRefine(noBlockedWords),
     type: z.enum(PROMOTION_TYPES),
-    discount: z.string().trim().max(40, "Keep it under 40 characters"),
-    description: z.string().trim().max(1000, "Keep it under 1000 characters"),
+    discount: z.string().trim().max(40, "Keep it under 40 characters").superRefine(noBlockedWords),
+    description: z.string().trim().max(1000, "Keep it under 1000 characters").superRefine(noBlockedWords),
     startDate: z.string(),
     endDate: z.string(),
-    location: z.string().trim().max(120, "Keep it under 120 characters"),
+    location: z.string().trim().max(120, "Keep it under 120 characters").superRefine(noBlockedWords),
     category: z.string(),
     ctaType: z.enum(CTA_TYPES),
     ctaUrl: z

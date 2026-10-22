@@ -27,6 +27,7 @@ export const bannerRepository = {
     db.banner.findMany({
       where: {
         removedAt: null,
+        review: "APPROVED",
         startsAt: { lte: today },
         endsAt: { gte: today },
         OR: [{ businessId: null }, { business: { status: { not: "SUSPENDED" }, owner: { status: "ACTIVE" } } }],
@@ -38,7 +39,7 @@ export const bannerRepository = {
   /** Saves the banner and takes its price from the wallet in one transaction: both happen, or neither. */
   create: (data: { businessId: string; promotionId: string | null; title: string; description: string; imageKey: string; startsAt: Date; endsAt: Date; coins: number }) =>
     db.$transaction(async (tx) => {
-      const banner = await tx.banner.create({ data });
+      const banner = await tx.banner.create({ data: { ...data, review: "PENDING" } });
       await walletRepository.spend(tx, data.businessId, data.coins, "BANNER", `Homepage banner: ${data.title}`);
       return banner;
     }),
@@ -74,6 +75,75 @@ export const bannerRepository = {
       return true;
     }),
 
+  /** How many banners are waiting for an admin to look at them. */
+  pendingReviewCount: () => db.banner.count({ where: { review: "PENDING", removedAt: null } }),
+
+  /**
+   * Settles a banner waiting for review. Approving makes it live (a banner whose start day has passed while it
+   * waited is moved to start today, keeping all its paid days). Rejecting a banner that was never approved gives the
+   * coins back; one that was approved before (and sent for a second check after an edit) has already run, so it
+   * doesn't. Either way the owner is told and who did it is noted. All of it happens, or none. False when it wasn't waiting.
+   */
+  review: (
+    id: string,
+    decision: "APPROVED" | "REJECTED",
+    note: string,
+    today: Date,
+    actor: { id: string; email: string },
+  ) =>
+    db.$transaction(async (tx) => {
+      const banner = await tx.banner.findFirst({ where: { id, review: "PENDING", removedAt: null }, include: withBusiness });
+      if (!banner) return false;
+      const now = new Date();
+
+      let shift = 0;
+      if (decision === "APPROVED" && banner.startsAt < today) shift = today.getTime() - banner.startsAt.getTime();
+      await tx.banner.update({
+        where: { id },
+        data: {
+          review: decision,
+          reviewNote: decision === "REJECTED" ? note : "",
+          reviewedAt: now,
+          ...(shift > 0 ? { startsAt: today, endsAt: new Date(banner.endsAt.getTime() + shift) } : {}),
+        },
+      });
+
+      const businessId = banner.businessId;
+      const owner = businessId ? await tx.business.findUnique({ where: { id: businessId }, select: { ownerId: true } }) : null;
+      // Only a banner that was never shown is paid back.
+      const refund = decision === "REJECTED" && banner.reviewedAt === null && banner.coins > 0;
+      if (refund && businessId) {
+        const wallet = await tx.wallet.upsert({ where: { businessId }, create: { businessId }, update: {} });
+        const updated = await tx.wallet.update({ where: { id: wallet.id }, data: { balance: { increment: banner.coins } }, select: { balance: true } });
+        await tx.coinTransaction.create({
+          data: { walletId: wallet.id, type: "REFUND", amount: banner.coins, balanceAfter: updated.balance, description: `Refund: banner not approved (${banner.title})` },
+        });
+      }
+      if (owner) {
+        await tx.notification.create({
+          data: {
+            userId: owner.ownerId,
+            title: decision === "APPROVED" ? "Your banner was approved" : "Your banner wasn't approved",
+            description:
+              decision === "APPROVED"
+                ? `“${banner.title}” is approved and will show on the home page on its days.`
+                : `“${banner.title}” wasn't approved: ${note} ${refund ? `Your ${banner.coins} coins were refunded.` : "Because it had already been approved and shown, the coins aren't refunded."}`,
+            href: "/business/banners",
+          },
+        });
+      }
+      await tx.auditLog.create({
+        data: {
+          actorId: actor.id,
+          actorEmail: actor.email,
+          action: decision === "APPROVED" ? "banner.approve" : "banner.reject",
+          targetId: id,
+          targetLabel: `${banner.business?.name ?? "Announcement"}: ${banner.title}`,
+        },
+      });
+      return true;
+    }),
+
   /** Every banner on the site, newest first, for the admin. */
   listAll: () => db.banner.findMany({ orderBy: { createdAt: "desc" }, include: withBusiness }),
 
@@ -95,7 +165,7 @@ export const bannerRepository = {
   update: (
     id: string,
     businessId: string,
-    data: { title: string; description: string; imageKey: string; endsAt: Date },
+    data: { title: string; description: string; imageKey: string; endsAt: Date; review?: "PENDING" },
     paid: number,
     audit: { actorId: string; actorEmail: string; action: string; targetId: string; targetLabel: string },
   ) =>
@@ -108,16 +178,30 @@ export const bannerRepository = {
   /** How many reports have been sent about a banner. */
   reportCount: (bannerId: string) => db.report.count({ where: { bannerId } }),
 
-  /** Deletes a banner, and its views and clicks with it, and records it, in one transaction. */
-  remove: (id: string, audit: { actorId: string; actorEmail: string; action: string; targetId: string; targetLabel: string }) =>
+  /**
+   * Deletes a banner, and its views and clicks with it, and records it, in one transaction. With `refund`, the coins
+   * go back to the wallet in the same transaction: the banner is gone and the coins are back, or neither happened.
+   */
+  remove: (
+    id: string,
+    audit: { actorId: string; actorEmail: string; action: string; targetId: string; targetLabel: string },
+    refund?: { businessId: string; coins: number; title: string },
+  ) =>
     db.$transaction(async (tx) => {
       await tx.banner.delete({ where: { id } });
+      if (refund && refund.coins > 0) {
+        const wallet = await tx.wallet.upsert({ where: { businessId: refund.businessId }, create: { businessId: refund.businessId }, update: {} });
+        const updated = await tx.wallet.update({ where: { id: wallet.id }, data: { balance: { increment: refund.coins } }, select: { balance: true } });
+        await tx.coinTransaction.create({
+          data: { walletId: wallet.id, type: "REFUND", amount: refund.coins, balanceAfter: updated.balance, description: `Refund: banner deleted before approval (${refund.title})` },
+        });
+      }
       await tx.auditLog.create({ data: audit });
     }),
 
   /** Counts a banner showing or being clicked. Only for a banner that is running today. */
   async recordEvent(bannerId: string, type: "VIEW" | "CLICK", today: Date) {
-    const running = await db.banner.count({ where: { id: bannerId, removedAt: null, startsAt: { lte: today }, endsAt: { gte: today } } });
+    const running = await db.banner.count({ where: { id: bannerId, removedAt: null, review: "APPROVED", startsAt: { lte: today }, endsAt: { gte: today } } });
     if (!running) return false;
     await db.bannerEvent.create({ data: { bannerId, type } });
     return true;

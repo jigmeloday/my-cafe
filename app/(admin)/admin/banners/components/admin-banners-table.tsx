@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
+import { ReasonDialog } from "@/components/shared/reason-dialog";
 import { FormMessage } from "@/components/shared/form-message";
 import { ImagePlaceholder } from "@/components/shared/image-placeholder";
 import { StatusBadge } from "@/components/shared/status-badge";
@@ -11,7 +12,7 @@ import { useActionRunner } from "@/hooks/use-action-runner";
 import { formatDate } from "@/lib/formatters/date";
 import { formatCoins, formatNumber } from "@/lib/formatters/number";
 import type { ActionResult } from "@/server/actions/action.type";
-import { takeDownBannerAction } from "@/server/actions/banner.actions";
+import { reviewBannerAction, takeDownBannerAction } from "@/server/actions/banner.actions";
 import type { BannerRow } from "@/services/banner/banner.service";
 
 import {
@@ -33,6 +34,8 @@ const HEADERS = [
 export function AdminBannersTable({ items }: { items: BannerRow[] }) {
   const [notice, setNotice] = useState<ActionResult | null>(null);
   const [target, setTarget] = useState<BannerRow | null>(null);
+  const [approve, setApprove] = useState<BannerRow | null>(null);
+  const [reject, setReject] = useState<BannerRow | null>(null);
   const { run, pending } = useActionRunner(setNotice);
 
   return (
@@ -97,7 +100,17 @@ export function AdminBannersTable({ items }: { items: BannerRow[] }) {
                   {formatNumber(b.clicks)}
                 </td>
                 <td className="px-4 py-3 text-right">
-                  {(b.status === "active" || b.status === "scheduled") && (
+                  {b.status === "pending" && (
+                  <div className="flex justify-end gap-2">
+                    <Button size="sm" disabled={pending} onClick={() => setApprove(b)}>
+                      Approve
+                    </Button>
+                    <Button variant="destructive" size="sm" disabled={pending} onClick={() => setReject(b)}>
+                      Reject
+                    </Button>
+                  </div>
+                )}
+                {(b.status === "active" || b.status === "scheduled") && (
                     <Button
                       variant="destructive"
                       size="sm"
@@ -113,6 +126,29 @@ export function AdminBannersTable({ items }: { items: BannerRow[] }) {
           </tbody>
         </table>
       </div>
+      <ConfirmDialog
+        open={approve !== null}
+        onOpenChange={(open) => !open && setApprove(null)}
+        title="Approve this banner?"
+        description={`“${approve?.title}” for ${approve?.businessName} will show on the home page on its days, and its owner will be told.`}
+        confirmLabel="Approve"
+        cancelLabel="Not yet"
+        onConfirm={() => approve && run(reviewBannerAction, { id: approve.id, decision: "APPROVED" })}
+      />
+      <ReasonDialog
+        open={reject !== null}
+        onOpenChange={(open) => !open && setReject(null)}
+        title="Turn this banner down?"
+        description={
+          reject && reject.refundable > 0
+            ? `“${reject.title}” won't be shown. The ${reject.refundable.toLocaleString("en")} coins the business paid are given back, and it sees your reason.`
+            : `“${reject?.title}” won't be shown and the business sees your reason. It was approved and shown before this edit, so its coins are not refunded.`
+        }
+        label="Reason (shown to the business)"
+        confirmLabel={reject && reject.refundable > 0 ? "Reject and refund" : "Reject"}
+        minLength={5}
+        onConfirm={(note) => reject && run(reviewBannerAction, { id: reject.id, decision: "REJECTED", note })}
+      />
       <ConfirmDialog
         open={target !== null}
         onOpenChange={(open) => !open && setTarget(null)}

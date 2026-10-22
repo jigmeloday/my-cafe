@@ -1,11 +1,13 @@
 import { z } from "zod";
 
+import { noBlockedWords } from "@/lib/validations/clean-text";
+
 /** How many days a banner can run. Each day costs `COIN_COSTS.bannerPerDay` coins. */
 export const BANNER_DAYS = ["3", "7", "14"] as const;
 
 export const bannerSchema = z.object({
-  title: z.string().trim().min(3, "Enter a headline").max(60, "Keep it under 60 characters"),
-  description: z.string().trim().max(100, "Keep it under 100 characters"),
+  title: z.string().trim().min(3, "Enter a headline").max(60, "Keep it under 60 characters").superRefine(noBlockedWords),
+  description: z.string().trim().max(100, "Keep it under 100 characters").superRefine(noBlockedWords),
   /** The uploaded image's file key. */
   imageKey: z.string().min(1, "Add a banner image").max(200),
   /** First day it shows, "YYYY-MM-DD". */

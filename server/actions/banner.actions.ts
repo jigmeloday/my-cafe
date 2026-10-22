@@ -79,3 +79,19 @@ export async function deleteBannerAction(id: string): Promise<ActionResult> {
   }
   return result;
 }
+
+/** An admin approves a banner waiting for review, or turns it down with a reason. Only admins can. */
+export async function reviewBannerAction({ id, decision, note }: { id: string; decision: "APPROVED" | "REJECTED"; note?: string }): Promise<ActionResult> {
+  const user = await getCurrentUser();
+  if (user?.role !== "ADMIN") return { ok: false, error: "Only admins can do this." };
+  if (typeof id !== "string" || !id || (decision !== "APPROVED" && decision !== "REJECTED")) return { ok: false, error: "We couldn't find that banner." };
+
+  const result = await bannerService.review({ id: user.id, email: user.email }, id, decision, note ?? "");
+  if (result.ok) {
+    revalidatePath("/admin/banners");
+    revalidatePath("/admin/dashboard");
+    revalidatePath("/");
+    return { ok: true, message: decision === "APPROVED" ? "The banner is approved." : "The banner was turned down." };
+  }
+  return result;
+}

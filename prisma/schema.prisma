@@ -89,6 +89,13 @@ enum BusinessEventType {
   SHARE
 }
 
+/// Where a business's banner is in Nook's check. Nothing shows on the home page until it is approved.
+enum BannerReview {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 enum PromotionStatus {
   DRAFT
   PUBLISHED
@@ -435,9 +442,15 @@ model Banner {
   reports     Report[]
   /// Set when an admin took it down after a report. Coins are not refunded.
   removedAt   DateTime?
+  /// A business's new banner waits as PENDING. Admin-made banners and older ones are APPROVED.
+  review      BannerReview  @default(APPROVED)
+  /// Why a banner was not approved. Shown to the owner.
+  reviewNote  String        @default("")
+  reviewedAt  DateTime?
 
   @@index([businessId])
   @@index([startsAt, endsAt])
+  @@index([review])
 }
 
 /// One time a banner was shown (VIEW) or clicked (CLICK).

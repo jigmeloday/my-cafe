@@ -18,7 +18,7 @@ export const reportRepository = {
 
   /** A banner that is running today and hasn't been taken down. */
   bannerReportable: async (id: string, today: Date) =>
-    (await db.banner.count({ where: { id, removedAt: null, startsAt: { lte: today }, endsAt: { gte: today } } })) > 0,
+    (await db.banner.count({ where: { id, removedAt: null, review: "APPROVED", startsAt: { lte: today }, endsAt: { gte: today } } })) > 0,
 
   /** Saves a report. Returns false when this person already reported this ad (one report each). */
   async create(data: { reporterId: string; promotionId?: string; bannerId?: string; reason: string; details: string }) {

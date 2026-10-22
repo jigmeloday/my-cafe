@@ -37,6 +37,7 @@ export const coinPoints = (days: OverviewDay[]): ChartPoint[] =>
 export function attentionItems({ totals, openReports }: Pick<Overview, "totals" | "openReports">): AttentionItem[] {
   return [
     { id: "verification", label: "Verification requests waiting", count: totals.pendingVerifications, href: "/admin/verification" },
+    { id: "banner-review", label: "Banners waiting for review", count: totals.bannersToReview, href: "/admin/banners" },
     { id: "messages", label: "Messages waiting for a reply", count: totals.openMessages, href: "/admin/messages" },
     { id: "reports", label: "Open reports to review", count: openReports, href: "/admin/moderation" },
     { id: "suspended-businesses", label: "Suspended businesses", count: totals.suspendedBusinesses, href: "/admin/businesses" },

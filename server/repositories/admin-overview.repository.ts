@@ -59,7 +59,7 @@ export const adminOverviewRepository = {
 
   /** Everything counted in one go. `today` is a Bhutan date at midnight UTC. */
   async totals(today: Date) {
-    const [users, customers, businesses, livePromotions, runningBanners, pendingVerifications, suspendedBusinesses, suspendedUsers, openMessages] = await Promise.all([
+    const [users, customers, businesses, livePromotions, runningBanners, pendingVerifications, suspendedBusinesses, suspendedUsers, openMessages, bannersToReview] = await Promise.all([
       db.user.count({ where: { role: { not: "ADMIN" } } }),
       db.user.count({ where: { role: "USER" } }),
       db.business.count(),
@@ -69,8 +69,9 @@ export const adminOverviewRepository = {
       db.business.count({ where: { status: "SUSPENDED" } }),
       db.user.count({ where: { status: "SUSPENDED" } }),
       db.contactMessage.count({ where: { status: "OPEN" } }),
+      db.banner.count({ where: { review: "PENDING", removedAt: null } }),
     ]);
-    return { users, customers, businesses, livePromotions, runningBanners, pendingVerifications, suspendedBusinesses, suspendedUsers, openMessages };
+    return { users, customers, businesses, livePromotions, runningBanners, pendingVerifications, suspendedBusinesses, suspendedUsers, openMessages, bannersToReview };
   },
 
   newestBusinesses: (take: number) =>
