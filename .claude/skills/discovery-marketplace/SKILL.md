@@ -229,3 +229,12 @@ Public: useful, curious, modern, local, visual, trustworthy — lead with "Disco
 - **Structured data:** home has WebSite (with search box) and Organization; deals are an Offer, events an Event, businesses a LocalBusiness; detail pages also carry a BreadcrumbList. The facts come from `DetailData.seo` and `BusinessProfile.seo`.
 - **`app/robots.ts`, `app/sitemap.ts`** (live promotions, visible businesses and categories, built per request), `app/manifest.ts`, `app/opengraph-image.tsx` (default share card). `robots` uses `/business/` and `/business$` so public `/businesses/…` stays open, and allows `/api/media/` so images can be read.
 - **Production needs `NEXT_PUBLIC_SITE_URL`** set to the real address, or canonical links, the sitemap and share cards use the local one.
+
+## Performance
+
+- **Run the code next to the database.** `vercel.json` sets `regions: ["sin1"]` (Singapore), where the Neon database is. Without it Vercel runs functions in the US and every query pays a trip across the world. If the database ever moves, move this too.
+- **Each query is a network trip.** Measured from Bhutan, one query is about 140 ms whatever it asks, so the number of queries run one after another matters most. Ask for everything at once (`Promise.all`) and load related rows in the same query with `relationLoadStrategy: "join"` (generator preview feature `relationJoins`). Home went from about 1.1 s to 0.16 s this way.
+- **See what a page asks.** Start the server with `DB_TIMING=1` to print each query and how long it took (`lib/db.ts`).
+- **One session lookup per request.** `getCurrentUser` is wrapped in React `cache`, so a layout, its page and components share one lookup.
+- **Pictures are stored small.** `/api/business/media` runs every business picture through `lib/image-optimize.ts` (upright, scaled down to the width it is shown at, saved as WebP at quality 82), and `/api/media` is cached by the CDN (`s-maxage`). Pictures uploaded before this stay as they were.
+- **Neon sleeps when idle.** The first request after a quiet spell waits for the database to wake (seconds). Turning off scale-to-zero removes that, at the cost of an always-on compute.

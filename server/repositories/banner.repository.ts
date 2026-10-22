@@ -6,7 +6,7 @@ const withBusiness = { business: { select: { id: true, name: true, slug: true } 
 
 export const bannerRepository = {
   listByOwner: (ownerId: string) =>
-    db.banner.findMany({ where: { business: { ownerId } }, orderBy: { createdAt: "desc" }, include: withBusiness }),
+    db.banner.findMany({ where: { business: { ownerId } }, orderBy: { createdAt: "desc" }, relationLoadStrategy: "join", include: withBusiness }),
 
   /** Views and clicks per banner. */
   async eventTotals(bannerIds: string[]) {
@@ -27,7 +27,7 @@ export const bannerRepository = {
     db.banner.findMany({
       where: { removedAt: null, startsAt: { lte: today }, endsAt: { gte: today }, business: { status: { not: "SUSPENDED" }, owner: { status: "ACTIVE" } } },
       orderBy: { createdAt: "desc" },
-      include: withBusiness,
+      relationLoadStrategy: "join", include: withBusiness,
     }),
 
   /** Saves the banner and takes its price from the wallet in one transaction: both happen, or neither. */

@@ -12,7 +12,7 @@ export async function GET(_request: Request, { params }: RouteContext<"/api/medi
     return new Response(object.Body.transformToWebStream(), {
       headers: {
         "Content-Type": object.ContentType ?? "application/octet-stream",
-        "Cache-Control": "public, max-age=31536000, immutable",
+        "Cache-Control": "public, max-age=31536000, s-maxage=31536000, immutable",
         "X-Content-Type-Options": "nosniff",
       },
     });
