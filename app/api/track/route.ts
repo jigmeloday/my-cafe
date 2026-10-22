@@ -11,10 +11,11 @@ import { trackingService } from "@/services/analytics/tracking.service";
 const source = z.string().max(30).default("other");
 const id = z.string().min(1).max(100);
 const viewOrClick = z.enum(["VIEW", "CLICK"]);
+const promotionEvent = z.enum(["VIEW", "CLICK", "SHARE", "WHATSAPP"]);
 
 /** One of four things a page can report. They are told apart by which field they carry. */
 const bodySchema = z.union([
-  z.object({ promotionId: id, type: viewOrClick, source }),
+  z.object({ promotionId: id, type: promotionEvent, source }),
   z.object({ bannerId: id, type: viewOrClick }),
   z.object({ businessSlug: id, type: z.enum(BUSINESS_EVENT_TYPES), source }),
   z.object({ section: z.enum(SITE_SECTIONS) }),

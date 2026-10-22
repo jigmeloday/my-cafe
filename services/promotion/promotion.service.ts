@@ -34,7 +34,7 @@ const SUSPENDED = "Your business is suspended, so you can't publish or change pr
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-const CTA_TYPES = ["VIEW_OFFER", "VISIT_WEBSITE", "CONTACT_BUSINESS"] as const;
+const CTA_TYPES = ["VIEW_OFFER", "VISIT_WEBSITE", "CONTACT_BUSINESS", "WHATSAPP"] as const;
 
 function toItem(p: Promotion): PromotionItem {
   return {

@@ -1,7 +1,8 @@
 import type { BarItem, ChartPoint } from "@/components/business/charts/model/chart.type";
 import { HISTORY_DAYS } from "@/app/(business)/business/analytics/constant/analytics.constant";
-import type { Dataset, ProfileData, PromotionMeta } from "@/app/(business)/business/analytics/model/analytics.type";
+import type { BannerDay, Dataset, ProfileData, PromotionMeta } from "@/app/(business)/business/analytics/model/analytics.type";
 import { addDays, lastDays } from "@/app/(business)/business/analytics/utils/analytics.utils";
+import { buildBannerData } from "@/app/(business)/business/analytics/utils/banner.utils";
 import { buildDataset } from "@/app/(business)/business/analytics/utils/dataset.utils";
 import { buildProfileData } from "@/app/(business)/business/analytics/utils/profile.utils";
 import { analyticsRepository as repo } from "@/server/repositories/analytics.repository";
@@ -26,6 +27,8 @@ export interface BusinessAnalytics {
   data: Dataset;
   /** Visits to the business's own page and clicks on its contact links. */
   profile: ProfileData;
+  /** Views and clicks on the business's home page banners, per day. */
+  banners: BannerDay[];
   metas: PromotionMeta[];
   audience: Audience;
   coins: BarItem[];
@@ -62,7 +65,7 @@ export const analyticsService = {
     const today = bhutanDay(now);
     const business = await businessRepository.findByOwner(ownerId);
     if (!business) {
-      return { data: buildDataset(today, HISTORY_DAYS, [], [], []), profile: buildProfileData(today, HISTORY_DAYS, [], []), metas: [], audience: summariseAudience([]), coins: [] };
+      return { data: buildDataset(today, HISTORY_DAYS, [], [], []), profile: buildProfileData(today, HISTORY_DAYS, [], []), banners: buildBannerData(today, HISTORY_DAYS, []), metas: [], audience: summariseAudience([]), coins: [] };
     }
 
     const since = startOfBhutanDay(addDays(today, -(HISTORY_DAYS - 1)));
@@ -70,7 +73,7 @@ export const analyticsService = {
     const slugOf = new Map(promotions.map((p) => [p.slug, p.id]));
 
     const promotionIds = promotions.map((p) => p.id);
-    const [events, saves, profiles, spent, reach, profileEvents, profileVisitors] = await Promise.all([
+    const [events, saves, profiles, spent, reach, profileEvents, profileVisitors, bannerEvents] = await Promise.all([
       repo.eventCounts(promotionIds, since),
       repo.savesSince([...slugOf.keys()], since),
       repo.followerProfiles(followHref(business.slug)),
@@ -78,6 +81,7 @@ export const analyticsService = {
       repo.promotionReachPerDay(promotionIds, since),
       repo.businessEventCounts(business.id, since),
       repo.businessVisitorsPerDay(business.id, since),
+      repo.bannerEventCounts(business.id, since),
     ]);
 
     const saveRows = saves.flatMap((f) => {
@@ -88,6 +92,7 @@ export const analyticsService = {
     return {
       data: buildDataset(today, HISTORY_DAYS, promotionIds, events, saveRows, reach),
       profile: buildProfileData(today, HISTORY_DAYS, profileEvents, profileVisitors),
+      banners: buildBannerData(today, HISTORY_DAYS, bannerEvents),
       metas: promotions.map((p) => ({ id: p.id, title: p.title, type: titleCase(p.type), ended: p.status === "ENDED" })),
       audience: summariseAudience(profiles.map((p) => p.user.profile ?? { dzongkhag: "", interests: [], marketingConsent: false })),
       coins: spent.map((s) => ({ id: s.type, label: s.type, value: s.coins })).sort((a, b) => b.value - a.value),

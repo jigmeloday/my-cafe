@@ -1,10 +1,10 @@
 import { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
-import type { BusinessEventType } from "@/lib/track-events";
+import type { BusinessEventType, PromotionEventKind } from "@/lib/track-events";
 
 export interface EventRow {
   promotionId: string;
-  type: "VIEW" | "CLICK";
+  type: PromotionEventKind;
   source: string;
   /** Bhutan-time day, "YYYY-MM-DD". */
   day: string;
@@ -29,7 +29,7 @@ export const analyticsRepository = {
   /** Views and clicks per promotion, source and day. Days are Bhutan days (UTC+6), counted by the database. */
   async eventCounts(promotionIds: string[], since: Date): Promise<EventRow[]> {
     if (promotionIds.length === 0) return [];
-    const rows = await db.$queryRaw<{ promotionId: string; type: "VIEW" | "CLICK"; source: string; day: string; count: bigint }[]>(Prisma.sql`
+    const rows = await db.$queryRaw<{ promotionId: string; type: PromotionEventKind; source: string; day: string; count: bigint }[]>(Prisma.sql`
       select "promotionId", type::text as type, source,
              to_char(("createdAt" + interval '6 hours')::date, 'YYYY-MM-DD') as day,
              count(*) as count
@@ -47,6 +47,18 @@ export const analyticsRepository = {
              count(*) as count
       from "BusinessEvent" where "businessId" = ${businessId} and "createdAt" >= ${since}
       group by 1, 2, 3`);
+    return rows.map((r) => ({ ...r, count: Number(r.count) }));
+  },
+
+  /** Views and clicks on all of a business's banners, per kind and Bhutan day. */
+  async bannerEventCounts(businessId: string, since: Date): Promise<{ type: string; day: string; count: number }[]> {
+    const rows = await db.$queryRaw<{ type: string; day: string; count: bigint }[]>(Prisma.sql`
+      select e.type::text as type,
+             to_char((e."createdAt" + interval '6 hours')::date, 'YYYY-MM-DD') as day,
+             count(*) as count
+      from "BannerEvent" e join "Banner" b on b.id = e."bannerId"
+      where b."businessId" = ${businessId} and e."createdAt" >= ${since}
+      group by 1, 2`);
     return rows.map((r) => ({ ...r, count: Number(r.count) }));
   },
 
@@ -107,11 +119,11 @@ export const analyticsRepository = {
       orderBy: { createdAt: "desc" },
     }),
 
-  recordEvent: (promotionId: string, type: "VIEW" | "CLICK", source: string, visitor: string) =>
+  recordEvent: (promotionId: string, type: PromotionEventKind, source: string, visitor: string) =>
     db.promotionEvent.create({ data: { promotionId, type, source, visitor } }),
 
   /** How many times this visitor already did this to this promotion since `since`. */
-  recentPromotionEvents: (promotionId: string, type: "VIEW" | "CLICK", visitor: string, since: Date) =>
+  recentPromotionEvents: (promotionId: string, type: PromotionEventKind, visitor: string, since: Date) =>
     db.promotionEvent.count({ where: { promotionId, type, visitor, createdAt: { gte: since } } }),
 
   /** The business behind a public page, unless it's suspended or the viewer owns it. Null means "don't count". */

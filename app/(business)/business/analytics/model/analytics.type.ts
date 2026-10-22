@@ -8,12 +8,17 @@ export interface DayStats {
   views: number;
   clicks: number;
   saves: number;
+  shares: number;
+  /** WhatsApp chats opened from a promotion's button. */
+  chats: number;
 }
 
 export interface Totals {
   views: number;
   clicks: number;
   saves: number;
+  shares: number;
+  chats: number;
 }
 
 export interface PromotionMeta {
@@ -45,6 +50,16 @@ export interface ProfileDay {
   /** Different people who opened or clicked it that day. */
   visitors: number;
   /** Clicks on the phone, email, website or social links. */
+  clicks: number;
+  /** Times the page was shared. */
+  shares: number;
+}
+
+/** One day of banner views and clicks, across all of the business's banners. */
+export interface BannerDay {
+  date: string;
+  label: string;
+  views: number;
   clicks: number;
 }
 

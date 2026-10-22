@@ -18,7 +18,7 @@ export function DetailAside({ detail }: { detail: DetailData }) {
         <p className="text-sm text-muted-foreground">{asideNote}</p>
         {detail.promotionId && detail.cta && (
           <div className="pt-2">
-            <TrackedCta promotionId={detail.promotionId} label={detail.cta.label} href={detail.cta.href} />
+            <TrackedCta promotionId={detail.promotionId} label={detail.cta.label} href={detail.cta.href} chat={detail.cta.chat} />
           </div>
         )}
       </div>

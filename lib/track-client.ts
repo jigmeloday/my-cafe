@@ -1,4 +1,4 @@
-import type { BusinessEventType, SiteSection } from "@/lib/track-events";
+import type { BusinessEventType, PromotionEventKind, SiteSection } from "@/lib/track-events";
 
 /** Where a visitor came from, read from the page they were on before: "/deals" -> "deals". */
 export function sourceFromReferrer(referrer: string, origin: string): string {
@@ -27,8 +27,8 @@ function send(report: object) {
 
 const sourceNow = () => sourceFromReferrer(document.referrer, window.location.origin);
 
-/** Tells the server a promotion was viewed or clicked. */
-export const trackEvent = (promotionId: string, type: "VIEW" | "CLICK") => send({ promotionId, type, source: sourceNow() });
+/** Tells the server a promotion was viewed, clicked or shared. */
+export const trackEvent = (promotionId: string, type: PromotionEventKind) => send({ promotionId, type, source: sourceNow() });
 
 /** Counts a banner being seen (VIEW) or clicked (CLICK). */
 export const trackBanner = (bannerId: string, type: "VIEW" | "CLICK") => send({ bannerId, type });

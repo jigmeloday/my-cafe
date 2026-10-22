@@ -73,6 +73,8 @@ enum MessageStatus {
 enum PromotionEventType {
   VIEW
   CLICK
+  SHARE
+  WHATSAPP
 }
 
 /// What a visitor did on a business's own page. VIEW is opening the page; the rest are clicks on its contact links.
@@ -82,6 +84,7 @@ enum BusinessEventType {
   EMAIL
   WEBSITE
   SOCIAL
+  SHARE
 }
 
 enum PromotionStatus {

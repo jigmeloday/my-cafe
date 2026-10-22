@@ -18,7 +18,7 @@ export function AnalyticsStats({ current, previous, reach }: AnalyticsStatsProps
   return (
     <section
       aria-label="Summary"
-      className="grid grid-cols-2 gap-3 lg:grid-cols-5"
+      className="grid grid-cols-2 gap-3 lg:grid-cols-4"
     >
       <StatCard
         label="Views"
@@ -48,6 +48,18 @@ export function AnalyticsStats({ current, previous, reach }: AnalyticsStatsProps
         label="Saves"
         value={formatNumber(current.saves)}
         delta={change(current.saves, previous.saves)}
+        hint={hint}
+      />
+      <StatCard
+        label="Shares"
+        value={formatNumber(current.shares)}
+        delta={change(current.shares, previous.shares)}
+        hint={hint}
+      />
+      <StatCard
+        label="WhatsApp chats"
+        value={formatNumber(current.chats)}
+        delta={change(current.chats, previous.chats)}
         hint={hint}
       />
     </section>

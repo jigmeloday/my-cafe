@@ -21,6 +21,13 @@ export const METRICS: ChartMetric[] = [
   { id: "views", label: "Views", kind: "number" },
   { id: "clicks", label: "Clicks", kind: "number" },
   { id: "saves", label: "Saves", kind: "number" },
+  { id: "shares", label: "Shares", kind: "number" },
+  { id: "chats", label: "WhatsApp chats", kind: "number" },
+];
+
+export const BANNER_METRICS: ChartMetric[] = [
+  { id: "views", label: "Views", kind: "number" },
+  { id: "clicks", label: "Clicks", kind: "number" },
 ];
 
 /** Days of history loaded: enough for the longest range and the period before it. */
@@ -41,6 +48,7 @@ export const PROFILE_METRICS: ChartMetric[] = [
   { id: "visits", label: "Visits", kind: "number" },
   { id: "visitors", label: "Visitors", kind: "number" },
   { id: "clicks", label: "Link clicks", kind: "number" },
+  { id: "shares", label: "Shares", kind: "number" },
 ];
 
 /** What each kind of click on the business's page means, in words a business owner would use. */
@@ -78,6 +86,7 @@ export const ANALYTICS_COPY = {
   reachTitle: "Who you can email",
   reachLabel: "People reached",
   reachHint: "Different people who viewed or clicked your promotions",
+  bannerChartTitle: "Your banners",
   profileChartTitle: "Your page",
   profileHint: "Your business page is the one with your name, hours and contact details.",
   profileClicksTitle: "What people clicked",

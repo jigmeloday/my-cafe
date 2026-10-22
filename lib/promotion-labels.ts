@@ -13,4 +13,5 @@ export const CTA_TYPE_LABELS = {
   VIEW_OFFER: "View offer",
   VISIT_WEBSITE: "Visit website",
   CONTACT_BUSINESS: "Contact business",
+  WHATSAPP: "Chat on WhatsApp",
 } as const;

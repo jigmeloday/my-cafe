@@ -1,8 +1,10 @@
 import type { ActivityItem } from "@/app/(public)/businesses/model/business.type";
 import type { HeroSlideData } from "@/app/(public)/home/model/home.type";
 import { CTA_TYPE_LABELS, TYPE_LABELS } from "@/lib/promotion-labels";
+import { whatsappLink } from "@/lib/whatsapp";
 import { mediaUrl } from "@/lib/media";
 import type { DetailData, ShopLine } from "@/components/public/model/detail.type";
+import { SITE_NAME } from "@/components/public/constant/site.constant";
 import type { PromotionCardData, TaggedPromotion } from "@/components/public/model/promotion.type";
 import { whenRange } from "@/lib/search-when";
 import { dealTags, eventDateText, eventTags, mainCategory, openedText, placeTags } from "@/lib/discovery-tags";
@@ -94,6 +96,17 @@ const LIST_LIMIT = 120;
 export const BANNER_SLOTS = 4;
 
 /** The page data for one promotion. Shared by the public page and the owner's preview. */
+/** The promotion's main button: a link, a phone call or a WhatsApp chat. None when it has nothing to open. */
+function ctaFor(p: { ctaType: string; ctaUrl: string; title: string }, phone: string): DetailData["cta"] {
+  if (p.ctaType === "VISIT_WEBSITE" && p.ctaUrl) return { label: CTA_TYPE_LABELS.VISIT_WEBSITE, href: p.ctaUrl };
+  if (p.ctaType === "CONTACT_BUSINESS" && phone) return { label: CTA_TYPE_LABELS.CONTACT_BUSINESS, href: `tel:${phone.replace(/\s/g, "")}` };
+  if (p.ctaType === "WHATSAPP") {
+    const href = whatsappLink(phone, `Hi! I saw "${p.title}" on ${SITE_NAME} and I'd like to know more.`);
+    return href ? { label: CTA_TYPE_LABELS.WHATSAPP, href, chat: true } : undefined;
+  }
+  return undefined;
+}
+
 function buildDetail(p: LivePromotion, related: LivePromotion[], today: Date, now: Date): DetailData {
     const b = p.business;
     const lines: ShopLine[] = [];
@@ -130,7 +143,7 @@ function buildDetail(p: LivePromotion, related: LivePromotion[], today: Date, no
       related: related.map((r) => toCard(r, today)),
       promotionId: p.id,
       photos: p.photos.map(mediaUrl),
-      cta: p.ctaType === "VISIT_WEBSITE" && p.ctaUrl ? { label: CTA_TYPE_LABELS.VISIT_WEBSITE, href: p.ctaUrl } : p.ctaType === "CONTACT_BUSINESS" && b.phone ? { label: CTA_TYPE_LABELS.CONTACT_BUSINESS, href: `tel:${b.phone.replace(/\s/g, "")}` } : undefined,
+      cta: ctaFor(p, b.phone),
       shopLines: lines,
       shopLogo: b.logoKey ? mediaUrl(b.logoKey) : undefined,
       seo: {

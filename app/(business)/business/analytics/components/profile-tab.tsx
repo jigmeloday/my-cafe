@@ -26,10 +26,11 @@ export function ProfileTab({ profile, range }: ProfileTabProps) {
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">{ANALYTICS_COPY.profileHint}</p>
-      <section aria-label="Page summary" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <section aria-label="Page summary" className="grid grid-cols-2 gap-3 lg:grid-cols-5">
         <StatCard label="Page visits" value={formatNumber(now.visits)} delta={change(now.visits, before.visits)} hint={hint} />
         <StatCard label="Visitors" value={formatNumber(now.visitors)} delta={change(now.visitors, before.visitors)} hint={hint} />
         <StatCard label="Link clicks" value={formatNumber(now.clicks)} delta={change(now.clicks, before.clicks)} hint={hint} />
+        <StatCard label="Shares" value={formatNumber(now.shares)} delta={change(now.shares, before.shares)} hint={hint} />
         <StatCard label="Clicks per visit" value={formatPercent(rate, 1)} delta={change(rate, rateBefore)} hint={hint} />
       </section>
       <div className="grid gap-4 lg:grid-cols-[1fr_20rem]">

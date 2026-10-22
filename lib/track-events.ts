@@ -5,11 +5,14 @@
 export const ANALYTICS_RETENTION_DAYS = 90;
 
 /** What can be counted about a business's page and about the site. Shared by the browser and the server. */
-export const BUSINESS_EVENT_TYPES = ["VIEW", "CALL", "EMAIL", "WEBSITE", "SOCIAL"] as const;
+export const BUSINESS_EVENT_TYPES = ["VIEW", "CALL", "EMAIL", "WEBSITE", "SOCIAL", "SHARE"] as const;
 export type BusinessEventType = (typeof BUSINESS_EVENT_TYPES)[number];
 
-/** The clicks on a business's contact links, in the order they are shown. */
-export const CLICK_EVENT_TYPES = BUSINESS_EVENT_TYPES.filter((type) => type !== "VIEW");
+/** What can be counted about a promotion. */
+export type PromotionEventKind = "VIEW" | "CLICK" | "SHARE" | "WHATSAPP";
+
+/** The clicks on a business's contact links, in the order they are shown. Views and shares are counted apart. */
+export const CLICK_EVENT_TYPES = BUSINESS_EVENT_TYPES.filter((type) => type !== "VIEW" && type !== "SHARE");
 
 export const SITE_SECTIONS = ["home", "discover", "deals", "events", "search", "business", "promotion", "other"] as const;
 export type SiteSection = (typeof SITE_SECTIONS)[number];

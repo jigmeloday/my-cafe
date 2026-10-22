@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ChevronLeft, Pencil } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { ShareButton } from "@/components/shared/share-button";
 import { FollowButton } from "@/components/shared/follow-button";
 
 import { BUSINESS_COPY } from "../constant/business.constant";
@@ -32,15 +33,27 @@ export function BusinessHeader({ business }: { business: BusinessProfile }) {
               .join(" · ")}
           </p>
         </div>
-        {business.isOwner ? (
-          <Button render={<Link href="/business/profile" />} variant="secondary">
-            <Pencil /> {BUSINESS_COPY.editProfile}
-          </Button>
-        ) : (
-          <FollowButton href={`/businesses/${business.slug}`} />
-        )}
+        <div className="flex items-center gap-2">
+          <ShareButton
+            path={`/businesses/${business.slug}`}
+            title={business.name}
+            story={{ kind: "business", slug: business.slug }} track={{ businessSlug: business.slug }}
+          />
+          {business.isOwner ? (
+            <Button
+              render={<Link href="/business/profile" />}
+              variant="secondary"
+            >
+              <Pencil /> {BUSINESS_COPY.editProfile}
+            </Button>
+          ) : (
+            <FollowButton href={`/businesses/${business.slug}`} />
+          )}
+        </div>
       </div>
-      {business.tagline && <p className="text-muted-foreground">{business.tagline}</p>}
+      {business.tagline && (
+        <p className="text-muted-foreground">{business.tagline}</p>
+      )}
       {business.openingOffer && (
         <p className="inline-flex items-center gap-2 rounded-full bg-maroon-soft px-3 py-1.5 text-sm">
           <span className="font-semibold text-primary">
