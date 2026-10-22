@@ -1,9 +1,10 @@
 import type { MediaKind } from "@/lib/media";
 
 /** Sends one image to the server. Resolves with the stored image, or throws an Error with a message to show. */
-export async function uploadBusinessImage(kind: MediaKind, file: File): Promise<{ key: string; url: string }> {
+export async function uploadBusinessImage(kind: MediaKind, file: File, businessId?: string): Promise<{ key: string; url: string }> {
   const form = new FormData();
   form.set("kind", kind);
+  if (businessId) form.set("businessId", businessId);
   form.set("file", file);
   const response = await fetch("/api/business/media", { method: "POST", body: form });
   const body = await response.json().catch(() => ({}));
@@ -11,11 +12,12 @@ export async function uploadBusinessImage(kind: MediaKind, file: File): Promise<
   return body;
 }
 
-export async function removeBusinessImage(kind: MediaKind, key = ""): Promise<void> {
+/** `businessId` is only for admins, who add banner pictures for a business they chose. */
+export async function removeBusinessImage(kind: MediaKind, key = "", businessId?: string): Promise<void> {
   const response = await fetch("/api/business/media", {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ kind, key }),
+    body: JSON.stringify({ kind, key, businessId }),
   });
   if (!response.ok) throw new Error((await response.json().catch(() => ({}))).error ?? "We couldn't remove that image.");
 }

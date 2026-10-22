@@ -8,21 +8,21 @@ import { removeBusinessImage, uploadBusinessImage } from "@/lib/upload-client";
 export const PENDING_IMAGE = "pending-upload";
 
 /** Deletes files that were sent but never saved. Best effort: a failure here must not hide the real result. */
-export async function discardUploads(kind: MediaKind, keys: string[]): Promise<void> {
-  await Promise.allSettled(keys.map((key) => removeBusinessImage(kind, key)));
+export async function discardUploads(kind: MediaKind, keys: string[], businessId?: string): Promise<void> {
+  await Promise.allSettled(keys.map((key) => removeBusinessImage(kind, key, businessId)));
 }
 
 /**
  * Sends the chosen pictures, one after another, only when the person saves. Resolves with their keys in order.
  * If one fails, the ones already sent are deleted again and the error is thrown, so nothing is left behind.
  */
-export async function uploadChosen(kind: MediaKind, files: File[]): Promise<string[]> {
+export async function uploadChosen(kind: MediaKind, files: File[], businessId?: string): Promise<string[]> {
   const keys: string[] = [];
   try {
-    for (const file of files) keys.push((await uploadBusinessImage(kind, file)).key);
+    for (const file of files) keys.push((await uploadBusinessImage(kind, file, businessId)).key);
     return keys;
   } catch (error) {
-    await discardUploads(kind, keys);
+    await discardUploads(kind, keys, businessId);
     throw error;
   }
 }

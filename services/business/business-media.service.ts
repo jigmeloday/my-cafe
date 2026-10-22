@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
 
-import { keyBelongsTo, MAX_GALLERY, type MediaKind } from "@/lib/media";
+import { ANNOUNCEMENT, keyBelongsTo, MAX_GALLERY, type MediaKind } from "@/lib/media";
 import { optimizeImage } from "@/lib/optimize-image";
 import { storage } from "@/lib/storage";
 import { businessRepository } from "@/server/repositories/business.repository";
@@ -11,6 +11,15 @@ import { businessService, type Owner } from "./business.service";
 type Result = { ok: true } | { ok: false; error: string };
 type Image = { ext: string; mime: string };
 
+/** Saves a picture under a fresh name, so a replaced image never shows from an old cache. */
+async function storeImage(businessId: string, kind: MediaKind, bytes: Uint8Array, image: Image) {
+  const optimized = await optimizeImage(bytes).catch(() => null);
+  const stored = optimized ?? { bytes, image };
+  const key = `business/${businessId}/${kind}-${randomBytes(8).toString("hex")}.${stored.image.ext}`;
+  await storage.put(key, stored.bytes, stored.image.mime);
+  return key;
+}
+
 /** Logo, cover and gallery photos. Files live in the bucket; the business row keeps only their keys. */
 export const businessMediaService = {
   async add(owner: Owner, kind: MediaKind, bytes: Uint8Array, image: Image): Promise<({ ok: true; key: string }) | { ok: false; error: string }> {
@@ -19,11 +28,7 @@ export const businessMediaService = {
       return { ok: false, error: `You can add up to ${MAX_GALLERY} photos.` };
     }
 
-    // A fresh name every time, so a replaced image never shows from an old cache.
-    const optimized = await optimizeImage(bytes).catch(() => null);
-    const stored = optimized ?? { bytes, image };
-    const key = `business/${business.id}/${kind}-${randomBytes(8).toString("hex")}.${stored.image.ext}`;
-    await storage.put(key, stored.bytes, stored.image.mime);
+    const key = await storeImage(business.id, kind, bytes, image);
 
     // Promotion photos and banner images are only files here. The promotion or banner keeps the key when it is saved.
     if (kind === "promotion" || kind === "banner") return { ok: true, key };
@@ -33,6 +38,19 @@ export const businessMediaService = {
     const old = kind === "logo" ? business.logoKey : kind === "cover" ? business.coverKey : "";
     if (old) await storage.remove(old);
     return { ok: true, key };
+  },
+
+  /** A banner picture an admin sends for a business they chose. The banner keeps the key when it is saved. */
+  async addBannerFile(businessId: string, bytes: Uint8Array, image: Image): Promise<({ ok: true; key: string }) | { ok: false; error: string }> {
+    if (businessId !== ANNOUNCEMENT && !(await businessRepository.findById(businessId))) return { ok: false, error: "We couldn't find that business." };
+    return { ok: true, key: await storeImage(businessId, "banner", bytes, image) };
+  },
+
+  /** Throws away a banner picture an admin sent but never saved. One a banner already uses is left alone. */
+  async removeBannerFile(businessId: string, key: string): Promise<Result> {
+    const ownUpload = keyBelongsTo(key, businessId) && key.startsWith(`business/${businessId}/banner-`);
+    if (ownUpload && !(await mediaRepository.isReferenced(key))) await storage.remove(key);
+    return { ok: true };
   },
 
   async remove(owner: Owner, kind: MediaKind, key: string): Promise<Result> {

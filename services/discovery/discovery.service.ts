@@ -49,8 +49,21 @@ export function toCard(p: LivePromotion, today: Date, badge?: string): Promotion
 
 type ActiveBanner = Awaited<ReturnType<typeof bannerRepository.active>>[number];
 
-/** A paid banner as a hero slide. It opens the linked promotion, or the business's page. */
+/** A banner as a hero slide. A business's banner opens its page; an admin's announcement opens its own link, if it has one. */
 export function toBannerSlide(b: ActiveBanner): HeroSlideData {
+  if (!b.business) {
+    return {
+      id: `banner-${b.id}`,
+      bannerId: b.id,
+      eyebrow: SITE_NAME,
+      title: b.title,
+      description: b.description,
+      cta: b.linkUrl ? "Learn more" : "",
+      href: b.linkUrl,
+      imageLabel: b.title,
+      imageUrl: mediaUrl(b.imageKey),
+    };
+  }
   const linkable = b.promotion && b.promotion.status === "PUBLISHED";
   return {
     id: `banner-${b.id}`,

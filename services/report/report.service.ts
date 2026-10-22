@@ -58,8 +58,8 @@ export function groupReports(rows: ReportRow[]): ReportItem[] {
       kind: promotion ? ("promotion" as const) : ("banner" as const),
       targetId: (promotion?.id ?? banner?.id) as string,
       title: promotion?.title ?? banner?.title ?? "Removed ad",
-      businessName: (promotion?.business.name ?? banner?.business.name) ?? "",
-      href: promotion ? (promotion.type === "EVENT" ? `/events/${promotion.slug}` : `/promotions/${promotion.slug}`) : banner ? `/businesses/${banner.business.slug}` : null,
+      businessName: (promotion?.business.name ?? banner?.business?.name) ?? "",
+      href: promotion ? (promotion.type === "EVENT" ? `/events/${promotion.slug}` : `/promotions/${promotion.slug}`) : banner?.business ? `/businesses/${banner.business.slug}` : null,
       reason: commonReason(list),
       details: latestNote,
       count: list.length,
@@ -106,7 +106,7 @@ export const reportService = {
     const first = open[0];
     const target = kind === "promotion" ? first.promotion : first.banner;
     const title = target?.title ?? "the ad";
-    const ownerId = target?.business.ownerId ?? null;
+    const ownerId = target?.business?.ownerId ?? null;
     const reason = REASON_LABEL[commonReason(open) as ReportReasonId];
     const where = kind === "promotion" ? "/business/promotions" : "/business/banners";
     const noun = kind === "promotion" ? "promotion" : "banner";

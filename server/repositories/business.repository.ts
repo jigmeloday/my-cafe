@@ -7,6 +7,8 @@ export const businessRepository = {
   findByOwner: (ownerId: string) =>
     db.business.findFirst({ where: { ownerId }, orderBy: { createdAt: "asc" } }),
 
+  findById: (id: string) => db.business.findUnique({ where: { id } }),
+
   findBySlug: (slug: string) => db.business.findUnique({ where: { slug } }),
 
   slugTaken: async (slug: string) => (await db.business.count({ where: { slug } })) > 0,

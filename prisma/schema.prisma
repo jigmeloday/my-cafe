@@ -413,14 +413,17 @@ model RateLimitHit {
 /// A paid homepage banner. It runs from `startsAt` to `endsAt` (both days included) and is paid for up front in coins.
 model Banner {
   id          String        @id @default(cuid())
-  businessId  String
-  business    Business      @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  /// Empty for an announcement an admin made for the whole site.
+  businessId  String?
+  business    Business?     @relation(fields: [businessId], references: [id], onDelete: Cascade)
   /// Where the banner leads. Empty means the business's own page.
   promotionId String?
   promotion   Promotion?    @relation(fields: [promotionId], references: [id], onDelete: SetNull)
   title       String
   description String        @default("")
   imageKey    String
+  /// Where an announcement leads: a full link or a page on this site. Empty means it leads nowhere.
+  linkUrl     String        @default("")
   startsAt    DateTime      @db.Date
   endsAt      DateTime      @db.Date
   /// Coins paid for the whole run.

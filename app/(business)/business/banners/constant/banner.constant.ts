@@ -18,8 +18,8 @@ export const BANNERS_COPY = {
   imageRatioNote: "This picture isn't wide, so it will show with blurred space at the sides. For the best result use a wide image, about 2100 × 800.",
 };
 
-export const STATUS_LABELS: Record<BannerStatus, string> = { scheduled: "Scheduled", active: "Running", ended: "Ended" };
-export const STATUS_TONES: Record<BannerStatus, StatusTone> = { scheduled: "info", active: "success", ended: "neutral" };
+export const STATUS_LABELS: Record<BannerStatus, string> = { scheduled: "Scheduled", active: "Running", ended: "Ended", removed: "Taken down" };
+export const STATUS_TONES: Record<BannerStatus, StatusTone> = { scheduled: "info", active: "success", ended: "neutral", removed: "danger" };
 
 /** "7 days · 700 coins" */
 export const DAY_OPTIONS = BANNER_DAYS.map((days) => ({

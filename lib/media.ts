@@ -2,6 +2,9 @@
 export const mediaUrl = (key: string) => (key ? `/api/media/${key}` : "");
 
 export const MAX_GALLERY = 8;
+
+/** Stands in for a business when an admin makes a site-wide announcement banner. Its pictures live in this folder. */
+export const ANNOUNCEMENT = "announcements";
 export const MEDIA_KINDS = ["logo", "cover", "gallery", "promotion", "banner"] as const;
 
 /** A stored file name inside a business folder, e.g. business/<id>/promotion-<random>.jpg */

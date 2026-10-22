@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Banner" ALTER COLUMN "businessId" DROP NOT NULL;
+ALTER TABLE "Banner" ADD COLUMN "linkUrl" TEXT NOT NULL DEFAULT '';

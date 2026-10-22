@@ -51,9 +51,11 @@ export function HeroSlide({ slide }: { slide: HeroSlideData }) {
         </div>
         <h3>{slide.title}</h3>
         {slide.description && <p className="text-sm text-muted-foreground">{slide.description}</p>}
-        <Button render={<Link href={slide.href} onClick={bannerId ? () => trackBanner(bannerId, "CLICK") : undefined} />} size="sm">
-          {slide.cta}
-        </Button>
+        {slide.href && (
+          <Button render={<Link href={slide.href} onClick={bannerId ? () => trackBanner(bannerId, "CLICK") : undefined} />} size="sm">
+            {slide.cta}
+          </Button>
+        )}
       </div>
     </article>
   );

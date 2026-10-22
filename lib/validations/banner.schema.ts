@@ -13,4 +13,20 @@ export const bannerSchema = z.object({
   days: z.enum(BANNER_DAYS),
 });
 
+/** An admin can run a banner for any business, for longer than an owner can buy, and it costs nothing. */
+export const ADMIN_BANNER_DAYS = ["3", "7", "14", "30"] as const;
+
+export const adminBannerSchema = bannerSchema.extend({
+  /** A business id, or `ANNOUNCEMENT` for a banner that belongs to the whole site. */
+  businessId: z.string().min(1, "Choose who the banner is for").max(100),
+  /** Where it leads: a full link, a page on this site like "/deals", or empty for nowhere. */
+  linkUrl: z
+    .string()
+    .trim()
+    .max(300)
+    .refine((v) => v === "" || /^https?:\/\/\S+\.\S+$/.test(v) || /^\/(?!\/)[\w\-/?=&%.#]*$/.test(v), "Enter a full link starting with https://, or a page like /deals"),
+  days: z.enum(ADMIN_BANNER_DAYS),
+});
+
+export type AdminBannerInput = z.infer<typeof adminBannerSchema>;
 export type BannerInput = z.infer<typeof bannerSchema>;

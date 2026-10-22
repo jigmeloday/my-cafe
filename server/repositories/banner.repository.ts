@@ -38,6 +38,44 @@ export const bannerRepository = {
       return banner;
     }),
 
+  /** Saves a banner an admin made for a business. No coins are taken; who did it is noted. All happens or none does. */
+  createByAdmin: (
+    data: { businessId: string | null; title: string; description: string; imageKey: string; linkUrl: string; startsAt: Date; endsAt: Date },
+    actor: { id: string; email: string },
+  ) =>
+    db.$transaction(async (tx) => {
+      const banner = await tx.banner.create({ data: { ...data, promotionId: null, coins: 0 }, include: withBusiness });
+      await tx.auditLog.create({
+        data: { actorId: actor.id, actorEmail: actor.email, action: "banner.create", targetId: banner.id, targetLabel: `${banner.business?.name ?? "Announcement"}: ${data.title}` },
+      });
+      return banner;
+    }),
+
+  /** Takes a running or scheduled banner down, tells its owner, and notes who did it. False when it was already down. */
+  takeDown: (id: string, actor: { id: string; email: string }) =>
+    db.$transaction(async (tx) => {
+      const banner = await tx.banner.findFirst({ where: { id, removedAt: null }, include: withBusiness });
+      if (!banner) return false;
+      await tx.banner.update({ where: { id }, data: { removedAt: new Date() } });
+      const owner = banner.businessId ? await tx.business.findUnique({ where: { id: banner.businessId }, select: { ownerId: true } }) : null;
+      if (owner) {
+        await tx.notification.create({
+          data: { userId: owner.ownerId, title: "A banner was taken down", description: `Your banner “${banner.title}” was taken down by Nook.`, href: "/business/banners" },
+        });
+      }
+      await tx.auditLog.create({
+        data: { actorId: actor.id, actorEmail: actor.email, action: "banner.takedown", targetId: id, targetLabel: `${banner.business?.name ?? "Announcement"}: ${banner.title}` },
+      });
+      return true;
+    }),
+
+  /** Every banner on the site, newest first, for the admin. */
+  listAll: () => db.banner.findMany({ orderBy: { createdAt: "desc" }, include: withBusiness }),
+
+  /** Businesses a banner can be made for. */
+  businessOptions: () =>
+    db.business.findMany({ where: { status: { not: "SUSPENDED" } }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+
   /** Counts a banner showing or being clicked. Only for a banner that is running today. */
   async recordEvent(bannerId: string, type: "VIEW" | "CLICK", today: Date) {
     const running = await db.banner.count({ where: { id: bannerId, removedAt: null, startsAt: { lte: today }, endsAt: { gte: today } } });
