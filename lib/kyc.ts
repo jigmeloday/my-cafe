@@ -13,6 +13,12 @@ export const KYC_KINDS = KYC_DOCS.map((d) => d.kind) as [KycDocKind, ...KycDocKi
 /** Uploads one person may make in an hour, so the upload form can't be used to fill the storage. */
 export const KYC_UPLOADS_PER_HOUR = 20;
 
+/**
+ * How long ID and licence files, and the ID and licence numbers, are kept after we decide on a request.
+ * After that `npm run purge:kyc` deletes them. The Privacy Policy states this number, so change both together.
+ */
+export const KYC_RETENTION_DAYS = 30;
+
 /** Where a business's documents live in the (private) bucket. */
 export const kycPrefix = (businessId: string) => `kyc/${businessId}/`;
 

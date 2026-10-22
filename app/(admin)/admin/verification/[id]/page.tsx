@@ -6,6 +6,7 @@ import { ChevronLeft, ExternalLink } from "lucide-react";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { formatDateTime } from "@/lib/formatters/date";
 import { requireRole } from "@/lib/session";
+import { KYC_RETENTION_DAYS } from "@/lib/kyc";
 import { kycService } from "@/services/kyc/kyc.service";
 
 import { ReviewPanel } from "../components/review-panel";
@@ -24,8 +25,8 @@ export default async function ReviewPage({ params }: PageProps<"/admin/verificat
 
   const rows: [string, string][] = [
     ["Name on ID", detail.ownerName],
-    ["ID number", detail.idNumber],
-    ["Trade licence number", detail.licenseNumber],
+    ["ID number", detail.idNumber || "Deleted"],
+    ["Trade licence number", detail.licenseNumber || "Deleted"],
     ["Account", `${detail.accountName} · ${detail.accountEmail}`],
     ["Sent", formatDateTime(detail.submittedAt)],
   ];
@@ -67,6 +68,11 @@ export default async function ReviewPage({ params }: PageProps<"/admin/verificat
         </div>
 
         <div className="space-y-4">
+          {detail.purged && (
+            <p className="rounded-xl bg-muted px-4 py-3 text-sm">
+              The documents and ID numbers were deleted {KYC_RETENTION_DAYS} days after the decision, as our Privacy Policy says. The decision stays on record.
+            </p>
+          )}
           {detail.docs.map((doc) => {
             const src = `/api/admin/kyc/${doc.key}`;
             return (

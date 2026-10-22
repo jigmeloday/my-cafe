@@ -75,6 +75,15 @@ enum PromotionEventType {
   CLICK
 }
 
+/// What a visitor did on a business's own page. VIEW is opening the page; the rest are clicks on its contact links.
+enum BusinessEventType {
+  VIEW
+  CALL
+  EMAIL
+  WEBSITE
+  SOCIAL
+}
+
 enum PromotionStatus {
   DRAFT
   PUBLISHED
@@ -197,6 +206,7 @@ model Business {
   promotions       Promotion[]
   wallet           Wallet?
   banners          Banner[]
+  events           BusinessEvent[]
   featuredBookings FeaturedBooking[]
   kycSubmissions   KycSubmission[]
 
@@ -351,9 +361,38 @@ model PromotionEvent {
   type        PromotionEventType
   /// Where the visitor came from: "discover", "deals", "events", "search" or "other".
   source      String             @default("other")
+  /// A one-way code that is the same for one visitor on one day (see lib/visitor.ts). Never an address.
+  visitor     String             @default("")
   createdAt   DateTime           @default(now())
 
   @@index([promotionId, createdAt])
+  @@index([createdAt])
+}
+
+/// One visit to a business's page, or one click on its phone, email, website or social links.
+model BusinessEvent {
+  id         String            @id @default(cuid())
+  businessId String
+  business   Business          @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  type       BusinessEventType
+  /// Where the visitor came from: "home", "discover", "deals", "events", "search" or "other".
+  source     String            @default("other")
+  /// Same one-way daily code as on PromotionEvent.
+  visitor    String            @default("")
+  createdAt  DateTime          @default(now())
+
+  @@index([businessId, createdAt])
+}
+
+/// One page opened anywhere on the public site, for the admin's traffic numbers. Holds no address or account.
+model SiteVisit {
+  id        String   @id @default(cuid())
+  /// Part of the site: "home", "discover", "deals", "events", "search", "business", "promotion" or "other".
+  section   String
+  /// Same one-way daily code as on PromotionEvent.
+  visitor   String
+  createdAt DateTime @default(now())
+
   @@index([createdAt])
 }
 

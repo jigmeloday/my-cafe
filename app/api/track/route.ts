@@ -2,39 +2,47 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { SOURCES } from "@/app/(business)/business/analytics/constant/analytics.constant";
+import { BUSINESS_EVENT_TYPES, SITE_SECTIONS } from "@/lib/track-events";
 import { getCurrentUser } from "@/lib/session";
 import { bannerRepository } from "@/server/repositories/banner.repository";
 import { bhutanToday } from "@/services/discovery/discovery.service";
-import { analyticsRepository } from "@/server/repositories/analytics.repository";
+import { trackingService } from "@/services/analytics/tracking.service";
 
-const bodySchema = z.object({
-  /** Set for a promotion... */
-  promotionId: z.string().min(1).max(100).optional(),
-  /** ...or for a homepage banner. Exactly one of the two. */
-  bannerId: z.string().min(1).max(100).optional(),
-  type: z.enum(["VIEW", "CLICK"]),
-  source: z.string().max(30).default("other"),
-}).refine((b) => !!b.promotionId !== !!b.bannerId, "Send either promotionId or bannerId");
+const source = z.string().max(30).default("other");
+const id = z.string().min(1).max(100);
+const viewOrClick = z.enum(["VIEW", "CLICK"]);
+
+/** One of four things a page can report. They are told apart by which field they carry. */
+const bodySchema = z.union([
+  z.object({ promotionId: id, type: viewOrClick, source }),
+  z.object({ bannerId: id, type: viewOrClick }),
+  z.object({ businessSlug: id, type: z.enum(BUSINESS_EVENT_TYPES), source }),
+  z.object({ section: z.enum(SITE_SECTIONS) }),
+]);
 
 const SOURCE_IDS = SOURCES.map((s) => s.id);
+const knownSource = (value: string) => (SOURCE_IDS.includes(value) ? value : "other");
 
 /**
- * Counts a view or a click on a promotion. Anyone may call it (visitors aren't signed in), so it only ever
- * adds one small row, only for a live promotion, and never for the business's own owner.
+ * Counts a view or a click: on a promotion, a banner, a business's page and links, or a page of the site.
+ * Anyone may call it (visitors aren't signed in), so each call adds at most one small row, only for something
+ * real and live, never for a robot, and never the same thing twice in a row (see tracking.service.ts).
  */
 export async function POST(request: Request) {
   const parsed = bodySchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ ok: false }, { status: 400 });
+  const body = parsed.data;
 
-  const { promotionId, bannerId, type, source } = parsed.data;
-  if (bannerId) {
+  if ("bannerId" in body) {
     // Only a banner that is running today is counted.
-    return NextResponse.json({ ok: true, counted: await bannerRepository.recordEvent(bannerId, type, bhutanToday()) });
+    return NextResponse.json({ ok: true, counted: await bannerRepository.recordEvent(body.bannerId, body.type, bhutanToday()) });
   }
+  if ("section" in body) return NextResponse.json({ ok: true, counted: await trackingService.site(body.section) });
+
   const viewer = await getCurrentUser();
-  if (!promotionId || !(await analyticsRepository.isCountable(promotionId, viewer?.id ?? null))) {
-    return NextResponse.json({ ok: true, counted: false });
-  }
-  await analyticsRepository.recordEvent(promotionId, type, SOURCE_IDS.includes(source) ? source : "other");
-  return NextResponse.json({ ok: true, counted: true });
+  const counted =
+    "promotionId" in body
+      ? await trackingService.promotion({ promotionId: body.promotionId, type: body.type, source: knownSource(body.source) }, viewer?.id ?? null)
+      : await trackingService.business({ slug: body.businessSlug, type: body.type, source: knownSource(body.source) }, viewer?.id ?? null);
+  return NextResponse.json({ ok: true, counted });
 }

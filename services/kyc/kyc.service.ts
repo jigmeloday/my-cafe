@@ -37,6 +37,8 @@ export interface KycDetail extends KycQueueItem {
   idNumber: string;
   licenseNumber: string;
   docs: { kind: KycDocKind; label: string; key: string }[];
+  /** True once the files and numbers were deleted after the retention period. */
+  purged: boolean;
   reviewNote: string;
   reviewedAt: string | null;
 }
@@ -118,11 +120,13 @@ export const kycService = {
       status: s.status,
       reviewNote: s.reviewNote,
       reviewedAt: s.reviewedAt ? toBhutan(s.reviewedAt) : null,
+      // Files deleted after the retention period have an empty key and are not listed.
       docs: [
         { kind: "id" as const, label: "ID document", key: s.idDocKey },
         { kind: "license" as const, label: "Trade licence", key: s.licenseDocKey },
-        ...(s.premisesKey ? [{ kind: "premises" as const, label: "Shop front photo", key: s.premisesKey }] : []),
-      ],
+        { kind: "premises" as const, label: "Shop front photo", key: s.premisesKey },
+      ].filter((doc) => doc.key),
+      purged: s.status !== "PENDING" && !s.idDocKey,
     };
   },
 

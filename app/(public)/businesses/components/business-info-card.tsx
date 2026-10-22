@@ -2,9 +2,10 @@ import {
   BUSINESS_COPY,
 } from "../constant/business.constant";
 import type { BusinessContact, BusinessHours } from "../model/business.type";
+import { ContactLink } from "./contact-link";
 import { HoursList } from "./hours-list";
 
-export function BusinessInfoCard({ hours, contacts }: { hours: BusinessHours[]; contacts: BusinessContact[] }) {
+export function BusinessInfoCard({ slug, hours, contacts }: { slug: string; hours: BusinessHours[]; contacts: BusinessContact[] }) {
   return (
     <aside className="space-y-6 rounded-2xl border p-5 lg:sticky lg:top-24">
       <section className="space-y-3">
@@ -21,9 +22,9 @@ export function BusinessInfoCard({ hours, contacts }: { hours: BusinessHours[]; 
             >
               <Icon className="size-4 shrink-0 text-foreground" />
               {href ? (
-                <a href={href} className="truncate hover:text-foreground hover:underline" {...(href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
+                <ContactLink slug={slug} contactKey={key} href={href}>
                   {text}
-                </a>
+                </ContactLink>
               ) : (
                 <span className="truncate">{text}</span>
               )}

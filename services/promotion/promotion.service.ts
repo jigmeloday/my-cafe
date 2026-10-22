@@ -100,6 +100,10 @@ export const promotionService = {
     // Every day from the start to the end is paid when it goes live.
     const goLiveFee = input.status === "PUBLISHED" ? listingCost(listingDays(input.startDate, input.endDate, today)) : 0;
 
+    // Going live with an end date that has already passed would run for no days, and so cost nothing.
+    const endedAlready = input.status === "PUBLISHED" && input.endDate < today;
+    const PAST_END = "The end date has already passed. Choose today or a later day.";
+
     // Featuring is booked together with going live (or on an already live promotion), and paid on top.
     const days = Number(input.featureDays);
     let featured: FeaturedRequest | undefined;
@@ -123,6 +127,7 @@ export const promotionService = {
         if (before.removedAt) return { ok: false, error: "Nook took this promotion down after a report, so it can't be changed or republished. Contact us if you think this is a mistake." };
         // Going live costs coins for every day. On a live one, only days added to the end are charged.
         const wasLive = before.status === "PUBLISHED";
+        if (!wasLive && endedAlready) return { ok: false, error: PAST_END };
         const charge = input.status === "PUBLISHED"
           ? wasLive
             ? listingCharge(input.title, before.endsAt ? extensionCost(toDateOnly(before.endsAt), input.endDate) : 0, "Extended")
@@ -134,6 +139,7 @@ export const promotionService = {
         return { ok: true };
       }
 
+      if (endedAlready) return { ok: false, error: PAST_END };
       const charge = input.status === "PUBLISHED" ? listingCharge(input.title, goLiveFee, "Published") : undefined;
       await promotionRepository.create({ ...data, businessId: business.id, slug: await uniqueSlug(input.title) }, charge, featured);
       return { ok: true };

@@ -32,4 +32,26 @@ export interface Dataset {
   promotions: Record<string, DayStats[]>;
   /** Per source id, clicks per day (same order as `days`). */
   sources: Record<string, number[]>;
+  /** Different people who viewed or clicked any promotion, per day (same order as `days`). */
+  reach: number[];
+}
+
+/** One day on the business's own page. */
+export interface ProfileDay {
+  date: string;
+  label: string;
+  /** Times the page was opened. */
+  visits: number;
+  /** Different people who opened or clicked it that day. */
+  visitors: number;
+  /** Clicks on the phone, email, website or social links. */
+  clicks: number;
+}
+
+export interface ProfileData {
+  days: ProfileDay[];
+  /** Per kind of click ("CALL", "EMAIL"...), clicks per day (same order as `days`). */
+  clicks: Record<string, number[]>;
+  /** Per source id, visits per day (same order as `days`). */
+  sources: Record<string, number[]>;
 }

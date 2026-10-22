@@ -18,6 +18,13 @@ export function emailMode(env: Env = process.env): "resend" | "console" | "missi
   return env.NODE_ENV === "production" ? "missing" : "console";
 }
 
+/** Mail apps POST to this address themselves, so it points at the API route, not at the page people read. */
+const oneClickUrl = (pageUrl: string) => {
+  const url = new URL(pageUrl);
+  url.pathname = "/api/unsubscribe";
+  return url.toString();
+};
+
 /** Resend wants the body as JSON; this is that body. */
 export const buildResendPayload = (message: EmailMessage, from: string) => ({
   from,
@@ -26,6 +33,10 @@ export const buildResendPayload = (message: EmailMessage, from: string) => ({
   html: message.html,
   text: message.text,
   ...(message.replyTo ? { reply_to: message.replyTo } : {}),
+  // Lets Gmail, Apple Mail and others show their own Unsubscribe button, which works in one press (RFC 8058).
+  ...(message.unsubscribeUrl
+    ? { headers: { "List-Unsubscribe": `<${oneClickUrl(message.unsubscribeUrl)}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" } }
+    : {}),
 });
 
 function printEmail(message: EmailMessage, reason: string) {

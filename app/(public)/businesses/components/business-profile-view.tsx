@@ -10,6 +10,7 @@ import { BusinessHeader } from "./business-header";
 import { BusinessInfoCard } from "./business-info-card";
 import { BusinessSection } from "./business-section";
 import { OfferingList } from "./offering-list";
+import { TrackProfileView } from "./track-profile-view";
 
 export function BusinessProfileView({
   business,
@@ -18,6 +19,7 @@ export function BusinessProfileView({
 }) {
   return (
     <Container className="max-w-6xl space-y-8 py-6 sm:py-8">
+      <TrackProfileView slug={business.slug} />
       <div>
         <BusinessCover name={business.name} coverUrl={business.coverUrl} logoUrl={business.logoUrl} />
         <BusinessHeader business={business} />
@@ -44,7 +46,7 @@ export function BusinessProfileView({
             </BusinessSection>
           )}
         </div>
-        <BusinessInfoCard hours={business.hours} contacts={business.contacts ?? []} />
+        <BusinessInfoCard slug={business.slug} hours={business.hours} contacts={business.contacts ?? []} />
       </div>
       <RelatedGrid title={BUSINESS_COPY.similar} items={business.similar} />
     </Container>

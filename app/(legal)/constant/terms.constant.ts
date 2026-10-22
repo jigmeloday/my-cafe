@@ -16,7 +16,7 @@ export const TERMS: LegalDocument = {
       id: "about",
       title: "About Nook",
       blocks: [
-        { p: `Nook is a website run by ${company} ("Nook", "we", "us"). It helps people in Bhutan find deals, events and new places, and it helps businesses tell people about them.` },
+        { p: `Nook ("Nook", "we", "us") is a website based in ${LEGAL.address}. It helps people in Bhutan find deals, events and new places, and it helps businesses tell people about them.` },
         { p: "Nook is for discovery only. You can't buy, sell or book anything on Nook. Any deal you take up is between you and the business." },
       ],
     },
@@ -84,6 +84,7 @@ export const TERMS: LegalDocument = {
           "we suspend or close your business or account.",
         ] },
         { p: "The days you paid for are used up whether or not the ad is shown, so nothing is returned for the unused days. If we make a mistake, such as charging you twice, we will put the coins back." },
+        { p: "Coins are sold to businesses for business use only. By buying coins you confirm that you are acting for a business and not as a private consumer. Coins are credits for advertising on Nook, not a payment service, and they can't be used for anything else." },
         { p: "Prices are shown in Bhutanese ngultrum (Nu.). Unless a price says otherwise, taxes that apply by law are added or included as shown when you confirm. If you buy coins through a payment provider, your payment is also covered by that provider's terms." },
         { p: "Your wallet belongs to your business account. Coins can't be moved to another business or person. If your business account is closed, any coins left in it are lost, except where the law says otherwise or where we closed it by mistake." },
         { p: "Buying coins will be done through a payment provider. When it is switched on, we will explain any extra terms at the time you pay." },
@@ -133,6 +134,7 @@ export const TERMS: LegalDocument = {
       title: "Reports and removals",
       blocks: [
         { p: "Anyone with an account can report a promotion, event or banner. An admin reviews reports and can dismiss them, warn the business, or take the ad down. The person who reported is not named to the business." },
+        { p: "We aim to look at every report within 3 working days, and sooner when it is about something illegal or unsafe. We tell the person who reported what we decided, and we tell the business when we remove something and why, so it can reply. We keep a record of each report and decision." },
         { p: "A removed promotion or banner can't be republished, and the coins you spent on it are not refunded, even for days that were still left. If you think we got it wrong, contact us and we will look again." },
       ],
     },

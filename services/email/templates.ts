@@ -2,6 +2,8 @@ export interface EmailContent {
   subject: string;
   text: string;
   html: string;
+  /** Set on promotional emails. Adds the one-click Unsubscribe that mail apps show next to the sender. */
+  unsubscribeUrl?: string;
 }
 
 export const APP_NAME = "Nook";
@@ -22,7 +24,7 @@ const BRAND = { maroon: "#7f1d3a", maroonSoft: "#f5e8ec", gold: "#d9a441", ink: 
 const FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif";
 
 /** Shared frame: brand header, white card, quiet footer. Tables and inline styles, because email apps ignore most CSS. */
-const layout = (title: string, body: string, preheader = "") => `<!doctype html>
+const layout = (title: string, body: string, preheader = "", unsubscribeUrl?: string) => `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>${escapeHtml(title)}</title></head>
 <body style="margin:0;padding:0;background:${BRAND.page};font-family:${FONT};color:${BRAND.ink}">
   <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent">${escapeHtml(preheader)}</div>
@@ -34,7 +36,9 @@ const layout = (title: string, body: string, preheader = "") => `<!doctype html>
         ${body}
       </td></tr>
       <tr><td style="padding:20px 8px 0;font-size:12px;line-height:1.6;color:${BRAND.muted};text-align:center">
-        You got this email because of activity on your ${APP_NAME} account. If that wasn't you, you can safely ignore it.<br>&copy; ${new Date().getFullYear()} ${APP_NAME}
+        ${unsubscribeUrl
+          ? `You got this email because you agreed to promotional emails from ${APP_NAME}. <a href="${safeUrl(unsubscribeUrl)}" style="color:${BRAND.muted};text-decoration:underline">Unsubscribe</a>`
+          : `You got this email because of activity on your ${APP_NAME} account. If that wasn't you, you can safely ignore it.`}<br>&copy; ${new Date().getFullYear()} ${APP_NAME}
       </td></tr>
     </table>
   </td></tr></table>
@@ -134,6 +138,28 @@ export function passwordChangedEmail(input: { name: string; contactUrl: string }
        <p style="margin:16px 0 0">If this was you, there's nothing to do. If it wasn't, contact us right away.</p>
        ${button(contactUrl, "Contact us")}`,
       "Your password was just changed."
+    ),
+  };
+}
+
+/**
+ * A promotional email: a message from a business to people who agreed to hear from it. Every one carries an
+ * unsubscribe link (also sent as a header), and the sender is named, so nobody wonders why they got it.
+ */
+export function promotionalEmail(input: { name: string; subject: string; message: string; businessName: string; ctaUrl?: string; ctaLabel?: string; unsubscribeUrl: string }): EmailContent {
+  const { name, subject, message, businessName, ctaUrl, ctaLabel, unsubscribeUrl } = input;
+  return {
+    subject,
+    unsubscribeUrl,
+    text: `Hi ${name},\n\n${businessName} sent you a message through ${APP_NAME}:\n\n${message}${ctaUrl ? `\n\n${ctaLabel ?? "See more"}: ${ctaUrl}` : ""}\n\nYou got this because you agreed to promotional emails. Unsubscribe: ${unsubscribeUrl}`,
+    html: layout(
+      subject,
+      `${greeting(name)}
+       <p style="margin:0 0 12px;color:${BRAND.muted}">${escapeHtml(businessName)} sent you a message through ${APP_NAME}.</p>
+       <div style="white-space:pre-wrap">${escapeHtml(message)}</div>
+       ${ctaUrl ? button(ctaUrl, ctaLabel ?? "See more") : ""}`,
+      `${businessName}: ${message}`.slice(0, 100),
+      unsubscribeUrl
     ),
   };
 }

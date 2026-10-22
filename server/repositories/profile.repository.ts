@@ -25,6 +25,10 @@ export const profileRepository = {
       }),
     ]),
 
+  /** Switches promotional messages off. Does nothing for a person without a profile (they never agreed to any). */
+  withdrawMarketing: (userId: string) =>
+    db.profile.updateMany({ where: { userId }, data: { marketingConsent: false, marketingConsentAt: null } }),
+
   countBusinesses: (userId: string) => db.business.count({ where: { ownerId: userId } }),
 
   deleteUser: (userId: string) => db.user.delete({ where: { id: userId } }),

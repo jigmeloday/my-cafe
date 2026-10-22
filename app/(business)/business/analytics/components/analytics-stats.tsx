@@ -8,21 +8,29 @@ import { change, ctr } from "../utils/analytics.utils";
 interface AnalyticsStatsProps {
   current: Totals;
   previous: Totals;
+  /** Different people who viewed or clicked a promotion, now and in the period before. */
+  reach: { current: number; previous: number };
 }
 
-export function AnalyticsStats({ current, previous }: AnalyticsStatsProps) {
+export function AnalyticsStats({ current, previous, reach }: AnalyticsStatsProps) {
   const hint = ANALYTICS_COPY.vsPrevious;
 
   return (
     <section
       aria-label="Summary"
-      className="grid grid-cols-2 gap-3 lg:grid-cols-4"
+      className="grid grid-cols-2 gap-3 lg:grid-cols-5"
     >
       <StatCard
         label="Views"
         value={formatNumber(current.views)}
         delta={change(current.views, previous.views)}
         hint={hint}
+      />
+      <StatCard
+        label={ANALYTICS_COPY.reachLabel}
+        value={formatNumber(reach.current)}
+        delta={change(reach.current, reach.previous)}
+        hint={ANALYTICS_COPY.reachHint}
       />
       <StatCard
         label="Clicks"

@@ -12,6 +12,8 @@
     "grant-coins": "node scripts/grant-coins.mjs",
     "seed:categories": "node scripts/seed-categories.mjs",
     "verify-email": "node scripts/verify-email.mjs",
+    "purge:kyc": "node scripts/purge-kyc.mjs",
+    "purge:analytics": "node scripts/purge-analytics.mjs",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "postinstall": "prisma generate",

@@ -1,5 +1,6 @@
 import { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
+import type { BusinessEventType } from "@/lib/track-events";
 
 export interface EventRow {
   promotionId: string;
@@ -8,6 +9,19 @@ export interface EventRow {
   /** Bhutan-time day, "YYYY-MM-DD". */
   day: string;
   count: number;
+}
+
+export interface BusinessEventRow {
+  type: BusinessEventType;
+  source: string;
+  day: string;
+  count: number;
+}
+
+export interface VisitorDay {
+  day: string;
+  /** Different people that day: one visitor code is one person, and a code lasts one day. */
+  visitors: number;
 }
 
 /** Database access for the business dashboard's numbers. Everything is limited to what the caller passes in. */
@@ -23,6 +37,37 @@ export const analyticsRepository = {
       where "promotionId" in (${Prisma.join(promotionIds)}) and "createdAt" >= ${since}
       group by 1, 2, 3, 4`);
     return rows.map((r) => ({ ...r, count: Number(r.count) }));
+  },
+
+  /** Visits and contact clicks on a business's page, per kind, source and Bhutan day. */
+  async businessEventCounts(businessId: string, since: Date): Promise<BusinessEventRow[]> {
+    const rows = await db.$queryRaw<{ type: BusinessEventType; source: string; day: string; count: bigint }[]>(Prisma.sql`
+      select type::text as type, source,
+             to_char(("createdAt" + interval '6 hours')::date, 'YYYY-MM-DD') as day,
+             count(*) as count
+      from "BusinessEvent" where "businessId" = ${businessId} and "createdAt" >= ${since}
+      group by 1, 2, 3`);
+    return rows.map((r) => ({ ...r, count: Number(r.count) }));
+  },
+
+  /** Different people who visited the business's page, per day. */
+  async businessVisitorsPerDay(businessId: string, since: Date): Promise<VisitorDay[]> {
+    const rows = await db.$queryRaw<{ day: string; visitors: bigint }[]>(Prisma.sql`
+      select to_char(("createdAt" + interval '6 hours')::date, 'YYYY-MM-DD') as day, count(distinct visitor) as visitors
+      from "BusinessEvent" where "businessId" = ${businessId} and "createdAt" >= ${since} and visitor <> ''
+      group by 1`);
+    return rows.map((r) => ({ day: r.day, visitors: Number(r.visitors) }));
+  },
+
+  /** Different people who viewed or clicked any of these promotions, per day (a person who saw two counts once). */
+  async promotionReachPerDay(promotionIds: string[], since: Date): Promise<VisitorDay[]> {
+    if (promotionIds.length === 0) return [];
+    const rows = await db.$queryRaw<{ day: string; visitors: bigint }[]>(Prisma.sql`
+      select to_char(("createdAt" + interval '6 hours')::date, 'YYYY-MM-DD') as day, count(distinct visitor) as visitors
+      from "PromotionEvent"
+      where "promotionId" in (${Prisma.join(promotionIds)}) and "createdAt" >= ${since} and visitor <> ''
+      group by 1`);
+    return rows.map((r) => ({ day: r.day, visitors: Number(r.visitors) }));
   },
 
   /** Hearts on pages whose address ends with one of these slugs ("/promotions/<slug>"). */
@@ -62,8 +107,29 @@ export const analyticsRepository = {
       orderBy: { createdAt: "desc" },
     }),
 
-  recordEvent: (promotionId: string, type: "VIEW" | "CLICK", source: string) =>
-    db.promotionEvent.create({ data: { promotionId, type, source } }),
+  recordEvent: (promotionId: string, type: "VIEW" | "CLICK", source: string, visitor: string) =>
+    db.promotionEvent.create({ data: { promotionId, type, source, visitor } }),
+
+  /** How many times this visitor already did this to this promotion since `since`. */
+  recentPromotionEvents: (promotionId: string, type: "VIEW" | "CLICK", visitor: string, since: Date) =>
+    db.promotionEvent.count({ where: { promotionId, type, visitor, createdAt: { gte: since } } }),
+
+  /** The business behind a public page, unless it's suspended or the viewer owns it. Null means "don't count". */
+  countableBusiness: (slug: string, viewerId: string | null) =>
+    db.business.findFirst({
+      where: { slug, status: { not: "SUSPENDED" }, ...(viewerId ? { ownerId: { not: viewerId } } : {}) },
+      select: { id: true },
+    }),
+
+  recordBusinessEvent: (businessId: string, type: BusinessEventType, source: string, visitor: string) =>
+    db.businessEvent.create({ data: { businessId, type, source, visitor } }),
+
+  recentBusinessEvents: (businessId: string, type: BusinessEventType, visitor: string, since: Date) =>
+    db.businessEvent.count({ where: { businessId, type, visitor, createdAt: { gte: since } } }),
+
+  recordSiteVisit: (section: string, visitor: string) => db.siteVisit.create({ data: { section, visitor } }),
+
+  siteVisitsSince: (visitor: string, since: Date) => db.siteVisit.count({ where: { visitor, createdAt: { gte: since } } }),
 
   /** True for a live promotion that the viewer does not own. An owner looking at their own page isn't an audience. */
   isCountable: async (promotionId: string, viewerId: string | null) =>

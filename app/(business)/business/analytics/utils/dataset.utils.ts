@@ -37,6 +37,7 @@ export function buildDataset(
   promotionIds: string[],
   events: EventCount[],
   saves: SaveCount[],
+  reach: { day: string; visitors: number }[] = [],
 ): Dataset {
   const labels = lastDays(endDate, count);
   const index = new Map(labels.map((d, i) => [d.date, i]));
@@ -62,7 +63,12 @@ export function buildDataset(
     own[i].saves += 1;
     days[i].saves += 1;
   }
-  return { days, promotions, sources };
+  const reachByDay: number[] = labels.map(() => 0);
+  for (const r of reach) {
+    const i = index.get(r.day);
+    if (i !== undefined) reachByDay[i] = r.visitors;
+  }
+  return { days, promotions, sources, reach: reachByDay };
 }
 
 const lastN = <T>(items: T[], range: RangeDays) => items.slice(-range);
@@ -89,6 +95,10 @@ export const promotionPoints = (data: Dataset, id: string, range: RangeDays): Ch
   toPoints(lastN(data.promotions[id] ?? [], range));
 
 export const rangeTotals = (data: Dataset, range: RangeDays): Totals => totalsOf(lastN(data.days, range));
+
+/** Different people reached in the last `range` days. A person back on two days counts twice, as codes change daily. */
+export const rangeReach = (data: Dataset, range: RangeDays) => sum(lastN(data.reach, range));
+export const previousReach = (data: Dataset, range: RangeDays) => sum(data.reach.slice(-range * 2, -range));
 
 export const previousTotals = (data: Dataset, range: RangeDays): Totals => {
   const previous = data.days.slice(-range * 2, -range);

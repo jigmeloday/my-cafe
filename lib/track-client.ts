@@ -1,3 +1,5 @@
+import type { BusinessEventType, SiteSection } from "@/lib/track-events";
+
 /** Where a visitor came from, read from the page they were on before: "/deals" -> "deals". */
 export function sourceFromReferrer(referrer: string, origin: string): string {
   try {
@@ -11,22 +13,9 @@ export function sourceFromReferrer(referrer: string, origin: string): string {
   }
 }
 
-/** Tells the server a promotion was viewed or clicked. Never blocks the page and never throws. */
-export function trackEvent(promotionId: string, type: "VIEW" | "CLICK") {
-  const source = sourceFromReferrer(document.referrer, window.location.origin);
-  const body = JSON.stringify({ promotionId, type, source });
-  try {
-    if (!navigator.sendBeacon?.("/api/track", new Blob([body], { type: "application/json" }))) {
-      void fetch("/api/track", { method: "POST", body, headers: { "Content-Type": "application/json" }, keepalive: true });
-    }
-  } catch {
-    // Counting a view must never break the page.
-  }
-}
-
-/** Counts a banner being seen (VIEW) or clicked (CLICK). Never blocks the page and never throws. */
-export function trackBanner(bannerId: string, type: "VIEW" | "CLICK") {
-  const body = JSON.stringify({ bannerId, type });
+/** Sends one report to the server. Never blocks the page and never throws: counting must not break anything. */
+function send(report: object) {
+  const body = JSON.stringify(report);
   try {
     if (!navigator.sendBeacon?.("/api/track", new Blob([body], { type: "application/json" }))) {
       void fetch("/api/track", { method: "POST", body, headers: { "Content-Type": "application/json" }, keepalive: true });
@@ -35,3 +24,17 @@ export function trackBanner(bannerId: string, type: "VIEW" | "CLICK") {
     // Counting must never break the page.
   }
 }
+
+const sourceNow = () => sourceFromReferrer(document.referrer, window.location.origin);
+
+/** Tells the server a promotion was viewed or clicked. */
+export const trackEvent = (promotionId: string, type: "VIEW" | "CLICK") => send({ promotionId, type, source: sourceNow() });
+
+/** Counts a banner being seen (VIEW) or clicked (CLICK). */
+export const trackBanner = (bannerId: string, type: "VIEW" | "CLICK") => send({ bannerId, type });
+
+/** Counts a visit to a business's page (VIEW) or a click on one of its contact links. */
+export const trackBusiness = (businessSlug: string, type: BusinessEventType) => send({ businessSlug, type, source: sourceNow() });
+
+/** Counts a page of the site being opened, for the admin's traffic numbers. */
+export const trackSite = (section: SiteSection) => send({ section });
