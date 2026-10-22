@@ -32,7 +32,8 @@ export const DZONGKHAGS = [
   "Zhemgang",
 ] as const;
 
-export const DEFAULT_CURRENCY = "USD";
+/** Bhutanese ngultrum (Nu.), shown as "Nu. 1,250". */
+export const DEFAULT_CURRENCY = "BTN";
 
 export const CAMPAIGN_STATUSES = [
   "DRAFT",

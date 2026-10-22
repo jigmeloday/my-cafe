@@ -29,6 +29,7 @@ interface RowActionsProps {
 
 export function RowActions({ item, onResult }: RowActionsProps) {
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [confirmEnd, setConfirmEnd] = useState(false);
   const { run } = useActionRunner(onResult);
   const published = item.status === "PUBLISHED";
 
@@ -53,7 +54,7 @@ export function RowActions({ item, onResult }: RowActionsProps) {
             <Pencil /> Edit
           </DropdownMenuItem>
           {published && (
-            <DropdownMenuItem onClick={() => run(endPromotionAction, item.id)}>
+            <DropdownMenuItem onClick={() => setConfirmEnd(true)}>
               <CircleStop /> End promotion
             </DropdownMenuItem>
           )}
@@ -67,10 +68,18 @@ export function RowActions({ item, onResult }: RowActionsProps) {
         </DropdownMenuContent>
       </DropdownMenu>
       <ConfirmDialog
+        open={confirmEnd}
+        onOpenChange={setConfirmEnd}
+        title="End this promotion?"
+        description={`“${item.values.title}” will leave discovery now. Coins you paid for the days left are not refunded.`}
+        confirmLabel="End promotion"
+        onConfirm={() => run(endPromotionAction, item.id)}
+      />
+      <ConfirmDialog
         open={confirmDelete}
         onOpenChange={setConfirmDelete}
         title="Delete this promotion?"
-        description={`“${item.values.title}” will be removed from discovery. Campaigns that use it will stop.`}
+        description={`“${item.values.title}” will be removed from discovery. Campaigns that use it will stop.${published ? " Coins you paid for the days left are not refunded." : ""}`}
         confirmLabel="Delete"
         onConfirm={() => run(deletePromotionAction, item.id)}
       />

@@ -113,7 +113,7 @@ Public: useful, curious, modern, local, visual, trustworthy — lead with "Disco
 ## Wallet (live on the database)
 
 - `/business/wallet` and `/business/transactions` read the real wallet (`services/wallet/wallet.service.ts` → `server/repositories/wallet.repository.ts`). Balance and history are whole coins; every change to a balance has a `CoinTransaction` row written in the same database transaction.
-- Spending: `walletRepository.spend` (inside the caller's transaction; one conditional update, so it can never overspend). Publishing a promotion costs `COIN_COSTS.publish`; editing a live one is free.
+- Spending: `walletRepository.spend` (inside the caller's transaction; one conditional update, so it can never overspend). A promotion costs `COIN_COSTS.publishPerDay` coins for every day from its start to its end date (`lib/listing.ts`), paid when it goes live; the end date is required to publish (max 90 days). Editing a live one is free, except moving the end date later, which charges only the extra days.
 - Adding coins: an admin can add coins at `/admin/wallets` (audited), and `walletService.creditPurchase(businessId, coins, reference)` is what a payment webhook will call. `reference` is unique, so a repeated webhook credits once.
 - **Payment gateway not connected.** `services/payment/payment.provider.ts` defines `PaymentProvider` and `getPaymentProvider()` (returns null). `buyCoinsAction` validates, then says payments aren't connected. To connect one: implement the interface, return it from `getPaymentProvider()`, add its webhook route calling `creditPurchase`.
 - Scripts: `npm run grant-coins -- owner@example.com 500` (testing only).
@@ -148,7 +148,7 @@ Public: useful, curious, modern, local, visual, trustworthy — lead with "Disco
 
 ## Banners (live on the database, separate from promotions)
 
-- **Promotions and banners are separate.** A promotion only costs the publish fee (`COIN_COSTS.publish`). Banners have their own section: `/business/banners` (list with status, views, clicks) and `/business/banners/new` (image, headline, short text, where it leads, first day, 3/7/14 days). Email and top-rank extras don't exist (email is Release 2).
+- **Promotions and banners are separate.** A promotion costs `COIN_COSTS.publishPerDay` per day it runs (see `lib/listing.ts`). Banners have their own section: `/business/banners` (list with status, views, clicks) and `/business/banners/new` (image, headline, short text, where it leads, first day, 3/7/14 days). Email and top-rank extras don't exist (email is Release 2).
 - **Paying:** a banner costs `days × COIN_COSTS.bannerPerDay` coins, taken from the wallet in the same transaction that saves it (`bannerRepository.create` → `walletRepository.spend`, type `BANNER`). Not enough coins means nothing is saved.
 - **Rules:** start today or later (Bhutan date); the image must be a file this business uploaded (`kind: "banner"` on `/api/business/media`); a linked promotion must be the owner's own PUBLISHED one; otherwise the banner opens the business page.
 - **Showing:** `discoveryService.landing()` puts running banners (start ≤ today ≤ end, business and owner not suspended) first in the home hero, marked Sponsored; promotions fill the rest. Banners can't be edited or refunded yet.

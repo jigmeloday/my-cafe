@@ -106,7 +106,7 @@ export const NEW_PROMOTION: PromotionInput = {
   status: "DRAFT",
 };
 
-/** "Not featured", "1 day · 100 coins", "3 days · 300 coins"... */
+/** "Not featured", "1 day · 50 coins", "3 days · 150 coins"... */
 export const FEATURE_OPTIONS = [
   { value: "0", label: "Not featured" },
   ...FEATURED_DAYS.map((d) => ({ value: d, label: `${d} ${d === "1" ? "day" : "days"} · ${featuredPrice(Number(d)).toLocaleString("en")} coins` })),
@@ -120,7 +120,9 @@ export const FEATURE_COPY = {
 
 export const PUBLISH_COPY = {
   title: "Publishing",
-  description: "Going live costs coins, once. Drafts and later edits are free.",
-  alreadyLive: "This promotion is already live, so saving changes is free.",
+  description: "You pay coins for each day your promotion runs, from its start date to its end date. Drafts are free.",
+  alreadyLive: "This promotion is already live, so saving changes is free. Moving the end date later costs coins for the extra days.",
+  perDay: (days: number, perDay: number) => `${days} ${days === 1 ? "day" : "days"} × ${perDay} coins`,
+  needDates: "Choose a start and end date to see the cost.",
   cost: "Cost to publish",
 };

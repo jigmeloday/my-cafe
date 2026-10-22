@@ -2,7 +2,7 @@ import { randomBytes } from "node:crypto";
 
 import { keyBelongsTo } from "@/lib/media";
 import { storage } from "@/lib/storage";
-import { COIN_COSTS } from "@/lib/coins";
+import { extensionCost, listingCost, listingDays } from "@/lib/listing";
 import { daysOfRun, FEATURED_HORIZON_DAYS, featuredPrice } from "@/lib/featured";
 import { formatCoins } from "@/lib/formatters/number";
 import type { Promotion } from "@/generated/prisma/client";
@@ -27,7 +27,8 @@ async function uniqueSlug(title: string) {
   return (await promotionRepository.slugTaken(base)) ? `${base}-${randomBytes(2).toString("hex")}` : base;
 }
 
-const publishCharge = (title: string) => ({ amount: COIN_COSTS.publish, description: `Published: ${title}` });
+const listingCharge = (title: string, amount: number, what: string) =>
+  amount > 0 ? { amount, description: `${what}: ${title}` } : undefined;
 
 const SUSPENDED = "Your business is suspended, so you can't publish or change promotions right now. Please contact us.";
 
@@ -74,7 +75,7 @@ export const promotionService = {
     return row ? toItem(row) : null;
   },
 
-  /** Creates a promotion (no `id`) or updates the owner's own. Going live costs the publish fee, once. */
+  /** Creates a promotion (no `id`) or updates the owner's own. Going live costs coins for every day it runs. */
   async save(owner: Owner, input: PromotionInput, id?: string): Promise<Result> {
     if (input.category && !(await promotionRepository.categoryExists(input.category))) {
       return { ok: false, error: "That category no longer exists. Pick another one." };
@@ -95,11 +96,14 @@ export const promotionService = {
       photos: [...new Set(input.photos)],
     };
 
+    const today = bhutanToday().toISOString().slice(0, 10);
+    // Every day from the start to the end is paid when it goes live.
+    const goLiveFee = input.status === "PUBLISHED" ? listingCost(listingDays(input.startDate, input.endDate, today)) : 0;
+
     // Featuring is booked together with going live (or on an already live promotion), and paid on top.
     const days = Number(input.featureDays);
     let featured: FeaturedRequest | undefined;
     if (days > 0) {
-      const today = bhutanToday().toISOString().slice(0, 10);
       if (input.featureStart < today) return { ok: false, error: "Choose today or a later day to start featuring." };
       if (input.featureStart > daysOfRun(today, FEATURED_HORIZON_DAYS).at(-1)!) return { ok: false, error: `You can book up to ${FEATURED_HORIZON_DAYS} days ahead.` };
       featured = { start: input.featureStart, days, coins: featuredPrice(days), title: input.title };
@@ -117,15 +121,20 @@ export const promotionService = {
         const before = await promotionRepository.findOwned(id, owner.id);
         if (!before) return NOT_FOUND;
         if (before.removedAt) return { ok: false, error: "Nook took this promotion down after a report, so it can't be changed or republished. Contact us if you think this is a mistake." };
-        // Going live costs coins, but editing something already live is free.
-        const charge = input.status === "PUBLISHED" && before.status !== "PUBLISHED" ? publishCharge(input.title) : undefined;
+        // Going live costs coins for every day. On a live one, only days added to the end are charged.
+        const wasLive = before.status === "PUBLISHED";
+        const charge = input.status === "PUBLISHED"
+          ? wasLive
+            ? listingCharge(input.title, before.endsAt ? extensionCost(toDateOnly(before.endsAt), input.endDate) : 0, "Extended")
+            : listingCharge(input.title, goLiveFee, "Published")
+          : undefined;
         if (!(await promotionRepository.update(id, owner.id, data, charge, featured))) return NOT_FOUND;
         // Photos taken off the promotion are no longer needed.
         await Promise.all(before.photos.filter((key) => !data.photos.includes(key)).map((key) => storage.remove(key)));
         return { ok: true };
       }
 
-      const charge = input.status === "PUBLISHED" ? publishCharge(input.title) : undefined;
+      const charge = input.status === "PUBLISHED" ? listingCharge(input.title, goLiveFee, "Published") : undefined;
       await promotionRepository.create({ ...data, businessId: business.id, slug: await uniqueSlug(input.title) }, charge, featured);
       return { ok: true };
     } catch (error) {
@@ -142,8 +151,8 @@ export const promotionService = {
         return {
           ok: false,
           error: featured
-            ? `This costs more than you have (${formatCoins(balance)}). Publishing is ${formatCoins(COIN_COSTS.publish)} and featuring is ${formatCoins(featured.coins)}. Buy more coins, or turn off featuring.`
-            : `Publishing costs ${formatCoins(total)} and you have ${formatCoins(balance)}. Buy more coins, or save it as a draft.`,
+            ? `This costs more than you have (${formatCoins(balance)}). Running it is ${formatCoins(error.needed - featured.coins)} and featuring is ${formatCoins(featured.coins)}. Buy more coins, or turn off featuring.`
+            : `Running it costs ${formatCoins(total)} and you have ${formatCoins(balance)}. Buy more coins, or save it as a draft.`,
         };
       }
       throw error;

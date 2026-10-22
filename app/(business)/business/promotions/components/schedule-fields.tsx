@@ -36,7 +36,7 @@ export function ScheduleFields({
           control={control}
           name="endDate"
           label="Ends"
-          hint="Leave empty if it has no end date."
+          hint="Required to publish. You pay for each day it runs."
           min={watch("startDate") || undefined}
           clearable
           error={errors.endDate?.message}
