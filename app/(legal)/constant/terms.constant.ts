@@ -72,6 +72,7 @@ export const TERMS: LegalDocument = {
         { ul: [
           `A promotion costs ${COIN_COSTS.publishPerDay} coins for each day it runs, from its start date to its end date, paid when it goes live. Saving a draft is free, and so is editing a live promotion, except that moving its end date later costs coins for the extra days.`,
           `A homepage banner costs ${COIN_COSTS.bannerPerDay} coins for each day it runs. Featuring a promotion in the Featured row costs ${COIN_COSTS.featuredPerDay} coins a day, on top of the daily price. Prices can change; the price you see when you confirm is the price you pay.`,
+          "You can change the picture, headline and text of a banner while it is scheduled or running. Changes must follow the advertising rules, and we may remove a banner that doesn't. The days you paid for can't be moved, and you can only add days at the end, for the price of those days.",
           `Featured places are limited to ${FEATURED_SLOTS_PER_DAY} promotions a day. When a day is full it is sold out.`,
           `Coins are bought with Bhutanese ngultrum (Nu.). A small purchase costs ${formatMoney(coinPriceMinor(100))} for 100 coins, and bigger amounts cost less for each coin. You always see the exact price in Nu. before you pay.`,
           "Coins are not money. They have no cash value, can't be exchanged for cash and can't be transferred to someone else.",

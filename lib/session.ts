@@ -1,4 +1,5 @@
 import { headers } from "next/headers";
+import { cache } from "react";
 import { notFound, redirect } from "next/navigation";
 
 import type { Role } from "@/generated/prisma/enums";
@@ -7,14 +8,18 @@ import { auth } from "@/lib/auth";
 
 export { HOME_BY_ROLE };
 
-/** The signed-in user, or null. Suspended accounts count as signed out. */
-export async function getCurrentUser() {
+/**
+ * The signed-in user, or null. Suspended accounts count as signed out.
+ * Looked up once per request: a layout, its page and the components under them can all ask without each
+ * costing a database trip.
+ */
+export const getCurrentUser = cache(async () => {
   const session = await auth.api.getSession({ headers: await headers() });
   const user = session?.user;
   // Suspended or not-yet-verified accounts count as signed out, even if an older session cookie is still around.
   if (!user || !user.emailVerified || (user as { status?: string }).status === "SUSPENDED") return null;
   return { ...user, role: (user as { role?: Role }).role ?? "USER" } as typeof user & { role: Role };
-}
+});
 
 /** For layouts and pages: sends visitors to log in, and other roles to their own home. */
 export async function requireRole(...allowed: Role[]) {

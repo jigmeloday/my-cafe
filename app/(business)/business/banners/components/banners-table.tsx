@@ -4,9 +4,10 @@ import { formatCoins, formatNumber, formatPercent } from "@/lib/formatters/numbe
 import { formatDate } from "@/lib/formatters/date";
 import type { BannerRow } from "@/services/banner/banner.service";
 
-import { STATUS_LABELS, STATUS_TONES } from "../constant/banner.constant";
+import { BANNERS_COPY, STATUS_LABELS, STATUS_TONES } from "../constant/banner.constant";
+import { BannerRowActions } from "./banner-row-actions";
 
-const HEADERS = ["Banner", "Status", "Runs", "Paid", "Views", "Clicks", "CTR"];
+const HEADERS = ["Banner", "Status", "Runs", "Paid", "Views", "Clicks", "CTR", ""];
 
 export function BannersTable({ items }: { items: BannerRow[] }) {
   return (
@@ -39,7 +40,11 @@ export function BannersTable({ items }: { items: BannerRow[] }) {
                 </div>
               </td>
               <td className="px-4 py-3">
-                <StatusBadge tone={STATUS_TONES[b.status]}>{STATUS_LABELS[b.status]}</StatusBadge>
+                {b.removed ? (
+                  <StatusBadge tone="danger">{BANNERS_COPY.removedByNook}</StatusBadge>
+                ) : (
+                  <StatusBadge tone={STATUS_TONES[b.status]}>{STATUS_LABELS[b.status]}</StatusBadge>
+                )}
               </td>
               <td className="px-4 py-3 whitespace-nowrap text-muted-foreground">
                 {formatDate(b.startDate)} – {formatDate(b.endDate)}
@@ -49,6 +54,9 @@ export function BannersTable({ items }: { items: BannerRow[] }) {
               <td className="px-4 py-3 text-right">{formatNumber(b.views)}</td>
               <td className="px-4 py-3 text-right">{formatNumber(b.clicks)}</td>
               <td className="px-4 py-3 text-right">{b.views ? formatPercent(b.clicks / b.views, 1) : "—"}</td>
+              <td className="px-4 py-3 text-right">
+                <BannerRowActions banner={b} />
+              </td>
             </tr>
           ))}
         </tbody>

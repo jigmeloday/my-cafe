@@ -381,15 +381,17 @@ export const discoveryService = {
     const today = bhutanToday(now);
     const started = { OR: [{ startsAt: null }, { startsAt: { lte: today } }] };
 
-    const [candidates, events, businesses, featuredNow] = await Promise.all([
+    // Everything is asked for at once: waiting for one answer before asking the next costs a full trip to the database.
+    const [candidates, events, businesses, featuredNow, clicks, running] = await Promise.all([
       repo.livePromotions(today, { AND: [{ type: { not: "EVENT" } }, started] }, 30, [{ createdAt: "desc" }]),
       repo.livePromotions(today, { type: "EVENT" }, SECTION_SIZE, [{ startsAt: { sort: "asc", nulls: "last" } }, { createdAt: "desc" }]),
       repo.newBusinesses(SECTION_SIZE),
       repo.featuredToday(today),
+      repo.clicksSince(new Date(now.getTime() - POPULAR_WINDOW_DAYS * DAY_MS)),
+      bannerRepository.active(today),
     ]);
 
     // "Popular" = most clicks lately, newest first among ties. Only promotions people actually clicked get the label.
-    const clicks = await repo.clicksSince(candidates.map((c) => c.id), new Date(now.getTime() - POPULAR_WINDOW_DAYS * DAY_MS));
     const ranked = [...candidates].sort((a, b) => (clicks.get(b.id) ?? 0) - (clicks.get(a.id) ?? 0));
     const popular = ranked.slice(0, SECTION_SIZE).map((p) => toCard(p, today, (clicks.get(p.id) ?? 0) > 0 ? "Popular" : undefined));
 
@@ -397,7 +399,7 @@ export const discoveryService = {
     // have the rows below. Banners are shuffled on every visit, and when more are running than there are slots,
     // which ones appear is random too, so every advertiser gets the first slot and a place at all about equally
     // often. With no banner running, the top is left out.
-    const hero = shuffle(await bannerRepository.active(today), random).slice(0, BANNER_SLOTS).map(toBannerSlide);
+    const hero = shuffle(running, random).slice(0, BANNER_SLOTS).map(toBannerSlide);
     // Featured places are limited per day. The row shows a few at a time and rotates, so every business
     // featured today appears about equally often.
     const featured = shuffle(featuredNow, random).slice(0, FEATURED_ROW_SIZE).map((p) => toCard(p, today, "Featured"));

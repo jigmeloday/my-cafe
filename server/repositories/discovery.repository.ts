@@ -30,24 +30,23 @@ export const discoveryRepository = {
   },
 
   livePromotions: (today: Date, extra: Prisma.PromotionWhereInput, take: number, orderBy: Prisma.PromotionOrderByWithRelationInput[]) =>
-    db.promotion.findMany({ where: { AND: [livePromotionWhere(today), extra] }, include: withBusiness, orderBy, take }),
+    db.promotion.findMany({ where: { AND: [livePromotionWhere(today), extra] }, relationLoadStrategy: "join", include: withBusiness, orderBy, take }),
 
   /** Live promotions that are featured today. All of them: the caller shuffles and takes as many as fit. */
   featuredToday: (today: Date) =>
     db.promotion.findMany({
       where: { AND: [livePromotionWhere(today), { featuredBookings: { some: { startsAt: { lte: today }, endsAt: { gte: today } } } }] },
-      include: withBusiness,
+      relationLoadStrategy: "join", include: withBusiness,
     }),
 
   findLiveBySlug: (today: Date, slug: string) =>
-    db.promotion.findFirst({ where: { AND: [livePromotionWhere(today), { slug }] }, include: withBusiness }),
+    db.promotion.findFirst({ where: { AND: [livePromotionWhere(today), { slug }] }, relationLoadStrategy: "join", include: withBusiness }),
 
-  /** Clicks per promotion since a moment, to rank "popular". */
-  async clicksSince(promotionIds: string[], since: Date) {
-    if (promotionIds.length === 0) return new Map<string, number>();
+  /** Clicks per promotion since a moment, to rank "popular". Covers every promotion, so it can run beside the list it ranks. */
+  async clicksSince(since: Date) {
     const rows = await db.promotionEvent.groupBy({
       by: ["promotionId"],
-      where: { promotionId: { in: promotionIds }, type: "CLICK", createdAt: { gte: since } },
+      where: { type: "CLICK", createdAt: { gte: since } },
       _count: { _all: true },
     });
     return new Map(rows.map((r) => [r.promotionId, r._count._all]));
@@ -55,13 +54,13 @@ export const discoveryRepository = {
 
   /** One promotion of this owner's business, whatever its status, so they can preview drafts too. */
   findOwnedBySlug: (ownerId: string, slug: string) =>
-    db.promotion.findFirst({ where: { slug, business: { ownerId } }, include: withBusiness }),
+    db.promotion.findFirst({ where: { slug, business: { ownerId } }, relationLoadStrategy: "join", include: withBusiness }),
 
   /** The owner's other promotions that visitors can see (published or ended), newest first. */
   ownedOthers: (ownerId: string, excludeId: string, take: number) =>
     db.promotion.findMany({
       where: { id: { not: excludeId }, status: { in: ["PUBLISHED", "ENDED"] }, business: { ownerId } },
-      include: withBusiness,
+      relationLoadStrategy: "join", include: withBusiness,
       orderBy: [{ createdAt: "desc" }],
       take,
     }),
@@ -70,7 +69,7 @@ export const discoveryRepository = {
   forBusiness: (businessId: string) =>
     db.promotion.findMany({
       where: { businessId, status: { in: ["PUBLISHED", "ENDED"] }, removedAt: null },
-      include: withBusiness,
+      relationLoadStrategy: "join", include: withBusiness,
       orderBy: [{ createdAt: "desc" }],
     }),
 
@@ -112,7 +111,7 @@ export const discoveryRepository = {
       ? Promise.resolve([])
       : db.promotion.findMany({
           where: { slug: { in: slugs }, status: { in: ["PUBLISHED", "ENDED"] }, removedAt: null, business: { status: { not: "SUSPENDED" }, owner: { status: "ACTIVE" } } },
-          include: withBusiness,
+          relationLoadStrategy: "join", include: withBusiness,
         }),
 
   /** Businesses a person follows, by page slug. */

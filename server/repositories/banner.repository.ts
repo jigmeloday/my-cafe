@@ -6,7 +6,7 @@ const withBusiness = { business: { select: { id: true, name: true, slug: true } 
 
 export const bannerRepository = {
   listByOwner: (ownerId: string) =>
-    db.banner.findMany({ where: { business: { ownerId } }, orderBy: { createdAt: "desc" }, include: withBusiness }),
+    db.banner.findMany({ where: { business: { ownerId } }, orderBy: { createdAt: "desc" }, relationLoadStrategy: "join", include: withBusiness }),
 
   /** Views and clicks per banner. */
   async eventTotals(bannerIds: string[]) {
@@ -22,12 +22,17 @@ export const bannerRepository = {
     return totals;
   },
 
-  /** Banners showing on `today`: started, not ended, from a business and owner that aren't suspended. */
+  /** Banners showing on `today`: started, not ended, and either an admin's announcement or from a business and owner that aren't suspended. */
   active: (today: Date) =>
     db.banner.findMany({
-      where: { removedAt: null, startsAt: { lte: today }, endsAt: { gte: today }, business: { status: { not: "SUSPENDED" }, owner: { status: "ACTIVE" } } },
+      where: {
+        removedAt: null,
+        startsAt: { lte: today },
+        endsAt: { gte: today },
+        OR: [{ businessId: null }, { business: { status: { not: "SUSPENDED" }, owner: { status: "ACTIVE" } } }],
+      },
       orderBy: { createdAt: "desc" },
-      include: withBusiness,
+      relationLoadStrategy: "join", include: withBusiness,
     }),
 
   /** Saves the banner and takes its price from the wallet in one transaction: both happen, or neither. */
@@ -75,6 +80,37 @@ export const bannerRepository = {
   /** Businesses a banner can be made for. */
   businessOptions: () =>
     db.business.findMany({ where: { status: { not: "SUSPENDED" } }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+
+  /** One of the owner's banners with its business, or null. */
+  findOwned: (id: string, ownerId: string) =>
+    db.banner.findFirst({ where: { id, business: { ownerId } }, include: { business: { select: { id: true, name: true, status: true } } } }),
+
+  /**
+   * Saves the changes to a banner, takes the price of any added days from the wallet, and records the edit, all in
+   * one transaction. `paid` is the extra coins, added to what the banner has cost in total.
+   */
+  update: (
+    id: string,
+    businessId: string,
+    data: { title: string; description: string; imageKey: string; endsAt: Date },
+    paid: number,
+    audit: { actorId: string; actorEmail: string; action: string; targetId: string; targetLabel: string },
+  ) =>
+    db.$transaction(async (tx) => {
+      await tx.banner.update({ where: { id }, data: { ...data, ...(paid > 0 ? { coins: { increment: paid } } : {}) } });
+      if (paid > 0) await walletRepository.spend(tx, businessId, paid, "BANNER", `Extended banner: ${data.title}`);
+      await tx.auditLog.create({ data: audit });
+    }),
+
+  /** How many reports have been sent about a banner. */
+  reportCount: (bannerId: string) => db.report.count({ where: { bannerId } }),
+
+  /** Deletes a banner, and its views and clicks with it, and records it, in one transaction. */
+  remove: (id: string, audit: { actorId: string; actorEmail: string; action: string; targetId: string; targetLabel: string }) =>
+    db.$transaction(async (tx) => {
+      await tx.banner.delete({ where: { id } });
+      await tx.auditLog.create({ data: audit });
+    }),
 
   /** Counts a banner showing or being clicked. Only for a banner that is running today. */
   async recordEvent(bannerId: string, type: "VIEW" | "CLICK", today: Date) {

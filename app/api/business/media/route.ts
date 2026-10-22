@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { MAX_IMAGE_BYTES } from "@/lib/files";
+import { optimizeImage } from "@/lib/image-optimize";
 import { MEDIA_KINDS, mediaUrl, sniffImage, type MediaKind } from "@/lib/media";
 import { getCurrentUser } from "@/lib/session";
 import { businessMediaService } from "@/services/business/business-media.service";
@@ -29,14 +30,18 @@ export async function POST(request: Request) {
   const type = sniffImage(bytes);
   if (!type) return fail("Use a JPG, PNG or WebP image.", 415);
 
+  // Stored small: what visitors download is this file, so a 5 MB photo is scaled down and saved as WebP.
+  const small = await optimizeImage(bytes, kind);
+  if (!small) return fail("We couldn't read that image. Try another one.", 415);
+
   if (user.role === "ADMIN") {
     const businessId = form?.get("businessId");
     if (kind !== "banner" || typeof businessId !== "string") return fail("Admins can only add banner pictures for a business.", 403);
-    const added = await businessMediaService.addBannerFile(businessId, bytes, type);
+    const added = await businessMediaService.addBannerFile(businessId, small.bytes, small);
     return added.ok ? NextResponse.json({ key: added.key, url: mediaUrl(added.key) }) : fail(added.error, 400);
   }
 
-  const result = await businessMediaService.add(user, kind, bytes, type);
+  const result = await businessMediaService.add(user, kind, small.bytes, small);
   if (!result.ok) return fail(result.error, 400);
   return NextResponse.json({ key: result.key, url: mediaUrl(result.key) });
 }
