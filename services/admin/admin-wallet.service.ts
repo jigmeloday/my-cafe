@@ -3,6 +3,7 @@ import { clampPage, totalPagesFor } from "@/lib/pagination";
 import { escapeLike, parseSearch } from "@/lib/search";
 import type { RechargeInput } from "@/lib/validations/recharge.schema";
 import { adminWalletRepository as repo } from "@/server/repositories/admin-wallet.repository";
+import { businessNotifyService } from "@/services/business/business-notify.service";
 import type { WalletListQuery, WalletListResult } from "@/types/admin-wallet";
 
 import type { Actor } from "./admin-user.service";
@@ -50,8 +51,8 @@ export const adminWalletService = {
       targetId: businessId,
       targetLabel: "",
     });
-    return result
-      ? { ok: true, message: `Added ${coins.toLocaleString("en")} coins to ${result.name}. Balance: ${result.balance.toLocaleString("en")}.` }
-      : { ok: false, error: "We couldn't find that business." };
+    if (!result) return { ok: false, error: "We couldn't find that business." };
+    await businessNotifyService.coinsAdded(result.owner, { businessName: result.name, coins, balance: result.balance, note: note || undefined });
+    return { ok: true, message: `Added ${coins.toLocaleString("en")} coins to ${result.name}. Balance: ${result.balance.toLocaleString("en")}.` };
   },
 };

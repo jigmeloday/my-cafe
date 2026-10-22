@@ -6,6 +6,7 @@ import type { KycInput, KycReviewInput } from "@/lib/validations/kyc.schema";
 import { businessRepository } from "@/server/repositories/business.repository";
 import { kycRepository } from "@/server/repositories/kyc.repository";
 import { rateLimit } from "@/services/auth/rate-limit.service";
+import { businessNotifyService } from "@/services/business/business-notify.service";
 import { businessService, type Owner } from "@/services/business/business.service";
 
 type Result = { ok: true; message?: string } | { ok: false; error: string };
@@ -150,6 +151,7 @@ export const kycService = {
       audit: { actorId: admin.id, actorEmail: admin.email, action: decision === "APPROVED" ? "kyc.approve" : "kyc.reject", targetId: id, targetLabel: `Verification: ${s.business.name}` },
     });
     if (!done) return { ok: false, error: "Someone else already reviewed this." };
+    if (decision === "APPROVED") await businessNotifyService.verified(s.business.owner, s.business.name);
     return { ok: true, message: decision === "APPROVED" ? `${s.business.name} is verified.` : "Sent back to the owner." };
   },
 

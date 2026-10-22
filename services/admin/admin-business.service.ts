@@ -2,6 +2,7 @@ import type { Prisma } from "@/generated/prisma/client";
 import { clampPage, totalPagesFor } from "@/lib/pagination";
 import { escapeLike, parseSearch } from "@/lib/search";
 import { adminBusinessRepository as repo, type BusinessRowData } from "@/server/repositories/admin-business.repository";
+import { businessNotifyService } from "@/services/business/business-notify.service";
 import type { AdminBusinessRow, BusinessFilter, BusinessListQuery, BusinessListResult, VerificationState } from "@/types/admin-business";
 
 import type { Actor } from "./admin-user.service";
@@ -125,6 +126,8 @@ export const adminBusinessService = {
       audit: entry(actor, id, b.name, "business.verify"),
       notice: { userId: b.owner.id, title: "Your business is verified", description: "Your business now shows the Verified badge on Nook.", href: "/business/verification" },
     });
-    return done ? { ok: true, message: `${b.name} is verified.` } : { ok: false, error: "Someone just changed this business. Refresh and try again." };
+    if (!done) return { ok: false, error: "Someone just changed this business. Refresh and try again." };
+    await businessNotifyService.verified(b.owner, b.name);
+    return { ok: true, message: `${b.name} is verified.` };
   },
 };

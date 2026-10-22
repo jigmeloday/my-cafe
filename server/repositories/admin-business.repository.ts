@@ -36,7 +36,7 @@ export const adminBusinessRepository = {
   findById: (id: string) =>
     db.business.findUnique({
       where: { id },
-      select: { id: true, name: true, status: true, owner: { select: { id: true } }, kycSubmissions: { where: { status: "APPROVED" }, take: 1, select: { id: true } } },
+      select: { id: true, name: true, status: true, owner: { select: { id: true, name: true, email: true } }, kycSubmissions: { where: { status: "APPROVED" }, take: 1, select: { id: true } } },
     }),
 
   /**

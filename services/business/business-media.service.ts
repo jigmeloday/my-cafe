@@ -1,8 +1,9 @@
 import { randomBytes } from "node:crypto";
 
-import { MAX_GALLERY, type MediaKind } from "@/lib/media";
+import { keyBelongsTo, MAX_GALLERY, type MediaKind } from "@/lib/media";
 import { storage } from "@/lib/storage";
 import { businessRepository } from "@/server/repositories/business.repository";
+import { mediaRepository } from "@/server/repositories/media.repository";
 
 import { businessService, type Owner } from "./business.service";
 
@@ -32,10 +33,17 @@ export const businessMediaService = {
   },
 
   async remove(owner: Owner, kind: MediaKind, key: string): Promise<Result> {
-    // A promotion photo is removed when the promotion is saved without it, not before.
-    if (kind === "promotion" || kind === "banner") return { ok: true };
     const business = await businessRepository.findByOwner(owner.id);
     if (!business) return { ok: false, error: "Nothing to remove." };
+
+    if (kind === "promotion" || kind === "banner") {
+      // Throws away a picture that was sent but never saved (the save failed). A picture a promotion or banner
+      // already uses is never deleted here: that happens when the promotion is saved without it.
+      // Only this kind's own files (named "<kind>-…"), so a logo or gallery photo can never be removed this way.
+      const ownUpload = keyBelongsTo(key, business.id) && key.startsWith(`business/${business.id}/${kind}-`);
+      if (ownUpload && !(await mediaRepository.isReferenced(key))) await storage.remove(key);
+      return { ok: true };
+    }
 
     if (kind === "gallery") {
       // Only a key this business really owns can be removed.

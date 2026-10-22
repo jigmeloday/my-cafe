@@ -5,6 +5,7 @@ import { ImagePlus, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { validateImage } from "@/lib/files";
+import { adviseOnShape } from "@/lib/image-shape";
 import { cn } from "@/lib/utils";
 
 interface ImageUploadProps {
@@ -17,6 +18,11 @@ interface ImageUploadProps {
   /** When given, the chosen file is sent here and the preview shows the saved image. Resolve with its URL; throw to show a message. */
   onUpload?: (file: File) => Promise<string>;
   onRemove?: () => Promise<void>;
+  /** Called with the chosen file (or null when removed). With no `onUpload`, nothing is sent: the form sends it on save. */
+  onChoose?: (file: File | null) => void;
+  /** The width ÷ height this picture is meant to have. A picture far from it gets `ratioNote` as advice (not an error). */
+  idealRatio?: number;
+  ratioNote?: string;
 }
 
 export function ImageUpload({
@@ -26,11 +32,15 @@ export function ImageUpload({
   value = null,
   onUpload,
   onRemove,
+  onChoose,
+  idealRatio,
+  ratioNote,
 }: ImageUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(value);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [advice, setAdvice] = useState<string | null>(null);
 
   useEffect(
     () => () => {
@@ -43,8 +53,13 @@ export function ImageUpload({
     if (!file) return;
     const problem = validateImage(file);
     setError(problem);
+    setAdvice(null);
     if (problem) return;
-    if (!onUpload) return setPreview(URL.createObjectURL(file));
+    if (idealRatio && ratioNote) void adviseOnShape(file, idealRatio, ratioNote).then(setAdvice);
+    if (!onUpload) {
+      onChoose?.(file);
+      return setPreview(URL.createObjectURL(file));
+    }
 
     setBusy(true);
     try {
@@ -57,7 +72,10 @@ export function ImageUpload({
   };
 
   const clear = async () => {
-    if (!onRemove) return setPreview(null);
+    if (!onRemove) {
+      onChoose?.(null);
+      return setPreview(null);
+    }
     setBusy(true);
     try {
       await onRemove();
@@ -133,6 +151,7 @@ export function ImageUpload({
           {error}
         </p>
       )}
+      {!error && advice && <p className="text-sm text-muted-foreground">{advice}</p>}
     </div>
   );
 }

@@ -14,7 +14,8 @@ export const BANNERS_COPY = {
   emptyTitle: "No banners yet",
   emptyDescription: "Create your first banner to be seen by everyone who opens Nook.",
   submit: "Pay & create banner",
-  imageHint: "Wide, about 1600 × 600. JPG, PNG or WebP, up to 5 MB.",
+  imageHint: "Wide works best: 2100 × 800 pixels. JPG, PNG or WebP, up to 5 MB.",
+  imageRatioNote: "This picture isn't wide, so it will show with blurred space at the sides. For the best result use a wide image, about 2100 × 800.",
   businessPage: "My business page",
 };
 
