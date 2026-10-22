@@ -10,6 +10,7 @@ import { AboutContrast } from "./components/about-contrast";
 import { AboutCta } from "./components/about-cta";
 import { AboutHero } from "./components/about-hero";
 import { AboutHow } from "./components/about-how";
+import { AboutNext } from "./components/about-next";
 import { AboutPillars } from "./components/about-pillars";
 import { AboutTrust } from "./components/about-trust";
 import { heroTiles } from "./utils/about.utils";
@@ -40,6 +41,9 @@ export default async function AboutPage() {
       </Reveal>
       <Reveal>
         <AboutTrust />
+      </Reveal>
+      <Reveal>
+        <AboutNext />
       </Reveal>
       <Reveal>
         <AboutCta />

@@ -83,6 +83,7 @@ export const FOOTER_COLUMNS: FooterColumn[] = [
     title: SITE_NAME,
     links: [
       { label: "About", href: "/about" },
+      { label: "What's coming", href: "/coming-soon" },
       { label: "Careers", href: "/careers" },
       { label: "Terms and conditions", href: "/terms" },
       { label: "Privacy policy", href: "/privacy" },

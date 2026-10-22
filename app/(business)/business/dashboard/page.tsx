@@ -5,6 +5,7 @@ import { analyticsService } from "@/services/analytics/analytics.service";
 import { reportService } from "@/services/report/report.service";
 import { promotionService } from "@/services/promotion/promotion.service";
 
+import { ComingSoonCard } from "./components/coming-soon-card";
 import { DashboardCharts } from "./components/dashboard-charts";
 import { DashboardHeader } from "./components/dashboard-header";
 import { PromotionsList } from "./components/promotions-list";
@@ -32,6 +33,7 @@ export default async function DashboardPage() {
       <StatsGrid stats={getSummary({ data, followers: followers.points, live, total: promotions.length })} />
       <DashboardCharts performance={performancePoints(data)} followers={followers.points} />
       <PromotionsList items={promotions} clicks={clicksByPromotion(data)} />
+      <ComingSoonCard />
     </div>
   );
 }
