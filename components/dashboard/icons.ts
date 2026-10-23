@@ -1,5 +1,6 @@
 import {
   ChartColumn,
+  Eye,
   LayoutDashboard,
   Mail,
   Megaphone,
@@ -19,6 +20,7 @@ import {
  */
 export const NAV_ICONS = {
   ChartColumn,
+  Eye,
   LayoutDashboard,
   Mail,
   Megaphone,

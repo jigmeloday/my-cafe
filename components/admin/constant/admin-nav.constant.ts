@@ -2,6 +2,7 @@ import type { DashboardNavItem } from "@/components/dashboard/model/nav.type";
 
 export const ADMIN_NAV: DashboardNavItem[] = [
   { label: "Overview", href: "/admin/dashboard", icon: "LayoutDashboard" },
+  { label: "Visitors", href: "/admin/visitors", icon: "Eye" },
   { label: "Businesses", href: "/admin/businesses", icon: "Store" },
   { label: "Users", href: "/admin/users", icon: "Users" },
   { label: "Wallets", href: "/admin/wallets", icon: "Wallet" },
