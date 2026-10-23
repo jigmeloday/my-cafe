@@ -175,3 +175,8 @@
     display: none;
   }
 }
+
+/* The home banners glide with a soft ease-out instead of the library's default. */
+.hero-swiper .swiper-wrapper {
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}

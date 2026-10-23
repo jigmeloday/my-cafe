@@ -59,6 +59,7 @@ export const searchService = {
         meta: [[main, area].filter(Boolean).join(" · ") || "Bhutan", openedText(b.createdAt, now)],
         highlight: b.tagline,
         href: `/businesses/${b.slug}`,
+        canSave: false,
         imageUrl: b.coverKey ? mediaUrl(b.coverKey) : b.logoKey ? mediaUrl(b.logoKey) : undefined,
       };
     });

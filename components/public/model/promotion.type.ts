@@ -7,6 +7,8 @@ export interface PromotionCardData {
   href: string;
   /** A stored photo. Without one the card shows a placeholder. */
   imageUrl?: string;
+  /** False for a business: only promotions can be saved with the heart (businesses are followed instead). */
+  canSave?: boolean;
 }
 
 export interface TaggedPromotion extends PromotionCardData {

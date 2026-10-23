@@ -8,3 +8,15 @@ export const CTA_BANNER = {
   imageUrl: undefined as string | undefined,
   imageAlt: "A local shop owner at work",
 };
+
+/** How the banners at the top of the home page move. */
+export const HERO_SWIPER = {
+  /** How long a slide stays before the next one comes in on its own. */
+  delayMs: 7000,
+  /** How long one slide takes to glide to the next. */
+  speedMs: 900,
+  /** Space between slides, in pixels. */
+  gap: 16,
+  /** How many slides fit across: one on a phone, a little over one from a tablet up so the next one peeks in. */
+  breakpoints: { 640: { slidesPerView: 1.09 }, 768: { slidesPerView: 1.14 } },
+} as const;

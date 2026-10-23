@@ -302,6 +302,7 @@ export const discoveryService = {
         meta: [[p.business.town, p.business.dzongkhag].filter(Boolean)[0] ?? "Bhutan"],
         highlight: "",
         href: `/businesses/${p.business.slug}`,
+        canSave: false,
         imageUrl: p.business.logoKey ? mediaUrl(p.business.logoKey) : undefined,
       }];
     }).slice(0, 12);
@@ -414,6 +415,7 @@ export const discoveryService = {
         meta: [[b.town || b.dzongkhag].filter(Boolean).join("") || "Bhutan"],
         highlight: b.tagline,
         href: `/businesses/${b.slug}`,
+        canSave: false,
         imageUrl: b.coverKey ? mediaUrl(b.coverKey) : b.logoKey ? mediaUrl(b.logoKey) : undefined,
       })),
       events: events.map((e) => toCard(e, today)),
@@ -461,6 +463,7 @@ export const discoveryService = {
         meta: [[main, area].filter(Boolean).join(" · ") || "Bhutan", openedText(b.createdAt, now)],
         highlight: b.tagline,
         href: `/businesses/${b.slug}`,
+        canSave: false,
         imageUrl: b.coverKey ? mediaUrl(b.coverKey) : b.logoKey ? mediaUrl(b.logoKey) : undefined,
         tags: placeTags(b.createdAt, main, now),
       };
