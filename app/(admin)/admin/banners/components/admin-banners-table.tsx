@@ -6,6 +6,7 @@ import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { ReasonDialog } from "@/components/shared/reason-dialog";
 import { FormMessage } from "@/components/shared/form-message";
 import { ImagePlaceholder } from "@/components/shared/image-placeholder";
+import { Photo } from "@/components/shared/photo";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
 import { useActionRunner } from "@/hooks/use-action-runner";
@@ -65,12 +66,7 @@ export function AdminBannersTable({ items }: { items: BannerRow[] }) {
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
                     {b.imageUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={b.imageUrl}
-                        alt=""
-                        className="h-11 w-20 shrink-0 rounded-lg bg-muted object-cover"
-                      />
+                      <Photo src={b.imageUrl} sizes="80px" className="h-11 w-20 shrink-0 rounded-lg" />
                     ) : (
                       <ImagePlaceholder
                         label=""

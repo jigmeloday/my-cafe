@@ -1,4 +1,7 @@
 import { ImagePlaceholder } from "@/components/shared/image-placeholder";
+import { Photo } from "@/components/shared/photo";
+
+import { COVER_SIZES } from "../constant/business.constant";
 
 interface BusinessCoverProps {
   name: string;
@@ -13,14 +16,12 @@ export function BusinessCover({ name, coverUrl, logoUrl }: BusinessCoverProps) {
   return (
     <div className="relative">
       {coverUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={coverUrl} alt="" className="aspect-[16/6] w-full rounded-2xl object-cover sm:aspect-[16/5]" />
+        <Photo src={coverUrl} sizes={COVER_SIZES} eager className="aspect-[16/6] w-full rounded-2xl sm:aspect-[16/5]" />
       ) : (
         <ImagePlaceholder label="Cover photo" className="aspect-[16/6] rounded-2xl sm:aspect-[16/5]" />
       )}
       {logoUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={logoUrl} alt={`${name} logo`} className={`${LOGO_CLASS} bg-surface object-cover`} />
+        <Photo src={logoUrl} alt={`${name} logo`} sizes="96px" className={`${LOGO_CLASS} bg-surface`} />
       ) : (
         <ImagePlaceholder label={`${name} logo`} className={`${LOGO_CLASS} text-[10px]`} />
       )}

@@ -8,6 +8,7 @@ import { formatDateTime } from "@/lib/formatters/date";
 import { requireRole } from "@/lib/session";
 import { KYC_RETENTION_DAYS } from "@/lib/kyc";
 import { kycService } from "@/services/kyc/kyc.service";
+import { Photo } from "@/components/shared/photo";
 
 import { ReviewPanel } from "../components/review-panel";
 
@@ -86,8 +87,8 @@ export default async function ReviewPage({ params }: PageProps<"/admin/verificat
                 {isPdf(doc.key) ? (
                   <p className="text-sm text-muted-foreground">This is a PDF. Use Open to read it.</p>
                 ) : (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={src} alt={doc.label} className="max-h-[32rem] w-full rounded-lg bg-muted object-contain" />
+                  // Private identity documents: served as they are, never through the picture optimizer (which has no login).
+                  <Photo src={src} alt={doc.label} sizes="(min-width: 1024px) 50vw, 100vw" fit="contain" unoptimized className="h-[32rem] w-full rounded-lg" />
                 )}
               </section>
             );

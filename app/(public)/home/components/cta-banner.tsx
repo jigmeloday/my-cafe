@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { Photo } from "@/components/shared/photo";
 
 import { CTA_BANNER } from "../constant/hero.constant";
 
@@ -16,8 +17,7 @@ export function CtaBanner() {
         </Button>
       </div>
       {imageUrl && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={imageUrl} alt={CTA_BANNER.imageAlt} loading="lazy" className="min-h-48 size-full object-cover" />
+        <Photo src={imageUrl} alt={CTA_BANNER.imageAlt} sizes="(min-width: 768px) 50vw, 100vw" className="min-h-48 size-full" />
       )}
     </section>
   );

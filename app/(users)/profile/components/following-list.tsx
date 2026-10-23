@@ -3,6 +3,7 @@ import Link from "next/link";
 import { EmptyState } from "@/components/shared/empty-state";
 import { FollowButton } from "@/components/shared/follow-button";
 import { ImagePlaceholder } from "@/components/shared/image-placeholder";
+import { Photo } from "@/components/shared/photo";
 
 import { PROFILE_COPY } from "../constant/profile.constant";
 import type { FollowedPlace } from "../model/profile.type";
@@ -18,8 +19,7 @@ export function FollowingList({ places, limit }: { places: FollowedPlace[]; limi
       {shown.map((place) => (
         <li key={place.href} className="flex items-center gap-4 border-b py-4">
           {place.imageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={place.imageUrl} alt="" className="size-14 shrink-0 rounded-full bg-muted object-cover" />
+            <Photo src={place.imageUrl} sizes="56px" className="size-14 shrink-0 rounded-full" />
           ) : (
             <ImagePlaceholder label="Logo" className="size-14 shrink-0 rounded-full" />
           )}

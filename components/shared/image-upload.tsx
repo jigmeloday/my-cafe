@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { ImagePlus, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Photo } from "@/components/shared/photo";
 import { validateImage } from "@/lib/files";
 import { adviseOnShape } from "@/lib/image-shape";
 import { cn } from "@/lib/utils";
@@ -98,13 +99,7 @@ export function ImageUpload({
           )}
         >
           {preview ? (
-            // A local preview or a stored image: next/image can't optimise either.
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={preview}
-              alt={`${label} preview`}
-              className="size-full object-cover"
-            />
+            <Photo src={preview} alt={`${label} preview`} sizes="(min-width: 640px) 28rem, 100vw" className="size-full" />
           ) : (
             <ImagePlus className="size-6" />
           )}

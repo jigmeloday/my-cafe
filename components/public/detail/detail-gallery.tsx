@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { PhotoLightbox } from "@/components/shared/photo-lightbox";
+import { Photo } from "@/components/shared/photo";
 
 const OPEN_LABEL = (n: number, total: number) => `Open photo ${n} of ${total}`;
 
@@ -23,16 +24,14 @@ export function DetailGallery({ photos }: { photos: string[] }) {
               aria-label={OPEN_LABEL(i + 1, photos.length)}
               className={i === 0 ? "aspect-4/3 cursor-zoom-in md:col-span-2 md:row-span-2 md:aspect-auto" : "hidden cursor-zoom-in md:block"}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={url} alt="" loading={i === 0 ? undefined : "lazy"} className="size-full bg-muted object-cover" />
+              <Photo src={url} sizes={i === 0 ? "(min-width: 768px) 50vw, 100vw" : "25vw"} eager={i === 0} className="size-full" />
             </button>
           ))}
         </div>
       ) : (
         // One photo is shown whole (never cropped to a strip); a tall one sits centred on a soft background.
-        <button type="button" onClick={() => setOpen(0)} aria-label={OPEN_LABEL(1, 1)} className="flex w-full cursor-zoom-in justify-center overflow-hidden rounded-3xl bg-muted">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={photos[0]} alt="" className="max-h-[26rem] w-auto max-w-full object-contain" />
+        <button type="button" onClick={() => setOpen(0)} aria-label={OPEN_LABEL(1, 1)} className="block w-full cursor-zoom-in overflow-hidden rounded-3xl bg-muted">
+          <Photo src={photos[0]} sizes="(min-width: 1024px) 66vw, 100vw" fit="contain" eager className="h-[26rem] w-full" />
         </button>
       )}
       <PhotoLightbox photos={photos} index={open} onIndexChange={setOpen} />

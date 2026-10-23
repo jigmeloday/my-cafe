@@ -21,7 +21,7 @@ export default async function NewAdminBannerPage() {
         </Link>
         <div className="space-y-1">
           <h1>Create a banner</h1>
-          <p className="text-sm text-muted-foreground">Pick a business, add an image and a headline, and choose how long it runs. The business isn't charged.</p>
+          <p className="text-sm text-muted-foreground">Pick a business, add an image and a headline, and choose how long it runs. The business isn&apos;t charged.</p>
         </div>
       </header>
       <AdminBannerForm businesses={businesses} />

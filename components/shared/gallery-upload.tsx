@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Plus, X } from "lucide-react";
 
 import { validateImage } from "@/lib/files";
+import { Photo } from "@/components/shared/photo";
 
 interface GalleryUploadProps {
   label: string;
@@ -30,7 +31,9 @@ export function GalleryUpload({ label, max = 8, initial = [], onUpload, onRemove
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const report = useRef(onItemsChange);
-  report.current = onItemsChange;
+  useEffect(() => {
+    report.current = onItemsChange;
+  });
   useEffect(() => report.current?.(items), [items]);
 
   const add = async (files: FileList | null) => {
@@ -78,8 +81,7 @@ export function GalleryUpload({ label, max = 8, initial = [], onUpload, onRemove
             key={item.id}
             className="relative aspect-square overflow-hidden rounded-xl"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={item.url} alt="" className="size-full object-cover" />
+            <Photo src={item.url} sizes="(min-width: 640px) 25vw, 50vw" className="size-full" />
             <button
               type="button"
               aria-label="Remove photo"

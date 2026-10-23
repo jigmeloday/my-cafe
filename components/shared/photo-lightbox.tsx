@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { Photo } from "@/components/shared/photo";
 
 interface PhotoLightboxProps {
   photos: string[];
@@ -60,8 +61,7 @@ export function PhotoLightbox({ photos, index, onIndexChange, label = "Photo" }:
         >
           <DialogPrimitive.Title className="sr-only">{`${label} ${current + 1} of ${count}`}</DialogPrimitive.Title>
           {count > 0 && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={photos[current]} alt={`${label} ${current + 1}`} className="max-h-full max-w-full rounded-xl object-contain" />
+            <Photo src={photos[current]} alt={`${label} ${current + 1}`} sizes="100vw" fit="contain" eager className="size-full rounded-xl bg-transparent" />
           )}
           <DialogPrimitive.Close render={<Button variant="secondary" size="icon" className={`${CIRCLE} top-4 right-4`} />}>
             <X />

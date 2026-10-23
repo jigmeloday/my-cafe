@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { Check, Copy, Download, Share2, Smartphone } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -21,18 +21,17 @@ interface ShareButtonProps {
 
 const OPTION = "justify-start";
 
+/** The address and what the browser can do never change while the page is open, so there is nothing to subscribe to. */
+const NEVER_CHANGES = () => () => {};
+
 /** Opens a small sheet to share a page: copy the link, post to other apps, or save a story picture. */
 export function ShareButton({ path, title, story, track, className }: ShareButtonProps) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
   // Known only in the browser, so the server render never touches `window` or `navigator`.
-  const [origin, setOrigin] = useState("");
-  const [canShareNatively, setCanShareNatively] = useState(false);
-  useEffect(() => {
-    setOrigin(window.location.origin);
-    setCanShareNatively(typeof navigator.share === "function");
-  }, []);
+  const origin = useSyncExternalStore(NEVER_CHANGES, () => window.location.origin, () => "");
+  const canShareNatively = useSyncExternalStore(NEVER_CHANGES, () => typeof navigator.share === "function", () => false);
 
   const url = `${origin}${path}`;
   const counted = () => {

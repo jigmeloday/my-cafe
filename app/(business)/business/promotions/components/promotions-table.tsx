@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { ImagePlaceholder } from "@/components/shared/image-placeholder";
+import { Photo } from "@/components/shared/photo";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { mediaUrl } from "@/lib/media";
 import { formatNumber } from "@/lib/formatters/number";
@@ -46,8 +47,7 @@ export function PromotionsTable({ items, onResult }: PromotionsTableProps) {
               <td className="px-4 py-3">
                 <div className="flex items-center gap-3">
                   {item.values.photos[0] ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={mediaUrl(item.values.photos[0])} alt="" className="size-11 shrink-0 rounded-lg object-cover" />
+                    <Photo src={mediaUrl(item.values.photos[0])} sizes="44px" className="size-11 shrink-0 rounded-lg" />
                   ) : (
                     <ImagePlaceholder label="" className="size-11 shrink-0 rounded-lg" />
                   )}

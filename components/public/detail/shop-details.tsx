@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { ImagePlaceholder } from "@/components/shared/image-placeholder";
+import { Photo } from "@/components/shared/photo";
 
 import { SHOP_LINE_ICONS } from "../constant/detail.constant";
 import type { DetailShop, ShopLine } from "../model/detail.type";
@@ -17,8 +18,7 @@ export function ShopDetails({ shop, lines, logo }: ShopDetailsProps) {
     <div className="space-y-4">
       <div className="flex items-center gap-3">
         {logo ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={logo} alt="" className="size-12 shrink-0 rounded-full bg-muted object-cover" />
+          <Photo src={logo} sizes="48px" className="size-12 shrink-0 rounded-full" />
         ) : (
           <ImagePlaceholder label="Logo" className="size-12 shrink-0 rounded-full" />
         )}

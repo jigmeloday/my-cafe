@@ -42,3 +42,6 @@ export const ACTIVITY_TABS: ActivityTab[] = [
   },
 ];
 
+
+/** How wide a business cover picture is shown: the page width, up to the page's widest. */
+export const COVER_SIZES = "(min-width: 1280px) 1200px, 100vw";
