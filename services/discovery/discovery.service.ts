@@ -303,6 +303,7 @@ export const discoveryService = {
         highlight: "",
         href: `/businesses/${p.business.slug}`,
         canSave: false,
+        wide: true,
         imageUrl: p.business.logoKey ? mediaUrl(p.business.logoKey) : undefined,
       }];
     }).slice(0, 12);
@@ -416,6 +417,7 @@ export const discoveryService = {
         highlight: b.tagline,
         href: `/businesses/${b.slug}`,
         canSave: false,
+        wide: true,
         imageUrl: b.coverKey ? mediaUrl(b.coverKey) : b.logoKey ? mediaUrl(b.logoKey) : undefined,
       })),
       events: events.map((e) => toCard(e, today)),
@@ -464,6 +466,7 @@ export const discoveryService = {
         highlight: b.tagline,
         href: `/businesses/${b.slug}`,
         canSave: false,
+        wide: true,
         imageUrl: b.coverKey ? mediaUrl(b.coverKey) : b.logoKey ? mediaUrl(b.logoKey) : undefined,
         tags: placeTags(b.createdAt, main, now),
       };

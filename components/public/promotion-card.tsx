@@ -1,12 +1,16 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
+import { BannerImage } from "@/components/shared/banner-image";
 import { FavoriteButton } from "@/components/shared/favorite-button";
 import { ImagePlaceholder } from "@/components/shared/image-placeholder";
+import { canOptimize } from "@/lib/images";
 import { cn } from "@/lib/utils";
 
+import { SQUARE_SIZES, WIDE_SIZES } from "./constant/promotion.constant";
 import type { PromotionCardData } from "./model/promotion.type";
 
 export function PromotionCard({
@@ -26,9 +30,17 @@ export function PromotionCard({
       className={cn("relative w-full space-y-2", className)}
     >
       <div className="relative">
-        {item.imageUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={item.imageUrl} alt="" loading="lazy" className="aspect-square w-full rounded-2xl bg-muted object-cover" />
+        {item.wide ? (
+          // A business's picture is usually wide (a cover) or small (a logo): show it whole, never cropped.
+          item.imageUrl ? (
+            <BannerImage src={item.imageUrl} sizes={WIDE_SIZES} className="aspect-video rounded-2xl" />
+          ) : (
+            <ImagePlaceholder className="aspect-video rounded-2xl" />
+          )
+        ) : item.imageUrl ? (
+          <div className="relative aspect-square overflow-hidden rounded-2xl bg-muted">
+            <Image src={item.imageUrl} alt="" fill sizes={SQUARE_SIZES} unoptimized={!canOptimize(item.imageUrl)} className="object-cover" />
+          </div>
         ) : (
           <ImagePlaceholder className="aspect-square rounded-2xl" />
         )}

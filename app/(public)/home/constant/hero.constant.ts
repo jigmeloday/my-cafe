@@ -20,3 +20,6 @@ export const HERO_SWIPER = {
   /** How many slides fit across: one on a phone, a little over one from a tablet up so the next one peeks in. */
   breakpoints: { 640: { slidesPerView: 1.09 }, 768: { slidesPerView: 1.14 } },
 } as const;
+
+/** The banner picture is almost the full width on a phone, and a bit less on a wide screen. */
+export const HERO_IMAGE_SIZES = "(min-width: 768px) 88vw, 100vw";

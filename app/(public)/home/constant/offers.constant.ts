@@ -1,4 +1,8 @@
 
+/** The width of a business card in a row: wider than a promotion's, so its picture has room. */
+export const OFFER_CARD_WIDE =
+  "w-[78%] shrink-0 snap-start sm:w-[46%] md:w-[34%] lg:w-[calc((100%-3rem)/4)]";
+
 export const OFFER_CARD_WIDTH =
   "w-[44%] shrink-0 snap-start sm:w-[30%] md:w-[22%] lg:w-[calc((100%-5rem)/6)]";
 

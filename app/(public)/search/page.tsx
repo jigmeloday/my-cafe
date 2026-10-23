@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { PromotionCard } from "@/components/public/promotion-card";
-import { PROMOTION_GRID } from "@/components/public/constant/promotion.constant";
+import { PLACE_GRID, PROMOTION_GRID } from "@/components/public/constant/promotion.constant";
 import { Container } from "@/components/shared/container";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Button } from "@/components/ui/button";
@@ -65,7 +65,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
               <h2 id={`group-${key}`}>
                 {title} <span className="text-base font-normal text-muted-foreground">{results[key].length}</span>
               </h2>
-              <ul className={PROMOTION_GRID}>
+              <ul className={results[key][0]?.wide ? PLACE_GRID : PROMOTION_GRID}>
                 {results[key].map((item) => (
                   <li key={item.id}>
                     <PromotionCard item={item} />

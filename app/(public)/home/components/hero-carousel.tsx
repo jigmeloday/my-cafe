@@ -54,7 +54,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlideData[] }) {
           >
             {slides.map((slide, i) => (
               <SwiperSlide key={slide.id}>
-                <HeroSlide slide={slide} active={i === index} />
+                <HeroSlide slide={slide} active={i === index} eager={i === 0} />
               </SwiperSlide>
             ))}
           </Swiper>

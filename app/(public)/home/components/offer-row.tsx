@@ -7,7 +7,7 @@ import { PromotionCard } from "@/components/public/promotion-card";
 import { ScrollArrows } from "@/components/shared/scroll-arrows";
 import { useScrollRow } from "@/hooks/use-scroll-row";
 
-import { OFFER_CARD_WIDTH } from "../constant/offers.constant";
+import { OFFER_CARD_WIDE, OFFER_CARD_WIDTH } from "../constant/offers.constant";
 import type { OfferSectionData } from "../model/home.type";
 
 export function OfferRow({ section }: { section: OfferSectionData }) {
@@ -39,7 +39,7 @@ export function OfferRow({ section }: { section: OfferSectionData }) {
           <PromotionCard
             key={item.id}
             item={item}
-            className={OFFER_CARD_WIDTH}
+            className={item.wide ? OFFER_CARD_WIDE : OFFER_CARD_WIDTH}
           />
         ))}
       </div>

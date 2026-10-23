@@ -6,7 +6,7 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { FilterChips } from "@/components/shared/filter-chips";
 import { Button } from "@/components/ui/button";
 
-import { ALL_FILTER_ID, PROMOTION_GRID } from "./constant/promotion.constant";
+import { ALL_FILTER_ID, PLACE_GRID, PROMOTION_GRID } from "./constant/promotion.constant";
 import type {
   ExplorerCopy,
   FilterOption,
@@ -39,7 +39,7 @@ export function PromotionExplorer({
     <div className="space-y-8">
       <FilterChips options={filters} active={filter} onChange={setFilter} />
       {visible.length > 0 ? (
-        <ul className={PROMOTION_GRID}>
+        <ul className={visible[0]?.wide ? PLACE_GRID : PROMOTION_GRID}>
           {visible.map((item) => (
             <li key={item.id}>
               <PromotionCard item={item} />

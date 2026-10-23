@@ -11,6 +11,7 @@ Applies to every page and component. Code-organization rules (150-line limit, se
 - Before writing any markup, check `components/ui/` (shadcn primitives), `components/shared/`, and the area folder (`components/public/`, `business/`, `admin/`, `account/`). Use what exists.
 - Need a button, input, card, badge, dialog, table? Use the existing one (or `npx shadcn add <name>`) — never hand-roll a lookalike.
 - Extend an existing component with a variant/prop (cva) instead of copying it with small differences. Check the `Button` variants (`default`, `secondary`, `outline`, `soft`, `ghost`, `destructive`, `link`) before adding one.
+- **Pictures are always `next/image` (`Image`), never a plain `<img>`** (see "Images" below). For a banner-shaped picture shown whole use the shared `BannerImage`.
 - Never hard-code colors (`#7f1d3a`, `bg-red-500`, `zinc-*`). Use tokens: `bg-primary`, `bg-maroon-dark`, `bg-maroon-soft`, `bg-gold`, `text-success`, `bg-surface`, `text-muted-foreground`, `border-border`, etc.
 
 ## 2. Extract when it repeats
@@ -47,7 +48,18 @@ Use `framer-motion` (`import { motion, AnimatePresence } from "framer-motion"`) 
 - No horizontal page scroll; no fixed pixel widths on containers — use `w-full`, `max-w-*`, `min-w-0`, `aspect-*`.
 - Navigation: collapsed menu/sheet on mobile, full nav on desktop. Dashboards: sidebar becomes a drawer on mobile; tables become stacked cards or scroll within their own container.
 - Touch targets ≥ 40px; readable text ≥ 14px; don't rely on hover for essential actions (hover is an enhancement).
-- Use `next/image` with `sizes` and `fill`/`aspect-*` so images are responsive and don't shift layout.
+- Use `next/image` with `sizes` and `fill`/`aspect-*` so images are responsive and don't shift layout (details in "Images").
+
+## 5b. Images (`next/image`)
+This is a Next.js app: every picture on a page uses `Image` from `next/image`. A plain `<img>` (and the `eslint-disable @next/next/no-img-element` comment that goes with it) is not allowed in new code. `next/image` resizes and caches each picture, sends phones smaller files, lazy-loads, and avoids layout shift.
+- **Shape:** give the parent `relative` plus a size (`aspect-square`, `aspect-video`, `h-*`) and put `fill` on the `Image`, with `object-cover` (fills and crops) or `object-contain` (shows whole). Use `width`/`height` only when the real size is known.
+- **`sizes` is required with `fill`.** Say how wide the picture is at each screen size (`"(min-width: 1024px) 25vw, 78vw"`), or the browser downloads the biggest file. Keep shared size strings in a `constant/` file.
+- **`alt`:** meaningful text for content pictures; `alt=""` for decoration, plus `aria-hidden` on a purely visual copy.
+- **Above the fold:** use `loading="eager"` for the first picture on a page (the likely largest one). Everything else stays lazy (the default). In Next 16 `priority` is deprecated: don't use it.
+- **Nook's own pictures** are paths like `/api/media/...` and go through the optimizer. A picture that is not a Nook path (a `blob:` preview of a file the person just chose, or another site's address) can't be fetched by the server: pass `unoptimized={!canOptimize(src)}` using `canOptimize` from `lib/images.ts`.
+- **Shape-agnostic banners and logos:** use `components/shared/banner-image.tsx` (whole picture, blurred fill) instead of cropping.
+- **Never** use `next/image` for something that must load before the server can answer (it needs the server) such as an email or an OG image; those use plain URLs.
+- Check the Next version's docs in `node_modules/next/dist/docs/01-app/03-api-reference/02-components/image.md` before using a prop you are not sure about: this Next.js has breaking changes (see `AGENTS.md`).
 
 ## 6. Other best practices
 - **Accessibility:** semantic elements (`button`, `nav`, `main`, `section`, headings in order), visible focus rings (already in tokens), `aria-label` on icon-only buttons, `alt` on images, sufficient contrast (maroon on cream/white passes; don't put gold text on white), keyboard-operable dialogs/menus (use Base UI/shadcn primitives).
@@ -56,7 +68,7 @@ Use `framer-motion` (`import { motion, AnimatePresence } from "framer-motion"`) 
 - **Forms:** React Hook Form + Zod schema from `lib/validations/`, inline field errors, labels always visible, correct `type`/`autocomplete`.
 - **Save buttons:** forms built with `useActionForm` + `ActionForm` turn the Save button off until something has changed (`dirty`), skip the request if the form is submitted unchanged (e.g. Enter), and treat the saved values as the new starting point after a successful save. Pass `dirty={dirty}` to `ActionForm`. Use `{ clearOnSuccess: true }` for forms that should empty after saving (passwords). Forms where saving unchanged is a valid action (publishing an existing draft) are left enabled.
 - **Server vs client:** default to Server Components; add `"use client"` only for state, effects, event handlers, or Framer Motion, and keep those components small and leaf-level.
-- **Performance:** `next/image`, `next/link`, lazy-load below-the-fold media, avoid large client bundles, no layout shift.
+- **Performance:** `next/image` (never `<img>`), `next/link`, lazy-load below-the-fold media, avoid large client bundles, no layout shift.
 - **Styling:** Tailwind utilities with `cn()`; variants via `cva`; no inline `style` for things Tailwind covers; no `!important`; light theme only (no `dark:` classes).
 - **Money/dates/numbers** display only through `lib/formatters/*`.
 - **Copy:** plain, local, useful — see Voice in `discovery-marketplace`.

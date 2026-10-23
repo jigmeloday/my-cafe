@@ -11,9 +11,10 @@ import { ImagePlaceholder } from "@/components/shared/image-placeholder";
 import { EASE_OUT, RISE, STAGGER } from "@/lib/motion";
 import { trackBanner } from "@/lib/track-client";
 
+import { HERO_IMAGE_SIZES } from "../constant/hero.constant";
 import type { HeroSlideData } from "../model/home.type";
 
-export function HeroSlide({ slide, active = true }: { slide: HeroSlideData; active?: boolean }) {
+export function HeroSlide({ slide, active = true, eager = false }: { slide: HeroSlideData; active?: boolean; eager?: boolean }) {
   const ref = useRef<HTMLElement>(null);
   const { bannerId } = slide;
 
@@ -44,7 +45,7 @@ export function HeroSlide({ slide, active = true }: { slide: HeroSlideData; acti
     >
       <motion.div animate={{ scale: active ? 1 : 1.06 }} transition={{ duration: 1.4, ease: EASE_OUT }}>
         {slide.imageUrl ? (
-          <BannerImage src={slide.imageUrl} className="aspect-16/10 sm:aspect-16/9 md:aspect-21/8" />
+          <BannerImage src={slide.imageUrl} eager={eager} sizes={HERO_IMAGE_SIZES} className="aspect-16/10 sm:aspect-16/9 md:aspect-21/8" />
         ) : (
           <ImagePlaceholder label={slide.imageLabel} className="aspect-16/10 sm:aspect-16/9 md:aspect-21/8" />
         )}

@@ -60,6 +60,7 @@ export const searchService = {
         highlight: b.tagline,
         href: `/businesses/${b.slug}`,
         canSave: false,
+        wide: true,
         imageUrl: b.coverKey ? mediaUrl(b.coverKey) : b.logoKey ? mediaUrl(b.logoKey) : undefined,
       };
     });

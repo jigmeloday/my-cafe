@@ -9,6 +9,8 @@ export interface PromotionCardData {
   imageUrl?: string;
   /** False for a business: only promotions can be saved with the heart (businesses are followed instead). */
   canSave?: boolean;
+  /** True for a business: its card is wider, with a landscape picture shown whole instead of a cropped square. */
+  wide?: boolean;
 }
 
 export interface TaggedPromotion extends PromotionCardData {
