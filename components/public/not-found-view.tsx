@@ -4,14 +4,14 @@ import { Container } from "@/components/shared/container";
 import { Button } from "@/components/ui/button";
 
 import { NOT_FOUND_AREAS, NOT_FOUND_COPY, type NotFoundArea } from "./constant/not-found.constant";
-import { NotFoundMark } from "./not-found-mark";
+import { StatusMark } from "./status-mark";
 
 /** The page shown for an address that doesn't exist (or a deal, event or business that has ended or been removed). */
 export function NotFoundView({ area = "site" }: { area?: NotFoundArea }) {
   const { home, homeLabel, second, moreTitle, links } = NOT_FOUND_AREAS[area];
   return (
     <Container className="max-w-3xl space-y-10 py-12 text-center sm:py-20">
-      <NotFoundMark />
+      <StatusMark before="4" after="4" />
       <div className="mx-auto max-w-xl space-y-3">
         <h1>{NOT_FOUND_COPY.title}</h1>
         <p className="text-lg text-muted-foreground">{NOT_FOUND_COPY.text}</p>

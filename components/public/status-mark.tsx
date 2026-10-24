@@ -3,12 +3,12 @@
 import { motion, MotionConfig } from "framer-motion";
 import { MapPin } from "lucide-react";
 
-/** "404" with Nook's map pin as the zero. The pin drops in once; nothing loops. */
-export function NotFoundMark() {
+/** A status code with Nook's map pin as one of the zeros ("404", "500"). The pin drops in once; nothing loops. */
+export function StatusMark({ before, after }: { before: string; after: string }) {
   return (
     <MotionConfig reducedMotion="user">
       <div aria-hidden className="flex items-center justify-center gap-2 text-8xl font-bold tracking-tight text-primary sm:gap-4 sm:text-9xl">
-        <span>4</span>
+        <span>{before}</span>
         <motion.span
           initial={{ y: -48, opacity: 0, scale: 0.8 }}
           animate={{ y: 0, opacity: 1, scale: 1 }}
@@ -17,7 +17,7 @@ export function NotFoundMark() {
         >
           <MapPin className="size-14 sm:size-20" strokeWidth={2.25} />
         </motion.span>
-        <span>4</span>
+        <span>{after}</span>
       </div>
     </MotionConfig>
   );
