@@ -5,9 +5,9 @@
 export const LEGAL = {
   company: "Nook",
   address: "Thimphu, Bhutan",
-  contactEmail: "jigmenlodey@gmail.com",
+  contactEmail: "palter.bt@gmail.com",
   /** "YYYY-MM-DD": shown as "Last updated". */
-  updated: "2026-10-22",
+  updated: "2026-10-26",
   /** Customers younger than this need a parent or guardian's permission. */
   minAge: 16,
 } as const;
