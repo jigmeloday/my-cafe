@@ -1,4 +1,4 @@
-import { DEFAULT_REGISTRATION_LABEL } from "@/lib/constants";
+import { DEFAULT_REGISTRATION_LABEL, SELECTABLE_PROMOTION_TYPES } from "@/lib/constants";
 import { randomBytes } from "node:crypto";
 
 import { keyBelongsTo } from "@/lib/media";
@@ -91,6 +91,9 @@ export const promotionService = {
       return { ok: false, error: "That category no longer exists. Pick another one." };
     }
 
+    const offered = (SELECTABLE_PROMOTION_TYPES as readonly string[]).includes(input.type);
+    if (!id && !offered) return { ok: false, error: "Choose one of the available types for a new promotion." };
+
     const data = {
       title: input.title,
       type: input.type,
@@ -144,6 +147,8 @@ export const promotionService = {
       if (id) {
         const before = await promotionRepository.findOwned(id, owner.id);
         if (!before) return NOT_FOUND;
+        // A type that is no longer offered can stay on a promotion that already has it, but can't be given to another.
+        if (!offered && before.type !== input.type) return { ok: false, error: "Choose one of the available types." };
         if (before.removedAt) return { ok: false, error: "Nook took this promotion down after a report, so it can't be changed or republished. Contact us if you think this is a mistake." };
         // Going live costs coins for every day. On a live one, only days added to the end are charged.
         const wasLive = before.status === "PUBLISHED";

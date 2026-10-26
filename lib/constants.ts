@@ -44,6 +44,12 @@ export const CAMPAIGN_STATUSES = [
   "CANCELLED",
 ] as const;
 
+/**
+ * The kinds of promotion a business can pick for a new one. "PRODUCT" and "GIVEAWAY" below still exist, so a promotion
+ * that already has one of them keeps working and keeps its label, but they are no longer offered.
+ */
+export const SELECTABLE_PROMOTION_TYPES = ["DEAL", "SALE", "EVENT", "SERVICE", "ANNOUNCEMENT"] as const;
+
 export const PROMOTION_TYPES = [
   "DEAL",
   "SALE",

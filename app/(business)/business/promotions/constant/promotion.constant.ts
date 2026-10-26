@@ -2,6 +2,7 @@ import { FEATURED_DAYS, featuredPrice } from "@/lib/featured";
 import {
   CTA_TYPES,
   DEFAULT_REGISTRATION_LABEL,
+  SELECTABLE_PROMOTION_TYPES,
   PROMOTION_STATUSES,
   PROMOTION_TYPES,
 } from "@/lib/constants";
@@ -46,6 +47,9 @@ export const TYPE_OPTIONS: OptionItem[] = PROMOTION_TYPES.map((value) => ({
   value,
   label: TYPE_LABELS[value],
 }));
+/** What a new promotion can be. Older promotions of a type that is no longer offered still show their own label. */
+export const SELECTABLE_TYPE_OPTIONS: OptionItem[] = TYPE_OPTIONS.filter((o) => (SELECTABLE_PROMOTION_TYPES as readonly string[]).includes(o.value));
+
 export const CTA_OPTIONS: OptionItem[] = CTA_TYPES.map((value) => ({
   value,
   label: CTA_LABELS[value],
@@ -53,7 +57,7 @@ export const CTA_OPTIONS: OptionItem[] = CTA_TYPES.map((value) => ({
 
 export const TYPE_FILTER_OPTIONS: OptionItem[] = [
   { value: "ALL", label: "All types" },
-  ...TYPE_OPTIONS,
+  ...SELECTABLE_TYPE_OPTIONS,
 ];
 export const STATUS_FILTERS = [
   { id: "ALL", label: "All" },
