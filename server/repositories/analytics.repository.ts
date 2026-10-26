@@ -50,6 +50,22 @@ export const analyticsRepository = {
     return rows.map((r) => ({ ...r, count: Number(r.count) }));
   },
 
+  /** Seats reserved at the given events, per event and Bhutan day. Cancelled seats are not counted. */
+  async reservationCounts(promotionIds: string[], since: Date): Promise<{ promotionId: string; day: string; count: number }[]> {
+    if (promotionIds.length === 0) return [];
+    const rows = await db.$queryRaw<{ promotionId: string; day: string; count: bigint }[]>(Prisma.sql`
+      select "promotionId", to_char(("createdAt" + interval '6 hours')::date, 'YYYY-MM-DD') as day, count(*) as count
+      from "EventRegistration"
+      where "promotionId" in (${Prisma.join(promotionIds)}) and status = 'REGISTERED' and "createdAt" >= ${since}
+      group by 1, 2`);
+    return rows.map((r) => ({ ...r, count: Number(r.count) }));
+  },
+
+  /** Whether the business has any event that takes reservations (or ever had one), so the number is worth showing. */
+  async takesReservations(businessId: string): Promise<boolean> {
+    return (await db.promotion.count({ where: { businessId, type: "EVENT", OR: [{ registrationEnabled: true }, { registrations: { some: {} } }] } })) > 0;
+  },
+
   /** Views and clicks on all of a business's banners, per kind and Bhutan day. */
   async bannerEventCounts(businessId: string, since: Date): Promise<{ type: string; day: string; count: number }[]> {
     const rows = await db.$queryRaw<{ type: string; day: string; count: bigint }[]>(Prisma.sql`

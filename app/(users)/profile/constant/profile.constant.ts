@@ -1,5 +1,6 @@
 import {
   Bell,
+  CalendarCheck,
   Heart,
   LayoutDashboard,
   MapPin,
@@ -40,6 +41,7 @@ export const PROFILE_NAV: ProfileNavGroup[] = [
     items: [
       { label: "Favorites", href: "/profile/favorites", icon: Heart },
       { label: "Following", href: "/profile/following", icon: UserCheck },
+      { label: "My events", href: "/profile/events", icon: CalendarCheck },
       { label: "Notifications", href: "/profile/notifications", icon: Bell },
     ],
   },

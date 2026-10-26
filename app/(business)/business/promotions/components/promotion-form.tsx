@@ -27,12 +27,16 @@ import {
   MAX_PHOTOS,
   FEATURE_COPY,
   PUBLISH_COPY,
+  EVENT_DATES_COPY,
   PROMOTIONS_COPY,
+  SCHEDULE_COPY,
 } from "../constant/promotion.constant";
 import type { OptionItem } from "../model/promotion.type";
 import { CtaFields } from "./cta-fields";
 import { DetailsFields } from "./details-fields";
+import { EventDateFields } from "./event-date-fields";
 import { PromotionPreview } from "./promotion-preview";
+import { RegistrationFields } from "./registration-fields";
 import { FeatureFields } from "./feature-fields";
 import { PublishCost } from "./publish-cost";
 import { ScheduleFields } from "./schedule-fields";
@@ -76,7 +80,7 @@ export function PromotionForm({ initial, categories, id, balance, availability, 
   useEffect(() => {
     if (result && !result.ok) scrollToFirstProblem();
   }, [result]);
-  const [featureDays, startDate, endDate] = useWatch({ control: form.control, name: ["featureDays", "startDate", "endDate"] });
+  const [featureDays, startDate, endDate, type] = useWatch({ control: form.control, name: ["featureDays", "startDate", "endDate", "type"] });
   // Every day it runs is paid when it goes live. A live promotion only pays for days added to its end.
   const isLive = Boolean(id) && initial.status === "PUBLISHED";
   const runDays = startDate && endDate ? listingDays(startDate, endDate, todayIso()) : 0;
@@ -103,7 +107,12 @@ export function PromotionForm({ initial, categories, id, balance, availability, 
         <SectionCard title="Details">
           <DetailsFields form={form} />
         </SectionCard>
-        <SectionCard title="When & where">
+        {type === "EVENT" && (
+          <SectionCard title={EVENT_DATES_COPY.title} description={EVENT_DATES_COPY.description}>
+            <EventDateFields form={form} />
+          </SectionCard>
+        )}
+        <SectionCard title={(type === "EVENT" ? SCHEDULE_COPY.event : SCHEDULE_COPY.promotion).title}>
           <ScheduleFields form={form} categories={categories} />
         </SectionCard>
         <SectionCard title="Photos" description={PROMOTIONS_COPY.photosHint}>
@@ -124,6 +133,11 @@ export function PromotionForm({ initial, categories, id, balance, availability, 
             }}
           />
         </SectionCard>
+        {type === "EVENT" && (
+          <SectionCard title={PROMOTIONS_COPY.registrationTitle} description={PROMOTIONS_COPY.registrationDescription}>
+            <RegistrationFields form={form} />
+          </SectionCard>
+        )}
         <SectionCard
           title="Call to action"
           description="The button people see on your promotion."

@@ -7,6 +7,7 @@ import { SelectField } from "@/components/shared/select-field";
 import { Input } from "@/components/ui/input";
 import type { PromotionInput } from "@/lib/validations/promotion.schema";
 
+import { SCHEDULE_COPY } from "../constant/promotion.constant";
 import type { OptionItem } from "../model/promotion.type";
 
 export function ScheduleFields({
@@ -22,6 +23,7 @@ export function ScheduleFields({
     watch,
     formState: { errors },
   } = form;
+  const copy = watch("type") === "EVENT" ? SCHEDULE_COPY.event : SCHEDULE_COPY.promotion;
 
   return (
     <>
@@ -29,14 +31,14 @@ export function ScheduleFields({
         <DateField
           control={control}
           name="startDate"
-          label="Starts"
+          label={copy.start}
           error={errors.startDate?.message}
         />
         <DateField
           control={control}
           name="endDate"
-          label="Ends"
-          hint="Required to publish. You pay for each day it runs."
+          label={copy.end}
+          hint={`Required to publish. ${copy.hint}`}
           min={watch("startDate") || undefined}
           clearable
           error={errors.endDate?.message}

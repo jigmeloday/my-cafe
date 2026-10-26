@@ -31,10 +31,10 @@ export function lastDays(endDate: string, count: number): { date: string; label:
   });
 }
 
-export const emptyTotals = (): Totals => ({ views: 0, clicks: 0, saves: 0, shares: 0, chats: 0 });
+export const emptyTotals = (): Totals => ({ views: 0, clicks: 0, saves: 0, shares: 0, chats: 0, reservations: 0 });
 
 export const totalsOf = (
-  days: Pick<DayStats, "views" | "clicks" | "saves" | "shares" | "chats">[],
+  days: Pick<DayStats, "views" | "clicks" | "saves" | "shares" | "chats" | "reservations">[],
 ): Totals =>
   days.reduce(
     (t, d) => ({
@@ -43,6 +43,7 @@ export const totalsOf = (
       saves: t.saves + d.saves,
       shares: t.shares + d.shares,
       chats: t.chats + d.chats,
+      reservations: t.reservations + d.reservations,
     }),
     emptyTotals(),
   );

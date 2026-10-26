@@ -16,10 +16,12 @@ export function PromotionPreview({
   /** The first photo, saved or just chosen on this device. */
   imageUrl?: string;
 }) {
-  const [title, type, discount, location, startDate, endDate] = useWatch({
+  const [title, type, discount, location, listStart, listEnd, eventStart, eventEnd] = useWatch({
     control,
-    name: ["title", "type", "discount", "location", "startDate", "endDate"],
+    name: ["title", "type", "discount", "location", "startDate", "endDate", "eventStartDate", "eventEndDate"],
   });
+  // An event shows its own days; anything else shows how long it runs.
+  const [startDate, endDate] = type === "EVENT" ? [eventStart, eventEnd || eventStart] : [listStart, listEnd];
 
   return (
     <aside className="space-y-3 lg:sticky lg:top-20 lg:self-start">

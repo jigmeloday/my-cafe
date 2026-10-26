@@ -96,6 +96,12 @@ enum BannerReview {
   REJECTED
 }
 
+/// A person's place at an event. Cancelling keeps the row (so they can sign up again) but frees the seat.
+enum RegistrationStatus {
+  REGISTERED
+  CANCELLED
+}
+
 enum PromotionStatus {
   DRAFT
   PUBLISHED
@@ -132,6 +138,7 @@ model User {
   follows            Follow[]
   notifications      Notification[]
   reports            Report[]
+  eventRegistrations EventRegistration[]
 }
 
 // The next three models are the tables Better Auth needs.
@@ -252,9 +259,42 @@ model Promotion {
   reports          Report[]
   /// Set when an admin took it down after a report. It is never shown again and the owner can\'t republish it.
   removedAt        DateTime?
+  /// Events only: the event's own days and times. startsAt / endsAt above are how long it is listed on Nook.
+  /// Empty on older events, which then use the listing days.
+  eventStartsAt       DateTime?           @db.Date
+  eventEndsAt         DateTime?           @db.Date
+  /// "HH:mm" in Bhutan time, or empty when no time was given.
+  eventStartTime      String              @default("")
+  eventEndTime        String              @default("")
+  /// Events only: people can reserve a seat. The button's wording is the owner's own.
+  registrationEnabled Boolean             @default(false)
+  registrationLabel   String              @default("Reserve my seat")
+  /// Events only: where people reserve when it is on another website. Empty when they reserve on Nook (or not at all).
+  registrationUrl     String              @default("")
+  /// How many seats there are. Empty means no limit.
+  capacity            Int?
+  registrations       EventRegistration[]
 
   @@index([businessId])
   @@index([status, type])
+}
+
+/// One person's seat at one event. The name and phone are what they chose to share with the organiser, as they were then.
+model EventRegistration {
+  id          String             @id @default(cuid())
+  promotionId String
+  promotion   Promotion          @relation(fields: [promotionId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  phone       String             @default("")
+  status      RegistrationStatus @default(REGISTERED)
+  createdAt   DateTime           @default(now())
+  cancelledAt DateTime?
+
+  @@unique([promotionId, userId])
+  @@index([promotionId, status])
+  @@index([userId])
 }
 
 // Coins are whole numbers. `balance` is only ever changed together with a CoinTransaction row.

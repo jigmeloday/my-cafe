@@ -14,6 +14,7 @@
     "verify-email": "node scripts/verify-email.mjs",
     "purge:kyc": "node scripts/purge-kyc.mjs",
     "purge:analytics": "node scripts/purge-analytics.mjs",
+    "purge:registrations": "node scripts/purge-registrations.mjs",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "postinstall": "prisma generate",

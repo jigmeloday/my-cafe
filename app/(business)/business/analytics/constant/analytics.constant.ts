@@ -23,6 +23,7 @@ export const METRICS: ChartMetric[] = [
   { id: "saves", label: "Saves", kind: "number" },
   { id: "shares", label: "Shares", kind: "number" },
   { id: "chats", label: "WhatsApp chats", kind: "number" },
+  { id: "reservations", label: "Reservations", kind: "number" },
 ];
 
 export const BANNER_METRICS: ChartMetric[] = [

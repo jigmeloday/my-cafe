@@ -1,3 +1,4 @@
+import { eventWindow } from "@/lib/event-dates";
 import type { PromotionCardData } from "@/components/public/model/promotion.type";
 import { mainCategory, openedText } from "@/lib/discovery-tags";
 import { mediaUrl } from "@/lib/media";
@@ -46,7 +47,10 @@ export const searchService = {
       searchRepository.businesses(text, PER_GROUP),
     ]);
 
-    const running = promotions.filter((p) => overlaps(p.startsAt, p.endsAt, range));
+    const running = promotions.filter((p) => {
+      const days = p.type === "EVENT" ? eventWindow(p) : { start: p.startsAt, end: p.endsAt };
+      return overlaps(days.start, days.end, range);
+    });
     const events = running.filter((p) => p.type === "EVENT").slice(0, PER_GROUP).map((p) => toCard(p, today));
     const deals = running.filter((p) => p.type !== "EVENT").slice(0, PER_GROUP).map((p) => toCard(p, today));
 

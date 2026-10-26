@@ -1,5 +1,6 @@
 import { KYC_RETENTION_DAYS } from "@/lib/kyc";
 import { LEGAL } from "@/lib/legal";
+import { REGISTRATION_RETENTION_DAYS } from "@/lib/constants";
 import { ANALYTICS_RETENTION_DAYS } from "@/lib/track-events";
 
 import type { LegalDocument } from "./legal.type";
@@ -72,7 +73,8 @@ export const PRIVACY: LegalDocument = {
       title: "Who can see your information",
       blocks: [
         { p: "Public: the information a business puts on its page and promotions is visible to everyone. Your own name and profile are not shown to other customers or businesses." },
-        { p: "Businesses you follow see only totals and groups, such as how many followers they have, which areas they live in, which interests are common, and how many agreed to emails. They never see your name, email or phone." },
+        { p: "Businesses you follow see only totals and groups, such as how many followers they have, which areas they live in, which interests are common, and how many agreed to emails. They never see your name, email or phone from following." },
+        { p: "Events: if you reserve a seat at an event, you agree to share the name and phone number you enter with the organiser (the business running the event), so they know who is coming. They see only that registration, and you can cancel it at any time. The organiser may keep a list of attendees for that event and should use it only for that event." },
         { p: "Our team: a small number of Nook admins can see account details when they need to, for example to help you, review a report or stop abuse." },
         { p: "Service providers who help us run Nook, and who may only use your information for that purpose:" },
         { ul: [
@@ -130,6 +132,7 @@ export const PRIVACY: LegalDocument = {
           "Coin and wallet history: kept for our records and for accounting, tax and legal reasons, even after the business account is closed, as it shows what a business paid for.",
           "Contact messages: kept while we deal with your request, and for a short time after. Ask us to delete yours at any time.",
           "Job applications: kept only as long as needed to consider you. Ask us to delete yours at any time.",
+          `Event registrations: the name and phone number you shared to reserve a seat are deleted ${REGISTRATION_RETENTION_DAYS} days after the event ends. We keep only how many people registered.`,
           "Admin logs: kept for security and accountability.",
           "Failed sign-in records: about a day.",
           `Visit and click records: the one-way visitor codes are deleted after ${ANALYTICS_RETENTION_DAYS} days. We keep only the totals, which don't identify anyone.`,

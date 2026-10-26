@@ -1,3 +1,4 @@
+import { eventWindow, isoWithTime, timeRangeText } from "@/lib/event-dates";
 import type { ActivityItem } from "@/app/(public)/businesses/model/business.type";
 import type { HeroSlideData } from "@/app/(public)/home/model/home.type";
 import { CTA_TYPE_LABELS, TYPE_LABELS } from "@/lib/promotion-labels";
@@ -31,6 +32,9 @@ export function validityText(startsAt: Date | null, endsAt: Date | null, today: 
   return "Ongoing";
 }
 
+/** A day (and the time, if there is one) the way search engines want it. Undefined when there is no day. */
+const seoDay = (day: Date | null, time: string) => (day ? isoWithTime(day.toISOString().slice(0, 10), time) : undefined);
+
 const place = (b: { name: string; town: string; dzongkhag: string }) => [b.name, b.town || b.dzongkhag].filter(Boolean).join(" · ");
 /** Events have their own pages; everything else is under /promotions. */
 const href = (slug: string, type?: string) => (type === "EVENT" ? `/events/${slug}` : `/promotions/${slug}`);
@@ -40,7 +44,7 @@ export function toCard(p: LivePromotion, today: Date, badge?: string): Promotion
     id: p.id,
     badge,
     title: p.title,
-    meta: [place(p.business), p.type === "EVENT" ? eventDateText(p.startsAt, p.endsAt) : validityText(p.startsAt, p.endsAt, today)],
+    meta: [place(p.business), p.type === "EVENT" ? eventDateText(eventWindow(p).start, eventWindow(p).end) : validityText(p.startsAt, p.endsAt, today)],
     highlight: p.discount,
     href: href(p.slug, p.type),
     imageUrl: p.photos[0] ? mediaUrl(p.photos[0]) : undefined,
@@ -140,7 +144,7 @@ function buildDetail(p: LivePromotion, related: LivePromotion[], today: Date, no
       highlight: p.discount || TYPE_LABELS[p.type],
       facts: isEvent
         ? [
-            { label: "Date", value: eventDateText(p.startsAt, p.endsAt) },
+            { label: "Date", value: [eventDateText(eventWindow(p).start, eventWindow(p).end), timeRangeText(p.eventStartTime, p.eventEndTime)].filter(Boolean).join(" · ") },
             { label: "Venue", value: where },
             { label: "Entry", value: p.discount || "—" },
             { label: "Area", value: b.town || b.dzongkhag || "—" },
@@ -155,14 +159,17 @@ function buildDetail(p: LivePromotion, related: LivePromotion[], today: Date, no
       shop: { name: b.name, area: b.town || b.dzongkhag, href: `/businesses/${b.slug}` },
       related: related.map((r) => toCard(r, today)),
       promotionId: p.id,
+      reservable: p.type === "EVENT" && (p.registrationEnabled || p.registrationUrl !== ""),
+      // Reserving on another website: its own button, with the organiser's wording.
+      reserveLink: p.type === "EVENT" && !p.registrationEnabled && p.registrationUrl ? { label: p.registrationLabel, href: p.registrationUrl } : undefined,
       photos: p.photos.map(mediaUrl),
       cta: ctaFor(p, b.phone),
       shopLines: lines,
       shopLogo: b.logoKey ? mediaUrl(b.logoKey) : undefined,
       seo: {
         description: p.description || `${p.title} at ${b.name}${b.town ? `, ${b.town}` : ""}.`,
-        startsAt: p.startsAt?.toISOString().slice(0, 10),
-        endsAt: p.endsAt?.toISOString().slice(0, 10),
+        startsAt: seoDay(isEvent ? eventWindow(p).start : p.startsAt, isEvent ? p.eventStartTime : ""),
+        endsAt: seoDay(isEvent ? eventWindow(p).end : p.endsAt, isEvent ? p.eventEndTime : ""),
         place: where,
         street: [b.addressLine1, b.addressLine2].filter(Boolean).join(", ") || undefined,
         town: b.town || undefined,
@@ -369,7 +376,17 @@ export const discoveryService = {
     const today = bhutanToday(now);
     const range = whenRange("weekend", today);
     if (!range) return [];
-    const rows = await repo.livePromotions(today, { AND: [{ type: "EVENT" }, { startsAt: { lte: range.to } }, { OR: [{ endsAt: null }, { endsAt: { gte: range.from } }] }] }, limit, [{ startsAt: { sort: "asc", nulls: "last" } }]);
+    const rows = await repo.livePromotions(today, {
+        AND: [
+          { type: "EVENT" },
+          {
+            OR: [
+              { eventStartsAt: null, startsAt: { lte: range.to }, OR: [{ endsAt: null }, { endsAt: { gte: range.from } }] },
+              { eventStartsAt: { lte: range.to }, OR: [{ eventEndsAt: { gte: range.from } }, { eventEndsAt: null, eventStartsAt: { gte: range.from } }] },
+            ],
+          },
+        ],
+      }, limit, [{ eventStartsAt: { sort: "asc", nulls: "last" } }, { startsAt: { sort: "asc", nulls: "last" } }]);
     return rows.map((p) => toCard(p, today, "This weekend"));
   },
 
@@ -386,7 +403,7 @@ export const discoveryService = {
     // Everything is asked for at once: waiting for one answer before asking the next costs a full trip to the database.
     const [candidates, events, businesses, featuredNow, clicks, running] = await Promise.all([
       repo.livePromotions(today, { AND: [{ type: { not: "EVENT" } }, started] }, 30, [{ createdAt: "desc" }]),
-      repo.livePromotions(today, { type: "EVENT" }, SECTION_SIZE, [{ startsAt: { sort: "asc", nulls: "last" } }, { createdAt: "desc" }]),
+      repo.livePromotions(today, { type: "EVENT" }, SECTION_SIZE, [{ eventStartsAt: { sort: "asc", nulls: "last" } }, { startsAt: { sort: "asc", nulls: "last" } }, { createdAt: "desc" }]),
       repo.newBusinesses(SECTION_SIZE),
       repo.featuredToday(today),
       repo.clicksSince(new Date(now.getTime() - POPULAR_WINDOW_DAYS * DAY_MS)),
@@ -441,12 +458,13 @@ export const discoveryService = {
   /** Live and upcoming events, soonest first, tagged for the Events page filters. */
   async events(now = new Date()): Promise<TaggedPromotion[]> {
     const today = bhutanToday(now);
-    const rows = await repo.livePromotions(today, { type: "EVENT" }, LIST_LIMIT, [{ startsAt: { sort: "asc", nulls: "last" } }, { createdAt: "desc" }]);
+    const rows = await repo.livePromotions(today, { type: "EVENT" }, LIST_LIMIT, [{ eventStartsAt: { sort: "asc", nulls: "last" } }, { startsAt: { sort: "asc", nulls: "last" } }, { createdAt: "desc" }]);
     return rows.map((p) => {
-      const tags = eventTags({ ...p, category: p.category?.name ?? null }, today);
+      const { start, end } = eventWindow(p);
+      const tags = eventTags({ ...p, startsAt: start, endsAt: end, category: p.category?.name ?? null }, today);
       return {
         ...toCard(p, today, tags.includes("weekend") ? "This weekend" : undefined),
-        meta: [place(p.business), eventDateText(p.startsAt, p.endsAt)],
+        meta: [place(p.business), eventDateText(start, end)],
         tags,
       };
     });
@@ -481,8 +499,9 @@ export const discoveryService = {
     const today = bhutanToday(now);
     const rows = await repo.forBusiness(businessId);
     return rows.map((p) => {
-      const ended = p.status === "ENDED" || (p.endsAt !== null && p.endsAt < today);
-      const upcoming = !ended && p.startsAt !== null && p.startsAt > today;
+      const { start, end } = p.type === "EVENT" ? eventWindow(p) : { start: p.startsAt, end: p.endsAt };
+      const ended = p.status === "ENDED" || (end !== null && end < today);
+      const upcoming = !ended && start !== null && start > today;
       const status = ended ? "past" : upcoming ? "upcoming" : "current";
       const badge = status === "past" ? "Ended" : status === "upcoming" ? "Coming up" : p.type === "EVENT" ? "Happening now" : "Now on";
       return { ...toCard(p, today, badge), status };

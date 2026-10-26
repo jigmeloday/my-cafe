@@ -48,7 +48,7 @@ export const ABOUT_COPY = {
     { icon: BadgeCheck, title: "Verified businesses", text: "Businesses can send their ID and trade licence to be checked. Verified ones show a badge. The documents stay private and only our review team can open them." },
     { icon: Flag, title: "Report anything wrong", text: "Anyone with an account can report a misleading or unsafe ad. We review every report and can warn the business or take the ad down." },
     { icon: Scale, title: "Fair to everyone", text: "Paid places are limited and shown in a random order. No business can buy its way to always being first." },
-    { icon: Lock, title: "Your information is yours", text: "We don't sell it, and businesses only see totals, never who you are." },
+    { icon: Lock, title: "Your information is yours", text: "We don't sell it. Businesses only see totals, never who you are, unless you choose to reserve a seat at their event: then the organiser sees the name and phone you agreed to share." },
     { icon: Coins, title: "No hidden fees", text: "You see the price in coins before you pay for anything." },
     { icon: MessageCircle, title: "A real team", text: "Questions, ideas or problems? Write to us and a person replies." },
   ] satisfies AboutStep[],

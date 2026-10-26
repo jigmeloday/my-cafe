@@ -3,6 +3,7 @@ import { FollowButton } from "@/components/shared/follow-button";
 import { DETAIL_KINDS, SHOP_LABEL } from "../constant/detail.constant";
 import type { DetailData } from "../model/detail.type";
 import { ShopDetails } from "./shop-details";
+import { EventSeat } from "./event-seat";
 import { TrackedCta } from "./tracked-cta";
 
 export function DetailAside({ detail }: { detail: DetailData }) {
@@ -16,9 +17,19 @@ export function DetailAside({ detail }: { detail: DetailData }) {
           {detail.highlight}
         </p>
         <p className="text-sm text-muted-foreground">{asideNote}</p>
+        {detail.promotionId && detail.reserveLink && (
+          <div className="pt-2">
+            <TrackedCta promotionId={detail.promotionId} label={detail.reserveLink.label} href={detail.reserveLink.href} />
+          </div>
+        )}
+        {detail.promotionId && detail.kind === "event" && (
+          <div className="pt-2">
+            <EventSeat promotionId={detail.promotionId} path={`/events/${detail.slug}`} />
+          </div>
+        )}
         {detail.promotionId && detail.cta && (
           <div className="pt-2">
-            <TrackedCta promotionId={detail.promotionId} label={detail.cta.label} href={detail.cta.href} chat={detail.cta.chat} />
+            <TrackedCta promotionId={detail.promotionId} label={detail.cta.label} href={detail.cta.href} chat={detail.cta.chat} variant={detail.reservable ? "secondary" : "default"} />
           </div>
         )}
       </div>

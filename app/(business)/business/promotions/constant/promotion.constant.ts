@@ -1,6 +1,7 @@
 import { FEATURED_DAYS, featuredPrice } from "@/lib/featured";
 import {
   CTA_TYPES,
+  DEFAULT_REGISTRATION_LABEL,
   PROMOTION_STATUSES,
   PROMOTION_TYPES,
 } from "@/lib/constants";
@@ -67,7 +68,42 @@ export const DEFAULT_FILTERS: PromotionFilters = {
 export const DESCRIPTION_MAX = 1000;
 export const MAX_PHOTOS = 5;
 
+/** What the two dates mean, by type: for an event they are its days; for anything else, how long the promotion is shown. */
+export const SCHEDULE_COPY = {
+  event: {
+    title: "How long it's shown & where",
+    start: "Show on Nook from",
+    end: "Show on Nook until",
+    hint: "Your event is listed on Nook on these days, up to the event's last day. You pay coins for each day it is listed.",
+  },
+  promotion: {
+    title: "Promotion dates & place",
+    start: "Promotion starts",
+    end: "Promotion ends",
+    hint: "People see your promotion on these days, then it ends. You pay coins for each day it is shown.",
+  },
+};
+
+export const EVENT_DATES_COPY = {
+  title: "When is the event?",
+  description: "The days and times people will see on your event page. This is separate from how long it is shown on Nook.",
+  start: "Event starts",
+  end: "Event ends",
+  endHint: "Leave empty for a one-day event.",
+  startTime: "Start time (optional)",
+  endTime: "End time (optional)",
+};
+
+/** The ways an event can take reservations, as the organiser picks them. */
+export const REGISTRATION_MODE_OPTIONS = [
+  { value: "NONE", title: "No reservations", text: "People just read the details and come along." },
+  { value: "NOOK", title: "Reserve a seat here on Nook", text: "People sign in and reserve. You see who is coming under Guest lists, and can download the list." },
+  { value: "EXTERNAL", title: "Reserve on another website", text: "You already take bookings or sell tickets elsewhere. Add the link and people go there." },
+] as const;
+
 export const PROMOTIONS_COPY = {
+  registrationTitle: "Reservations",
+  registrationDescription: "Do people need to reserve a place? You can take reservations here, or send them to your own website.",
   title: "Promotions",
   subtitle:
     "What you're offering. Publish it for free, then tell your followers about it with an email campaign.",
@@ -105,6 +141,14 @@ export const NEW_PROMOTION: PromotionInput = {
   featureDays: "0",
   featureStart: "",
   status: "DRAFT",
+  eventStartDate: "",
+  eventEndDate: "",
+  eventStartTime: "",
+  eventEndTime: "",
+  registrationMode: "NONE",
+  registrationUrl: "",
+  registrationLabel: DEFAULT_REGISTRATION_LABEL,
+  capacity: "",
 };
 
 /** "Not featured", "1 day · 50 coins", "3 days · 150 coins"... */

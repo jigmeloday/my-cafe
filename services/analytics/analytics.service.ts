@@ -27,6 +27,8 @@ export interface BusinessAnalytics {
   data: Dataset;
   /** Visits to the business's own page and clicks on its contact links. */
   profile: ProfileData;
+  /** The business has events with reservations, so the Reservations number is shown. */
+  reservationsOn: boolean;
   /** Views and clicks on the business's home page banners, per day. */
   banners: BannerDay[];
   metas: PromotionMeta[];
@@ -65,7 +67,7 @@ export const analyticsService = {
     const today = bhutanDay(now);
     const business = await businessRepository.findByOwner(ownerId);
     if (!business) {
-      return { data: buildDataset(today, HISTORY_DAYS, [], [], []), profile: buildProfileData(today, HISTORY_DAYS, [], []), banners: buildBannerData(today, HISTORY_DAYS, []), metas: [], audience: summariseAudience([]), coins: [] };
+      return { reservationsOn: false, data: buildDataset(today, HISTORY_DAYS, [], [], []), profile: buildProfileData(today, HISTORY_DAYS, [], []), banners: buildBannerData(today, HISTORY_DAYS, []), metas: [], audience: summariseAudience([]), coins: [] };
     }
 
     const since = startOfBhutanDay(addDays(today, -(HISTORY_DAYS - 1)));
@@ -73,7 +75,7 @@ export const analyticsService = {
     const slugOf = new Map(promotions.map((p) => [p.slug, p.id]));
 
     const promotionIds = promotions.map((p) => p.id);
-    const [events, saves, profiles, spent, reach, profileEvents, profileVisitors, bannerEvents] = await Promise.all([
+    const [events, saves, profiles, spent, reach, profileEvents, profileVisitors, bannerEvents, reservations, reservationsOn] = await Promise.all([
       repo.eventCounts(promotionIds, since),
       repo.savesSince([...slugOf.keys()], since),
       repo.followerProfiles(followHref(business.slug)),
@@ -82,6 +84,8 @@ export const analyticsService = {
       repo.businessEventCounts(business.id, since),
       repo.businessVisitorsPerDay(business.id, since),
       repo.bannerEventCounts(business.id, since),
+      repo.reservationCounts(promotionIds, since),
+      repo.takesReservations(business.id),
     ]);
 
     const saveRows = saves.flatMap((f) => {
@@ -90,7 +94,8 @@ export const analyticsService = {
     });
 
     return {
-      data: buildDataset(today, HISTORY_DAYS, promotionIds, events, saveRows, reach),
+      reservationsOn,
+      data: buildDataset(today, HISTORY_DAYS, promotionIds, events, saveRows, reach, reservations),
       profile: buildProfileData(today, HISTORY_DAYS, profileEvents, profileVisitors),
       banners: buildBannerData(today, HISTORY_DAYS, bannerEvents),
       metas: promotions.map((p) => ({ id: p.id, title: p.title, type: titleCase(p.type), ended: p.status === "ENDED" })),

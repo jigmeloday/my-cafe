@@ -22,21 +22,23 @@ import { CoinsCard } from "./coins-card";
 interface TabProps {
   data: Dataset;
   banners: BannerDay[];
+  /** Show the Reservations number and chart line. */
+  reservationsOn: boolean;
   range: RangeDays;
   coins: BarItem[];
 }
 
-export function OverviewTab({ data, banners, range, coins }: TabProps) {
+export function OverviewTab({ data, banners, reservationsOn, range, coins }: TabProps) {
   const totals = rangeTotals(data, range);
 
   return (
     <div className="space-y-4">
-      <AnalyticsStats current={totals} previous={previousTotals(data, range)} reach={{ current: rangeReach(data, range), previous: previousReach(data, range) }} />
+      <AnalyticsStats showReservations={reservationsOn} current={totals} previous={previousTotals(data, range)} reach={{ current: rangeReach(data, range), previous: previousReach(data, range) }} />
       <div className="grid gap-4 lg:grid-cols-[1fr_20rem]">
         <PerformanceChart
           title={ANALYTICS_COPY.chartTitle}
           points={toPoints(rangeDays(data, range))}
-          metrics={METRICS}
+          metrics={reservationsOn ? METRICS : METRICS.filter((m) => m.id !== "reservations")}
         />
         <SectionCard title={ANALYTICS_COPY.sourcesTitle}>
           <BreakdownList rows={sourceRows(data, range)} />

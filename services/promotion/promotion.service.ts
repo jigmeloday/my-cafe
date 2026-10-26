@@ -1,3 +1,4 @@
+import { DEFAULT_REGISTRATION_LABEL } from "@/lib/constants";
 import { randomBytes } from "node:crypto";
 
 import { keyBelongsTo } from "@/lib/media";
@@ -58,6 +59,15 @@ function toItem(p: Promotion): PromotionItem {
       featureDays: "0",
       featureStart: "",
       status: p.status === "DRAFT" ? "DRAFT" : "PUBLISHED",
+      // An older event never had its own days, so its listing days are shown as the event's until the owner says otherwise.
+      eventStartDate: p.type === "EVENT" ? toDateOnly(p.eventStartsAt ?? p.startsAt) : "",
+      eventEndDate: p.type === "EVENT" ? toDateOnly(p.eventStartsAt ? p.eventEndsAt : p.endsAt) : "",
+      eventStartTime: p.eventStartTime,
+      eventEndTime: p.eventEndTime,
+      registrationMode: p.type !== "EVENT" ? "NONE" : p.registrationEnabled ? "NOOK" : p.registrationUrl ? "EXTERNAL" : "NONE",
+      registrationUrl: p.registrationUrl,
+      registrationLabel: p.registrationLabel,
+      capacity: p.capacity === null ? "" : String(p.capacity),
     },
     removed: p.removedAt !== null,
   };
@@ -94,6 +104,16 @@ export const promotionService = {
       ctaType: input.ctaType,
       ctaUrl: input.ctaType === "VISIT_WEBSITE" ? input.ctaUrl : "",
       photos: [...new Set(input.photos)],
+      // The event's own days and times belong to events only. One day (no end day) is saved as just a start.
+      eventStartsAt: input.type === "EVENT" ? fromDateOnly(input.eventStartDate) : null,
+      eventEndsAt: input.type === "EVENT" && input.eventEndDate && input.eventEndDate !== input.eventStartDate ? fromDateOnly(input.eventEndDate) : null,
+      eventStartTime: input.type === "EVENT" ? input.eventStartTime : "",
+      eventEndTime: input.type === "EVENT" ? input.eventEndTime : "",
+      // Only an event can take reservations; any other type is saved with it off.
+      registrationEnabled: input.type === "EVENT" && input.registrationMode === "NOOK",
+      registrationUrl: input.type === "EVENT" && input.registrationMode === "EXTERNAL" ? input.registrationUrl : "",
+      registrationLabel: input.registrationLabel || DEFAULT_REGISTRATION_LABEL,
+      capacity: input.type === "EVENT" && input.registrationMode === "NOOK" && input.capacity !== "" ? Number(input.capacity) : null,
     };
 
     const today = bhutanToday().toISOString().slice(0, 10);

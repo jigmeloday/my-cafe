@@ -11,6 +11,8 @@ export interface DayStats {
   shares: number;
   /** WhatsApp chats opened from a promotion's button. */
   chats: number;
+  /** Seats reserved at an event that day. */
+  reservations: number;
 }
 
 export interface Totals {
@@ -19,6 +21,7 @@ export interface Totals {
   saves: number;
   shares: number;
   chats: number;
+  reservations: number;
 }
 
 export interface PromotionMeta {

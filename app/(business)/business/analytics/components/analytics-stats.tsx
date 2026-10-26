@@ -6,13 +6,15 @@ import type { Totals } from "../model/analytics.type";
 import { change, ctr } from "../utils/analytics.utils";
 
 interface AnalyticsStatsProps {
+  /** Add the Reservations card (for businesses that run events with seats). */
+  showReservations?: boolean;
   current: Totals;
   previous: Totals;
   /** Different people who viewed or clicked a promotion, now and in the period before. */
   reach: { current: number; previous: number };
 }
 
-export function AnalyticsStats({ current, previous, reach }: AnalyticsStatsProps) {
+export function AnalyticsStats({ current, previous, reach, showReservations }: AnalyticsStatsProps) {
   const hint = ANALYTICS_COPY.vsPrevious;
 
   return (
@@ -56,6 +58,14 @@ export function AnalyticsStats({ current, previous, reach }: AnalyticsStatsProps
         delta={change(current.shares, previous.shares)}
         hint={hint}
       />
+      {showReservations && (
+        <StatCard
+          label="Reservations"
+          value={formatNumber(current.reservations)}
+          delta={change(current.reservations, previous.reservations)}
+          hint={hint}
+        />
+      )}
       <StatCard
         label="WhatsApp chats"
         value={formatNumber(current.chats)}

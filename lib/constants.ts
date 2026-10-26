@@ -54,6 +54,18 @@ export const PROMOTION_TYPES = [
   "ANNOUNCEMENT",
 ] as const;
 
+/**
+ * How many days after an event ends the names and phone numbers people shared to reserve a seat are removed
+ * (`npm run purge:registrations`). Only the count stays. The Privacy Policy and the guest list page state this number.
+ */
+export const REGISTRATION_RETENTION_DAYS = 30;
+
+/** How an event takes reservations: not at all (just come along), here on Nook, or on another website. */
+export const REGISTRATION_MODES = ["NONE", "NOOK", "EXTERNAL"] as const;
+
+/** What the reserve-a-seat button on an event says unless the organiser changes it. */
+export const DEFAULT_REGISTRATION_LABEL = "Reserve my seat";
+
 export const PROMOTION_STATUSES = ["DRAFT", "PUBLISHED", "ENDED"] as const;
 
 // This release is discovery only, so call-to-actions never buy or book.

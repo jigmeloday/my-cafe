@@ -76,7 +76,7 @@ export const FAQ_TOPICS: FaqTopic[] = [
     title: "Safety and privacy",
     faqs: [
       { q: "How do I report an ad?", a: "Open the promotion or event and press Report, or press “Report ad” on a sponsored banner. You need to be logged in. The business isn't told who reported." },
-      { q: "Who can see my information?", a: "Your profile isn't shown to other people. Businesses you follow only see totals, never your name or email. Our privacy policy explains the details." },
+      { q: "Who can see my information?", a: "Your profile isn't shown to other people. Businesses you follow only see totals, never your name or email. The one exception is an event you reserve a seat at: the organiser then sees the name and phone you agreed to share. Our privacy policy explains the details." },
       { q: "How do I ask for my information to be corrected or deleted?", a: "Change it in your profile, or write to us and we'll help. See the privacy policy for what we keep and for how long." },
     ],
   },

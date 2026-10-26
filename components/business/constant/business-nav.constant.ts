@@ -5,6 +5,7 @@ export const BUSINESS_NAV: DashboardNavItem[] = [
   { label: "Business profile", href: "/business/profile", icon: "Store" },
   { label: "Verification", href: "/business/verification", icon: "ShieldCheck" },
   { label: "Promotions", href: "/business/promotions", icon: "Tag" },
+  { label: "Guest lists", href: "/business/registrations", icon: "Users" },
   { label: "Banners", href: "/business/banners", icon: "Megaphone" },
   { label: "Wallet", href: "/business/wallet", icon: "Wallet" },
   { label: "Transactions", href: "/business/transactions", icon: "Receipt" },

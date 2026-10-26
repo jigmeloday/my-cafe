@@ -21,6 +21,13 @@ export interface EventCount {
   count: number;
 }
 
+/** Seats reserved at one event on one day. */
+export interface ReservationCount {
+  promotionId: string;
+  day: string;
+  count: number;
+}
+
 export interface SaveCount {
   promotionId: string;
   day: string;
@@ -39,10 +46,11 @@ export function buildDataset(
   events: EventCount[],
   saves: SaveCount[],
   reach: { day: string; visitors: number }[] = [],
+  reservations: ReservationCount[] = [],
 ): Dataset {
   const labels = lastDays(endDate, count);
   const index = new Map(labels.map((d, i) => [d.date, i]));
-  const blank = (): DayStats[] => labels.map((d) => ({ ...d, views: 0, clicks: 0, saves: 0, shares: 0, chats: 0 }));
+  const blank = (): DayStats[] => labels.map((d) => ({ ...d, views: 0, clicks: 0, saves: 0, shares: 0, chats: 0, reservations: 0 }));
 
   const days = blank();
   const promotions: Dataset["promotions"] = Object.fromEntries(promotionIds.map((id) => [id, blank()]));
@@ -56,6 +64,13 @@ export function buildDataset(
     own[i][field] += e.count;
     days[i][field] += e.count;
     if (e.type === "CLICK") sources[SOURCE_IDS.includes(e.source) ? e.source : OTHER_SOURCE][i] += e.count;
+  }
+  for (const r of reservations) {
+    const i = index.get(r.day);
+    const own = promotions[r.promotionId];
+    if (i === undefined || !own) continue;
+    own[i].reservations += r.count;
+    days[i].reservations += r.count;
   }
   for (const s of saves) {
     const i = index.get(s.day);
@@ -90,7 +105,7 @@ export function promotionRows(data: Dataset, range: RangeDays, metas: PromotionM
 }
 
 export const toPoints = (days: DayStats[]): ChartPoint[] =>
-  days.map(({ label, views, clicks, saves, shares, chats }) => ({ label, values: { views, clicks, saves, shares, chats } }));
+  days.map(({ label, views, clicks, saves, shares, chats, reservations }) => ({ label, values: { views, clicks, saves, shares, chats, reservations } }));
 
 export const promotionPoints = (data: Dataset, id: string, range: RangeDays): ChartPoint[] =>
   toPoints(lastN(data.promotions[id] ?? [], range));

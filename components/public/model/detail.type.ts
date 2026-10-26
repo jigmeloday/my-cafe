@@ -60,6 +60,10 @@ export interface DetailData {
   related: PromotionCardData[];
   /** Set for real promotions. Used to count views and clicks. */
   promotionId?: string;
+  /** An event where people can reserve a seat: its own button becomes the main one. */
+  reservable?: boolean;
+  /** Where to reserve when the organiser uses another website. */
+  reserveLink?: DetailCta;
   photos?: string[];
   cta?: DetailCta;
   shopLines?: ShopLine[];
