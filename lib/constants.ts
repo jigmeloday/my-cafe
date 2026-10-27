@@ -72,6 +72,27 @@ export const REGISTRATION_MODES = ["NONE", "NOOK", "EXTERNAL"] as const;
 /** What the reserve-a-seat button on an event says unless the organiser changes it. */
 export const DEFAULT_REGISTRATION_LABEL = "Reserve my seat";
 
+/** The types people can order from: a deal or a sale item. */
+export const ORDERABLE_TYPES = ["DEAL", "SALE"] as const;
+
+/** How a deal or sale item takes orders: not at all, here on Nook, in a WhatsApp chat, or on the seller's own website. */
+export const ORDER_MODES = ["NONE", "NOOK", "WHATSAPP", "EXTERNAL"] as const;
+
+/** What the order button says unless the seller changes it. */
+export const DEFAULT_ORDER_LABEL = "Order now";
+
+/** The most of one item a person can order at once. */
+export const MAX_ORDER_QUANTITY = 20;
+
+/** The most unfinished orders one person can have for one item, so a form can't be used to flood a seller. */
+export const MAX_OPEN_ORDERS = 5;
+
+/**
+ * How many days after an order is finished (completed or cancelled) the name, phone and note the customer shared are
+ * removed (`npm run purge:orders`). The order stays for the seller's totals. The Privacy Policy states this number.
+ */
+export const ORDER_RETENTION_DAYS = 30;
+
 export const PROMOTION_STATUSES = ["DRAFT", "PUBLISHED", "ENDED"] as const;
 
 // This release is discovery only, so call-to-actions never buy or book.

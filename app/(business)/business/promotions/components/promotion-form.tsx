@@ -7,6 +7,7 @@ import { FormMessage } from "@/components/shared/form-message";
 import { GalleryUpload } from "@/components/shared/gallery-upload";
 import { Button } from "@/components/ui/button";
 import { COIN_COSTS } from "@/lib/coins";
+import { ORDERABLE_TYPES } from "@/lib/constants";
 import { extensionCost, listingCost, listingDays } from "@/lib/listing";
 import { mediaUrl } from "@/lib/media";
 import { discardUploads, uploadChosen } from "@/lib/pending-upload";
@@ -28,6 +29,7 @@ import {
   FEATURE_COPY,
   PUBLISH_COPY,
   EVENT_DATES_COPY,
+  ORDER_COPY,
   PROMOTIONS_COPY,
   SCHEDULE_COPY,
 } from "../constant/promotion.constant";
@@ -36,6 +38,7 @@ import { CtaFields } from "./cta-fields";
 import { DetailsFields } from "./details-fields";
 import { EventDateFields } from "./event-date-fields";
 import { PromotionPreview } from "./promotion-preview";
+import { OrderFields } from "./order-fields";
 import { RegistrationFields } from "./registration-fields";
 import { FeatureFields } from "./feature-fields";
 import { PublishCost } from "./publish-cost";
@@ -136,6 +139,11 @@ export function PromotionForm({ initial, categories, id, balance, availability, 
         {type === "EVENT" && (
           <SectionCard title={PROMOTIONS_COPY.registrationTitle} description={PROMOTIONS_COPY.registrationDescription}>
             <RegistrationFields form={form} />
+          </SectionCard>
+        )}
+        {ORDERABLE_TYPES.some((t) => t === type) && (
+          <SectionCard title={ORDER_COPY.title} description={ORDER_COPY.description}>
+            <OrderFields form={form} />
           </SectionCard>
         )}
         <SectionCard

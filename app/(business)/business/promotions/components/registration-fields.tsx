@@ -1,12 +1,12 @@
 "use client";
 
-import { Controller, useWatch, type UseFormReturn } from "react-hook-form";
+import { useWatch, type UseFormReturn } from "react-hook-form";
 
 import { Input } from "@/components/ui/input";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import type { PromotionInput } from "@/lib/validations/promotion.schema";
 
 import { REGISTRATION_MODE_OPTIONS } from "../constant/promotion.constant";
+import { ModeRadioGroup } from "./mode-radio-group";
 
 /** For events: how people reserve a place, if they need to. Here on Nook, or on a website the organiser already uses. */
 export function RegistrationFields({ form }: { form: UseFormReturn<PromotionInput> }) {
@@ -19,23 +19,7 @@ export function RegistrationFields({ form }: { form: UseFormReturn<PromotionInpu
 
   return (
     <div className="space-y-4">
-      <Controller
-        control={control}
-        name="registrationMode"
-        render={({ field }) => (
-          <RadioGroup value={field.value} onValueChange={field.onChange} aria-label="How people reserve" className="gap-3">
-            {REGISTRATION_MODE_OPTIONS.map(({ value, title, text }) => (
-              <label key={value} className="flex cursor-pointer items-start gap-3 rounded-xl border p-4 has-data-checked:border-primary has-data-checked:bg-maroon-soft/40">
-                <RadioGroupItem value={value} className="mt-0.5" />
-                <span className="space-y-0.5">
-                  <span className="block font-semibold">{title}</span>
-                  <span className="block text-sm text-muted-foreground">{text}</span>
-                </span>
-              </label>
-            ))}
-          </RadioGroup>
-        )}
-      />
+      <ModeRadioGroup control={control} name="registrationMode" label="How people reserve" options={REGISTRATION_MODE_OPTIONS} />
       {mode === "EXTERNAL" && (
         <Input
           label="Link where people reserve"

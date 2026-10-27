@@ -102,6 +102,22 @@ enum RegistrationStatus {
   CANCELLED
 }
 
+/// How people order a deal or sale item: not at all, here on Nook, in a WhatsApp chat, or on the seller's own website.
+enum OrderMode {
+  NONE
+  NOOK
+  WHATSAPP
+  EXTERNAL
+}
+
+/// Where an order made on Nook stands. The seller moves it forward; the customer can cancel while it is still PLACED.
+enum OrderStatus {
+  PLACED
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
 enum PromotionStatus {
   DRAFT
   PUBLISHED
@@ -119,17 +135,17 @@ enum CoinTransactionType {
 }
 
 model User {
-  id                 String         @id @default(cuid())
-  email              String         @unique
+  id                 String              @id @default(cuid())
+  email              String              @unique
   name               String
-  emailVerified      Boolean        @default(false)
+  emailVerified      Boolean             @default(false)
   image              String?
   /// When a verification email was last sent, so people can't be spammed with them.
   verificationSentAt DateTime?
-  role               Role           @default(USER)
-  status             AccountStatus  @default(ACTIVE)
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @updatedAt
+  role               Role                @default(USER)
+  status             AccountStatus       @default(ACTIVE)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
   businesses         Business[]
   sessions           Session[]
   accounts           Account[]
@@ -139,6 +155,7 @@ model User {
   notifications      Notification[]
   reports            Report[]
   eventRegistrations EventRegistration[]
+  productOrders      ProductOrder[]
 }
 
 // The next three models are the tables Better Auth needs.
@@ -234,31 +251,31 @@ model Business {
 }
 
 model Promotion {
-  id               String            @id @default(cuid())
-  businessId       String
-  business         Business          @relation(fields: [businessId], references: [id], onDelete: Cascade)
-  categoryId       String?
-  category         Category?         @relation(fields: [categoryId], references: [id])
-  slug             String            @unique
-  title            String
-  type             PromotionType
-  status           PromotionStatus   @default(DRAFT)
-  discount         String            @default("")
-  description      String            @default("")
-  location         String            @default("")
-  ctaType          String            @default("VIEW_OFFER")
-  ctaUrl           String            @default("")
-  photos           String[]
-  events           PromotionEvent[]
-  startsAt         DateTime?
-  endsAt           DateTime?
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
-  banners          Banner[]
-  featuredBookings FeaturedBooking[]
-  reports          Report[]
+  id                  String              @id @default(cuid())
+  businessId          String
+  business            Business            @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  categoryId          String?
+  category            Category?           @relation(fields: [categoryId], references: [id])
+  slug                String              @unique
+  title               String
+  type                PromotionType
+  status              PromotionStatus     @default(DRAFT)
+  discount            String              @default("")
+  description         String              @default("")
+  location            String              @default("")
+  ctaType             String              @default("VIEW_OFFER")
+  ctaUrl              String              @default("")
+  photos              String[]
+  events              PromotionEvent[]
+  startsAt            DateTime?
+  endsAt              DateTime?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  banners             Banner[]
+  featuredBookings    FeaturedBooking[]
+  reports             Report[]
   /// Set when an admin took it down after a report. It is never shown again and the owner can\'t republish it.
-  removedAt        DateTime?
+  removedAt           DateTime?
   /// Events only: the event's own days and times. startsAt / endsAt above are how long it is listed on Nook.
   /// Empty on older events, which then use the listing days.
   eventStartsAt       DateTime?           @db.Date
@@ -274,6 +291,14 @@ model Promotion {
   /// How many seats there are. Empty means no limit.
   capacity            Int?
   registrations       EventRegistration[]
+  /// Deals and sales only: the price of the item in minor units (Nu. 250 is 25000). Empty when the owner didn't say.
+  price               Int?
+  /// How people order it. The button's wording is the owner's own.
+  orderMode           OrderMode           @default(NONE)
+  orderLabel          String              @default("Order now")
+  /// When people order on another website: its address.
+  orderUrl            String              @default("")
+  orders              ProductOrder[]
 
   @@index([businessId])
   @@index([status, type])
@@ -295,6 +320,27 @@ model EventRegistration {
   @@unique([promotionId, userId])
   @@index([promotionId, status])
   @@index([userId])
+}
+
+/// One order made on Nook. The name, phone and note are what the customer chose to share with the seller; they are
+/// removed some days after the order is finished (`npm run purge:orders`). The price is as it was when they ordered.
+model ProductOrder {
+  id          String      @id @default(cuid())
+  promotionId String
+  promotion   Promotion   @relation(fields: [promotionId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  phone       String      @default("")
+  quantity    Int         @default(1)
+  note        String      @default("")
+  unitPrice   Int?
+  status      OrderStatus @default(PLACED)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([promotionId, status])
+  @@index([userId, createdAt])
 }
 
 // Coins are whole numbers. `balance` is only ever changed together with a CoinTransaction row.

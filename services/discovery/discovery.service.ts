@@ -2,6 +2,8 @@ import { eventWindow, isoWithTime, timeRangeText } from "@/lib/event-dates";
 import type { ActivityItem } from "@/app/(public)/businesses/model/business.type";
 import type { HeroSlideData } from "@/app/(public)/home/model/home.type";
 import { CTA_TYPE_LABELS, TYPE_LABELS } from "@/lib/promotion-labels";
+import { formatMoney } from "@/lib/formatters/currency";
+import { canOrder, orderMessage } from "@/lib/orders";
 import { whatsappLink } from "@/lib/whatsapp";
 import { mediaUrl } from "@/lib/media";
 import type { DetailData, ShopLine } from "@/components/public/model/detail.type";
@@ -124,6 +126,17 @@ function ctaFor(p: { ctaType: string; ctaUrl: string; title: string }, phone: st
   return undefined;
 }
 
+/** The order button for a deal or sale item that is ordered on WhatsApp or another website. Ordering on Nook has its own button. */
+function orderLinkFor(p: LivePromotion, price: string | undefined): DetailData["orderLink"] {
+  if (!canOrder(p.type)) return undefined;
+  if (p.orderMode === "EXTERNAL" && p.orderUrl) return { label: p.orderLabel, href: p.orderUrl };
+  if (p.orderMode === "WHATSAPP") {
+    const href = whatsappLink(p.business.phone, orderMessage(p.title, SITE_NAME, price));
+    return href ? { label: p.orderLabel, href, chat: true } : undefined;
+  }
+  return undefined;
+}
+
 function buildDetail(p: LivePromotion, related: LivePromotion[], today: Date, now: Date): DetailData {
     const b = p.business;
     const lines: ShopLine[] = [];
@@ -135,6 +148,8 @@ function buildDetail(p: LivePromotion, related: LivePromotion[], today: Date, no
     if (b.website) lines.push({ key: "website", text: b.website.replace(/^https?:\/\//, ""), href: b.website });
 
     const isEvent = p.type === "EVENT";
+    const price = canOrder(p.type) && p.price !== null ? formatMoney(p.price) : undefined;
+    const orderLink = orderLinkFor(p, price);
     const where = p.location || [b.town, b.dzongkhag].filter(Boolean).join(", ") || "—";
     return {
       kind: isEvent ? "event" : "promotion",
@@ -162,6 +177,9 @@ function buildDetail(p: LivePromotion, related: LivePromotion[], today: Date, no
       reservable: p.type === "EVENT" && (p.registrationEnabled || p.registrationUrl !== ""),
       // Reserving on another website: its own button, with the organiser's wording.
       reserveLink: p.type === "EVENT" && !p.registrationEnabled && p.registrationUrl ? { label: p.registrationLabel, href: p.registrationUrl } : undefined,
+      price,
+      orderable: canOrder(p.type) && p.orderMode === "NOOK",
+      orderLink,
       photos: p.photos.map(mediaUrl),
       cta: ctaFor(p, b.phone),
       shopLines: lines,

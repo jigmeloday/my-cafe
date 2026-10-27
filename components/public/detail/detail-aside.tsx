@@ -4,6 +4,7 @@ import { DETAIL_KINDS, SHOP_LABEL } from "../constant/detail.constant";
 import type { DetailData } from "../model/detail.type";
 import { ShopDetails } from "./shop-details";
 import { EventSeat } from "./event-seat";
+import { OrderItem } from "./order-item";
 import { TrackedCta } from "./tracked-cta";
 
 export function DetailAside({ detail }: { detail: DetailData }) {
@@ -16,7 +17,18 @@ export function DetailAside({ detail }: { detail: DetailData }) {
         <p className="text-2xl font-semibold tracking-tight">
           {detail.highlight}
         </p>
+        {detail.price && <p className="text-lg font-semibold text-primary">{detail.price}</p>}
         <p className="text-sm text-muted-foreground">{asideNote}</p>
+        {detail.promotionId && detail.orderLink && (
+          <div className="pt-2">
+            <TrackedCta promotionId={detail.promotionId} label={detail.orderLink.label} href={detail.orderLink.href} chat={detail.orderLink.chat} />
+          </div>
+        )}
+        {detail.promotionId && detail.orderable && (
+          <div className="pt-2">
+            <OrderItem promotionId={detail.promotionId} path={`/promotions/${detail.slug}`} />
+          </div>
+        )}
         {detail.promotionId && detail.reserveLink && (
           <div className="pt-2">
             <TrackedCta promotionId={detail.promotionId} label={detail.reserveLink.label} href={detail.reserveLink.href} />
@@ -29,7 +41,7 @@ export function DetailAside({ detail }: { detail: DetailData }) {
         )}
         {detail.promotionId && detail.cta && (
           <div className="pt-2">
-            <TrackedCta promotionId={detail.promotionId} label={detail.cta.label} href={detail.cta.href} chat={detail.cta.chat} variant={detail.reservable ? "secondary" : "default"} />
+            <TrackedCta promotionId={detail.promotionId} label={detail.cta.label} href={detail.cta.href} chat={detail.cta.chat} variant={detail.reservable || detail.orderable || detail.orderLink ? "secondary" : "default"} />
           </div>
         )}
       </div>

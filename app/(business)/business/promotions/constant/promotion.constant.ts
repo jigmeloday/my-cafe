@@ -1,6 +1,7 @@
 import { FEATURED_DAYS, featuredPrice } from "@/lib/featured";
 import {
   CTA_TYPES,
+  DEFAULT_ORDER_LABEL,
   DEFAULT_REGISTRATION_LABEL,
   SELECTABLE_PROMOTION_TYPES,
   PROMOTION_STATUSES,
@@ -105,6 +106,26 @@ export const REGISTRATION_MODE_OPTIONS = [
   { value: "EXTERNAL", title: "Reserve on another website", text: "You already take bookings or sell tickets elsewhere. Add the link and people go there." },
 ] as const;
 
+/** The ways a deal or sale item can take orders, as the seller picks them. */
+export const ORDER_MODE_OPTIONS = [
+  { value: "NONE", title: "No ordering", text: "People read the offer and come to you, or use the button above." },
+  { value: "NOOK", title: "Take orders here on Nook", text: "Customers sign in and order. You see every order under Orders and can confirm it, then arrange payment and pickup with them." },
+  { value: "WHATSAPP", title: "Order on WhatsApp", text: "The button opens a WhatsApp chat with the phone number on your business profile, with the item already typed in." },
+  { value: "EXTERNAL", title: "Order on another website", text: "You already sell elsewhere. Add the link and people go there." },
+] as const;
+
+export const ORDER_COPY = {
+  title: "Price and orders",
+  description: "Show a price, and let people order straight from the promotion.",
+  priceLabel: "Price (optional)",
+  priceHint: "In Nu. For the item itself. Leave empty if it varies.",
+  urlLabel: "Link where people order",
+  urlHint: "Your own shop or order page. It opens in a new tab.",
+  labelLabel: "Button wording",
+  labelHint: 'For example "Order now", "Buy on our site" or "Order on WhatsApp"',
+  whatsappHint: "Uses the phone number on your business profile.",
+};
+
 export const PROMOTIONS_COPY = {
   registrationTitle: "Reservations",
   registrationDescription: "Do people need to reserve a place? You can take reservations here, or send them to your own website.",
@@ -153,6 +174,10 @@ export const NEW_PROMOTION: PromotionInput = {
   registrationUrl: "",
   registrationLabel: DEFAULT_REGISTRATION_LABEL,
   capacity: "",
+  price: "",
+  orderMode: "NONE",
+  orderUrl: "",
+  orderLabel: DEFAULT_ORDER_LABEL,
 };
 
 /** "Not featured", "1 day · 50 coins", "3 days · 150 coins"... */

@@ -1,7 +1,8 @@
 import { z } from "zod";
 
-import { CTA_TYPES, PROMOTION_TYPES, REGISTRATION_MODES } from "@/lib/constants";
+import { CTA_TYPES, ORDERABLE_TYPES, ORDER_MODES, PROMOTION_TYPES, REGISTRATION_MODES } from "@/lib/constants";
 import { daysOfRun, FEATURE_CHOICES } from "@/lib/featured";
+import { parseMoney } from "@/lib/formatters/currency";
 import { listingDays, MAX_LISTING_DAYS } from "@/lib/listing";
 import { noBlockedWords } from "@/lib/validations/clean-text";
 
@@ -52,6 +53,14 @@ export const promotionSchema = z
     registrationLabel: z.string().trim().max(30, "Keep it under 30 characters").superRefine(noBlockedWords),
     /** How many seats. Empty means no limit. */
     capacity: z.string().trim().regex(/^\d{0,5}$/, "Use digits only"),
+    /** Deals and sales: the price in Nu., like "250" or "99.50". Empty when the owner would rather not say. */
+    price: z.string().trim().refine((v) => v === "" || parseMoney(v) !== null, "Enter the price as a number, like 250"),
+    /** Deals and sales: how people order. */
+    orderMode: z.enum(ORDER_MODES),
+    /** When people order on another website: its address. */
+    orderUrl: z.string().trim().max(300).refine((v) => v === "" || /^https?:\/\/\S+\.\S+$/.test(v), "Enter a full link starting with https://"),
+    /** The words on the order button. */
+    orderLabel: z.string().trim().max(30, "Keep it under 30 characters").superRefine(noBlockedWords),
   })
   .superRefine((v, ctx) => {
     const add = (path: keyof typeof v, message: string) =>
@@ -70,6 +79,10 @@ export const promotionSchema = z
       if (!v.registrationLabel) add("registrationLabel", "Add the words for the button");
       if (v.registrationMode === "NOOK" && v.capacity !== "" && Number(v.capacity) < 1) add("capacity", "Seats must be at least 1, or leave it empty for no limit");
       if (v.registrationMode === "EXTERNAL" && v.status === "PUBLISHED" && !v.registrationUrl) add("registrationUrl", "Add the link where people reserve");
+    }
+    if ((ORDERABLE_TYPES as readonly string[]).includes(v.type) && v.orderMode !== "NONE") {
+      if (!v.orderLabel) add("orderLabel", "Add the words for the button");
+      if (v.orderMode === "EXTERNAL" && v.status === "PUBLISHED" && !v.orderUrl) add("orderUrl", "Add the link where people order");
     }
     if (v.startDate && v.endDate && v.endDate < v.startDate)
       add("endDate", "End date must be after the start date");

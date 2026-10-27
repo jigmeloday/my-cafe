@@ -64,6 +64,12 @@ export interface DetailData {
   reservable?: boolean;
   /** Where to reserve when the organiser uses another website. */
   reserveLink?: DetailCta;
+  /** The item's price ("Nu. 250"), when the seller gave one. */
+  price?: string;
+  /** People can order this here on Nook: its own button becomes the main one. */
+  orderable?: boolean;
+  /** Where to order when the seller uses WhatsApp or another website. */
+  orderLink?: DetailCta;
   photos?: string[];
   cta?: DetailCta;
   shopLines?: ShopLine[];

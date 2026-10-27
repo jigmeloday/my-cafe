@@ -1,4 +1,5 @@
-import { DEFAULT_REGISTRATION_LABEL, SELECTABLE_PROMOTION_TYPES } from "@/lib/constants";
+import { DEFAULT_ORDER_LABEL, DEFAULT_REGISTRATION_LABEL, SELECTABLE_PROMOTION_TYPES } from "@/lib/constants";
+import { minorToInput, parseMoney } from "@/lib/formatters/currency";
 import { randomBytes } from "node:crypto";
 
 import { keyBelongsTo } from "@/lib/media";
@@ -7,6 +8,7 @@ import { extensionCost, listingCost, listingDays } from "@/lib/listing";
 import { daysOfRun, FEATURED_HORIZON_DAYS, featuredPrice } from "@/lib/featured";
 import { formatCoins } from "@/lib/formatters/number";
 import type { Promotion } from "@/generated/prisma/client";
+import { canOrder } from "@/lib/orders";
 import { slugify } from "@/lib/slug";
 import type { PromotionInput } from "@/lib/validations/promotion.schema";
 import type { PromotionItem } from "@/app/(business)/business/promotions/model/promotion.type";
@@ -68,6 +70,10 @@ function toItem(p: Promotion): PromotionItem {
       registrationUrl: p.registrationUrl,
       registrationLabel: p.registrationLabel,
       capacity: p.capacity === null ? "" : String(p.capacity),
+      price: p.price === null ? "" : minorToInput(p.price),
+      orderMode: canOrder(p.type) ? p.orderMode : "NONE",
+      orderUrl: p.orderUrl,
+      orderLabel: p.orderLabel,
     },
     removed: p.removedAt !== null,
   };
@@ -117,6 +123,11 @@ export const promotionService = {
       registrationUrl: input.type === "EVENT" && input.registrationMode === "EXTERNAL" ? input.registrationUrl : "",
       registrationLabel: input.registrationLabel || DEFAULT_REGISTRATION_LABEL,
       capacity: input.type === "EVENT" && input.registrationMode === "NOOK" && input.capacity !== "" ? Number(input.capacity) : null,
+      // Only a deal or a sale can have a price and take orders; any other type is saved without them.
+      price: canOrder(input.type) && input.price !== "" ? parseMoney(input.price) : null,
+      orderMode: canOrder(input.type) ? input.orderMode : ("NONE" as const),
+      orderUrl: canOrder(input.type) && input.orderMode === "EXTERNAL" ? input.orderUrl : "",
+      orderLabel: input.orderLabel || DEFAULT_ORDER_LABEL,
     };
 
     const today = bhutanToday().toISOString().slice(0, 10);
@@ -139,6 +150,10 @@ export const promotionService = {
     try {
       const business = await businessService.ensure(owner);
       if (business.status === "SUSPENDED") return { ok: false, error: SUSPENDED };
+      // A WhatsApp order opens a chat with the number on the business profile.
+      if (data.orderMode === "WHATSAPP" && input.status === "PUBLISHED" && !business.phone) {
+        return { ok: false, error: "Add a phone number to your business profile first. WhatsApp orders open a chat with that number." };
+      }
       // Photos must be files this business uploaded, never someone else's.
       if (!data.photos.every((key) => keyBelongsTo(key, business.id))) {
         return { ok: false, error: "One of the photos isn't valid. Remove it and add it again." };
